@@ -3,16 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conjius</title>
+    <title>Conjius — Danny Priymak</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main>
-        <h1>Conjius</h1>
-        <p class="tagline">Software Engineer</p>
-        <nav>
-            <a href="https://github.com/conjius" target="_blank" rel="noopener">GitHub</a>
+
+    <!-- Decorative SVG background -->
+    <div class="bg-art" aria-hidden="true">
+        <svg viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <polygon points="1100,0 1440,0 1440,320 1020,180" fill="#d48300" opacity="0.06"/>
+            <circle cx="120" cy="750" r="180" fill="#d48300" opacity="0.05"/>
+            <circle cx="220" cy="680" r="80" fill="#ffffff" opacity="0.03"/>
+            <line x1="0" y1="600" x2="500" y2="300" stroke="#d48300" stroke-width="1" opacity="0.12"/>
+            <polygon points="1300,500 1380,620 1220,620" fill="#ffffff" opacity="0.04"/>
+            <circle cx="900" cy="150" r="100" fill="none" stroke="#d48300" stroke-width="1.5" opacity="0.1"/>
+            <polyline points="0,100 200,50 180,200" fill="none" stroke="#d48300" stroke-width="1" opacity="0.1"/>
+        </svg>
+    </div>
+
+    <!-- Hero -->
+    <header class="hero">
+        <img src="https://avatars.githubusercontent.com/u/24496156?v=4" alt="Danny Priymak" class="avatar">
+        <h2 class="name">Danny Priymak</h2>
+        <p class="tagline">Software Engineer & Electronic Musician</p>
+        <nav class="links">
+            <a href="https://github.com/conjius" target="_blank" rel="noopener" class="link-pill">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                <span class="link-label">GitHub</span>
+            </a>
+            <a href="https://www.linkedin.com/in/danny-priymak-7a8138172/" target="_blank" rel="noopener" class="link-pill" aria-label="LinkedIn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                <span class="link-label">LinkedIn</span>
+            </a>
+            <a href="https://instagram.com/conjius" target="_blank" rel="noopener" class="link-pill" aria-label="Instagram">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                <span class="link-label">Instagram</span>
+            </a>
+            <a href="mailto:danny@conji.us" class="link-pill" aria-label="Email">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/><path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/></svg>
+                <span class="link-label">Email</span>
+            </a>
         </nav>
-    </main>
+    </header>
+
+    <!-- Section Toggle -->
+    <div class="section-toggle">
+        <button class="toggle-btn active" data-target="projects" onclick="toggleSection('projects')">Code</button>
+        <button class="toggle-btn" data-target="music" onclick="toggleSection('music')">Music</button>
+    </div>
+
+    <!-- Music & Videos -->
+    <section class="music hidden" id="music-section">
+        <div class="project-grid">
+
+            <a href="https://open.spotify.com/artist/0f9jIr7n3I2EvtdNce6JDB" target="_blank" rel="noopener" class="project-card">
+                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/spotify/d48300" alt="Spotify" class="brand-icon"></div>
+                <div class="project-info"><h3>Spotify</h3><p>Stream all releases</p></div>
+            </a>
+
+            <a href="https://music.apple.com/il/album/what-if-you-tried/1765325363" target="_blank" rel="noopener" class="project-card">
+                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/applemusic/d48300" alt="Apple Music" class="brand-icon"></div>
+                <div class="project-info"><h3>Apple Music</h3><p>Stream all releases</p></div>
+            </a>
+
+            <a href="https://music.youtube.com/channel/UC4XwLQrc3CT0jPac-w4WPxw" target="_blank" rel="noopener" class="project-card">
+                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/youtubemusic/d48300" alt="YouTube Music" class="brand-icon"></div>
+                <div class="project-info"><h3>YouTube Music</h3><p>Full discography</p></div>
+            </a>
+
+            <a href="https://conjius.bandcamp.com" target="_blank" rel="noopener" class="project-card">
+                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/bandcamp/d48300" alt="Bandcamp" class="brand-icon"></div>
+                <div class="project-info"><h3>Bandcamp</h3><p>Buy and download music</p></div>
+            </a>
+
+            <a href="https://www.soundcloud.com/conjius" target="_blank" rel="noopener" class="project-card">
+                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/soundcloud/d48300" alt="SoundCloud" class="brand-icon"></div>
+                <div class="project-info"><h3>SoundCloud</h3><p>Old B-Sides</p></div>
+            </a>
+
+            <a href="https://www.youtube.com/@conjius" target="_blank" rel="noopener" class="project-card">
+                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/youtube/d48300" alt="YouTube" class="brand-icon"></div>
+                <div class="project-info"><h3>YouTube</h3><p>Videos and live sets</p></div>
+            </a>
+
+
+        </div>
+    </section>
+
+    <!-- Projects (dynamically loaded from GitHub pinned repos) -->
+    <section class="projects" id="projects-section">
+        <div class="project-grid" id="projects-grid"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Conjius</p>
+    </footer>
+
+    <script>
+    function toggleSection(section) {
+        var music = document.getElementById('music-section');
+        var projects = document.getElementById('projects-section');
+        var btns = document.querySelectorAll('.toggle-btn');
+        btns.forEach(function(btn) { btn.classList.remove('active'); });
+        document.querySelector('[data-target="' + section + '"]').classList.add('active');
+        if (section === 'music') {
+            music.classList.remove('hidden');
+            projects.classList.add('hidden');
+        } else {
+            projects.classList.remove('hidden');
+            music.classList.add('hidden');
+        }
+    }
+
+    var GH_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>';
+    var LINK_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-7h-2v7H5V7h7V5H5z"/></svg>';
+
+    // Pinned repos are defined here. To update, change this list.
+    var PINNED_REPOS = ['CivDecks','wav_decoder','midi-visu','generative_art','Kyoob','denoiser'];
+
+    function loadPinnedRepos() {
+        var grid = document.getElementById('projects-grid');
+        var promises = PINNED_REPOS.map(function(name) {
+            return fetch('https://api.github.com/repos/conjius/' + name)
+                .then(function(r) { return r.json(); });
+        });
+        Promise.all(promises).then(function(repos) {
+            grid.innerHTML = '';
+            repos.forEach(function(repo) {
+                if (!repo.name) return;
+                var hasCustomImage = repo.name === 'CivDecks';
+                var thumbHTML;
+                if (hasCustomImage) {
+                    thumbHTML = '<img src="https://repository-images.githubusercontent.com/' + repo.id + '/' + repo.name + '" alt="' + repo.name + '" loading="lazy" onerror="this.style.display=\'none\'">';
+                } else {
+                    thumbHTML = '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><circle cx="200" cy="100" r="50" fill="none" stroke="#d48300" stroke-width="1.5" opacity="0.2"/><line x1="50" y1="180" x2="350" y2="20" stroke="#d48300" stroke-width="0.8" opacity="0.1"/></svg></div>';
+                }
+                var langHTML = '';
+                if (repo.language) {
+                    var colors = {GDScript:'#355570','C++':'#f34b7d',Python:'#3572A5','C#':'#178600',JavaScript:'#f1e05a',TypeScript:'#3178c6'};
+                    var color = colors[repo.language] || '#888';
+                    langHTML = '<span class="lang"><span class="lang-dot" style="background:' + color + '"></span>' + repo.language + '</span>';
+                }
+                var linksHTML = '<a href="' + repo.html_url + '" target="_blank" rel="noopener" aria-label="Source" title="Source">' + GH_ICON + '</a>';
+                if (repo.homepage) {
+                    linksHTML += '<a href="' + repo.homepage + '" target="_blank" rel="noopener" aria-label="Live demo" title="Live Demo">' + LINK_ICON + '</a>';
+                }
+                var card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = thumbHTML +
+                    '<div class="project-info">' +
+                        '<h3>' + repo.name + '</h3>' +
+                        '<p>' + (repo.description || repo.name) + '</p>' +
+                        '<div class="card-footer">' + langHTML +
+                            '<div class="card-links">' + linksHTML + '</div>' +
+                        '</div>' +
+                    '</div>';
+                grid.appendChild(card);
+            });
+        })
+        .catch(function() {
+            grid.innerHTML = '<p style="color:#888;text-align:center;grid-column:1/-1">Unable to load projects. Visit <a href="https://github.com/conjius" style="color:#d48300">GitHub</a> instead.</p>';
+        });
+    }
+    loadPinnedRepos();
+    </script>
+
 </body>
 </html>
