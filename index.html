@@ -164,12 +164,12 @@
         if (animFrame) cancelAnimationFrame(animFrame);
         var start = progress;
         var startTime = performance.now();
-        var duration = 800;
+        var duration = 600;
         function step(now) {
             var t = Math.min(1, (now - startTime) / duration);
-            // damped spring - overshoots slightly then settles
-            var ease = 1 - Math.exp(-6 * t) * Math.cos(t * Math.PI * 1.2);
-            setProgress(start + (target - start) * ease);
+            // ease out expo - gentle deceleration
+            t = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+            setProgress(start + (target - start) * t);
             if (t < 1) animFrame = requestAnimationFrame(step);
         }
         animFrame = requestAnimationFrame(step);
