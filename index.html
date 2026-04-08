@@ -186,6 +186,7 @@
             var dx = e.clientX - startX;
             if (Math.abs(dx) > 8) moved = true;
             if (moved) {
+                e.preventDefault();
                 var delta = -dx / sensitivity;
                 setProgress(startProgress + delta);
             }
@@ -228,6 +229,7 @@
 
     // prevent native link/image drag inside swipeable areas
     wrapper.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    toggle.addEventListener('dragstart', function(e) { e.preventDefault(); });
 
     // content area: sensitivity = wrapper width (full swipe = full transition)
     addSwipe(wrapper, wrapper.offsetWidth || 600, false);
