@@ -199,9 +199,9 @@
                 // snap with low threshold - 20% drag is enough to switch
                 var target;
                 if (startProgress < 0.5) {
-                    target = progress > 0.2 ? 1 : 0;
+                    target = progress > 0.08 ? 1 : 0;
                 } else {
-                    target = progress < 0.8 ? 0 : 1;
+                    target = progress < 0.92 ? 0 : 1;
                 }
                 animateTo(target);
             } else if (isToggle) {
