@@ -208,6 +208,9 @@
         }, true);
     }
 
+    // prevent native link/image drag inside swipeable areas
+    wrapper.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
     // content area: sensitivity = wrapper width (full swipe = full transition)
     addSwipe(wrapper, wrapper.offsetWidth || 600);
     // toggle: sensitivity = toggle width
