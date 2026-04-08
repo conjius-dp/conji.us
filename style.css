@@ -389,10 +389,62 @@ footer {
 
 /* ── Responsive ── */
 
+/* ── Touch devices: no hover effects ── */
+
+@media (hover: none) {
+    .project-card:hover {
+        border-color: var(--border);
+        transform: none;
+    }
+
+    .project-card:active {
+        border-color: var(--accent);
+    }
+
+    .card-links a:hover {
+        background: transparent;
+        color: var(--accent);
+    }
+
+    .card-links a:active {
+        background: var(--accent);
+        color: var(--bg);
+    }
+
+    .link-pill:hover {
+        background: transparent;
+        color: var(--accent);
+    }
+
+    .link-pill:active {
+        background: var(--accent);
+        color: var(--bg);
+    }
+
+    .toggle-btn:not(.active):hover {
+        background: transparent;
+    }
+
+    .toggle-btn:not(.active):active {
+        background: rgba(212, 131, 0, 0.2);
+    }
+}
+
+/* ── Mobile layout ── */
+
 @media (max-width: 600px) {
     .hero {
         min-height: auto;
         padding: 2.5rem 1.5rem 1rem;
+    }
+
+    .avatar {
+        width: 90px;
+        height: 90px;
+    }
+
+    .name {
+        font-size: 1rem;
     }
 
     .link-label {
@@ -404,7 +456,27 @@ footer {
         gap: 0;
     }
 
+    .section-toggle {
+        max-width: 220px;
+    }
+
     .project-grid {
         grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+
+    .project-card {
+        border-radius: 30px;
+        border-width: 3px;
+    }
+
+    .project-info {
+        padding: 1.5rem;
+    }
+
+    .card-links a {
+        width: 40px;
+        height: 40px;
+        padding: 8px;
     }
 }
