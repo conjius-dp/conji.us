@@ -140,9 +140,9 @@
 
     function setProgress(p, allowOverscroll) {
         if (allowOverscroll) {
-            // rubber band: allow slight overscroll with resistance
-            if (p < 0) p = p * 0.3;
-            else if (p > 1) p = 1 + (p - 1) * 0.3;
+            // rubber band: allow overscroll with resistance
+            if (p < 0) p = p * 0.4;
+            else if (p > 1) p = 1 + (p - 1) * 0.4;
             progress = p;
         } else {
             progress = Math.max(0, Math.min(1, p));
@@ -164,11 +164,11 @@
         if (animFrame) cancelAnimationFrame(animFrame);
         var start = progress;
         var startTime = performance.now();
-        var duration = 450;
+        var duration = 600;
         function step(now) {
             var t = Math.min(1, (now - startTime) / duration);
-            // ease out quint - very gentle deceleration at the end
-            t = 1 - Math.pow(1 - t, 5);
+            // ease out expo - ultra gentle landing
+            t = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
             setProgress(start + (target - start) * t);
             if (t < 1) animFrame = requestAnimationFrame(step);
         }
