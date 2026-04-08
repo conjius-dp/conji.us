@@ -136,10 +136,13 @@
         btns.forEach(function(btn) { btn.classList.remove('active'); });
         document.querySelector('[data-target="' + section + '"]').classList.add('active');
 
+        var toggle = document.querySelector('.section-toggle');
         if (section === 'music') {
             track.classList.add('show-music');
+            toggle.classList.add('music-active');
         } else {
             track.classList.remove('show-music');
+            toggle.classList.remove('music-active');
         }
         currentSection = section;
     }
