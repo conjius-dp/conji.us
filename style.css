@@ -115,9 +115,11 @@ body {
     transition: background 0.2s, color 0.2s;
 }
 
-.link-pill:hover {
-    background: var(--accent);
-    color: var(--bg);
+@media (hover: hover) {
+    .link-pill:hover {
+        background: var(--accent);
+        color: var(--bg);
+    }
 }
 
 .link-pill svg {
@@ -173,8 +175,10 @@ body {
     transition: none;
 }
 
-.toggle-btn:not(.active):hover {
-    background: rgba(212, 131, 0, 0.1);
+@media (hover: hover) {
+    .toggle-btn:not(.active):hover {
+        background: rgba(212, 131, 0, 0.1);
+    }
 }
 
 /* ── Music section ── */
@@ -259,9 +263,11 @@ body {
     transition: border-color 0.2s, transform 0.2s;
 }
 
-.project-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-4px);
+@media (hover: hover) {
+    .project-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-4px);
+    }
 }
 
 .project-card > img,
@@ -337,9 +343,11 @@ body {
     transition: background 0.2s, color 0.2s;
 }
 
-.card-links a:hover {
-    background: var(--accent);
-    color: var(--bg);
+@media (hover: hover) {
+    .card-links a:hover {
+        background: var(--accent);
+        color: var(--bg);
+    }
 }
 
 .card-links a.play-pill {
@@ -353,9 +361,11 @@ body {
     white-space: nowrap;
 }
 
-.card-links a.play-pill:hover {
-    background: var(--accent);
-    color: var(--bg);
+@media (hover: hover) {
+    .card-links a.play-pill:hover {
+        background: var(--accent);
+        color: var(--bg);
+    }
 }
 
 .lang {
@@ -400,46 +410,6 @@ footer {
 
 /* ── Responsive ── */
 
-/* ── Touch devices: no hover effects ── */
-
-@media (hover: none) {
-    .project-card:hover {
-        border-color: var(--border);
-        transform: none;
-    }
-
-    .project-card:active {
-        border-color: var(--accent);
-    }
-
-    .card-links a:hover {
-        background: transparent;
-        color: var(--accent);
-    }
-
-    .card-links a:active {
-        background: var(--accent);
-        color: var(--bg);
-    }
-
-    .link-pill:hover {
-        background: transparent;
-        color: var(--accent);
-    }
-
-    .link-pill:active {
-        background: var(--accent);
-        color: var(--bg);
-    }
-
-    .toggle-btn:not(.active):hover {
-        background: transparent;
-    }
-
-    .toggle-btn:not(.active):active {
-        background: rgba(212, 131, 0, 0.2);
-    }
-}
 
 /* ── Mobile layout ── */
 
