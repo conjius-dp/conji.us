@@ -34,6 +34,7 @@
     <div class="section-toggle" id="section-toggle">
         <button class="toggle-btn active" data-target="projects">Code</button>
         <button class="toggle-btn" data-target="music">Music</button>
+        <div class="toggle-dark-layer" id="toggle-dark-layer"><span>Code</span><span>Music</span></div>
     </div>
 
     <div class="sections-wrapper" id="sections-wrapper">
@@ -135,15 +136,18 @@
 
     var PEEK = 1.2; // percentage of track width to peek
 
+    var darkLayer = document.getElementById('toggle-dark-layer');
+
     function setProgress(p) {
         progress = Math.max(0, Math.min(1, p));
         // at 0: show peek of right section. at 1: show peek of left section.
         var offset = -PEEK + progress * (-(50 - PEEK * 2));
         track.style.transform = 'translateX(' + offset + '%)';
         toggle.style.setProperty('--pill-x', (progress * 100) + '%');
-        // update button colors
-        btns[0].style.color = progress < 0.5 ? 'var(--bg)' : 'var(--accent)';
-        btns[1].style.color = progress >= 0.5 ? 'var(--bg)' : 'var(--accent)';
+        // clip the dark text layer to match the pill position
+        var pillLeft = progress * 50;
+        var pillRight = pillLeft + 50;
+        darkLayer.style.clipPath = 'inset(0 ' + (100 - pillRight) + '% 0 ' + pillLeft + '%)';
         btns[0].classList.toggle('active', progress < 0.5);
         btns[1].classList.toggle('active', progress >= 0.5);
     }
