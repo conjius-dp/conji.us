@@ -17,10 +17,10 @@
             <polygon points="1100,0 1440,0 1440,320 1020,180" fill="#d48300" opacity="0.06"/>
             <circle cx="120" cy="750" r="180" fill="#d48300" opacity="0.05"/>
             <circle cx="220" cy="680" r="80" fill="#ffffff" opacity="0.03"/>
-            <line x1="0" y1="600" x2="500" y2="300" stroke="#d48300" stroke-width="1" opacity="0.12"/>
+            <line x1="0" y1="600" x2="500" y2="300" stroke="#d48300" stroke-width="2.0" opacity="0.12"/>
             <polygon points="1300,500 1380,620 1220,620" fill="#ffffff" opacity="0.04"/>
-            <circle cx="900" cy="150" r="100" fill="none" stroke="#d48300" stroke-width="1.5" opacity="0.1"/>
-            <polyline points="0,100 200,50 180,200" fill="none" stroke="#d48300" stroke-width="1" opacity="0.1"/>
+            <circle cx="900" cy="150" r="100" fill="none" stroke="#d48300" stroke-width="3.0" opacity="0.1"/>
+            <polyline points="0,100 200,50 180,200" fill="none" stroke="#d48300" stroke-width="2.0" opacity="0.1"/>
         </svg>
     </div>
 
@@ -55,9 +55,16 @@
         <button class="toggle-btn" data-target="music" onclick="toggleSection('music')">Music</button>
     </div>
 
+    <div class="sections-wrapper">
+
     <!-- Music & Videos -->
     <section class="music hidden" id="music-section">
         <div class="project-grid">
+
+            <a href="https://www.youtube.com/@conjius" target="_blank" rel="noopener" class="project-card">
+                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/youtube/d48300" alt="YouTube" class="brand-icon"></div>
+                <div class="project-info"><h3>YouTube</h3><p>Videos and live sets</p></div>
+            </a>
 
             <a href="https://open.spotify.com/artist/0f9jIr7n3I2EvtdNce6JDB" target="_blank" rel="noopener" class="project-card">
                 <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/spotify/d48300" alt="Spotify" class="brand-icon"></div>
@@ -84,91 +91,146 @@
                 <div class="project-info"><h3>SoundCloud</h3><p>Old B-Sides</p></div>
             </a>
 
-            <a href="https://www.youtube.com/@conjius" target="_blank" rel="noopener" class="project-card">
-                <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/youtube/d48300" alt="YouTube" class="brand-icon"></div>
-                <div class="project-info"><h3>YouTube</h3><p>Videos and live sets</p></div>
-            </a>
-
 
         </div>
     </section>
 
-    <!-- Projects (dynamically loaded from GitHub pinned repos) -->
+    <!-- Projects -->
     <section class="projects" id="projects-section">
-        <div class="project-grid" id="projects-grid"></div>
+        <div class="project-grid">
+
+            <div class="project-card">
+                <img src="https://repository-images.githubusercontent.com/1187257433/50e47450-cd04-4a22-85e5-d8e8bebee176" alt="CivDecks" loading="lazy">
+                <div class="project-info">
+                    <h3>CivDecks</h3>
+                    <p>Hex-based civilization strategy game with deckbuilding mechanics</p>
+                    <div class="card-footer">
+                        <span class="lang"><span class="lang-dot" style="background:#355570"></span>GDScript</span>
+                        <div class="card-links">
+                            <a href="https://github.com/conjius-dp/civ-deckbuilder" target="_blank" rel="noopener" title="Source"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                            <a href="https://conjius-dp.github.io/civ-deckbuilder/" target="_blank" rel="noopener" title="Live Demo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-7h-2v7H5V7h7V5H5z"/></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="16" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>
+                <div class="project-info">
+                    <h3>wav_decoder</h3>
+                    <p>C++20 .wav file decoder</p>
+                    <div class="card-footer">
+                        <span class="lang"><span class="lang-dot" style="background:#f34b7d"></span>C++</span>
+                        <div class="card-links">
+                            <a href="https://github.com/conjius-dp/wav-decoder" target="_blank" rel="noopener" title="Source"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><circle cx="80" cy="55" r="35" fill="#d48300" opacity="0.12"/><circle cx="200" cy="130" r="28" fill="#d48300" opacity="0.25"/><circle cx="310" cy="60" r="42" fill="#d48300" opacity="0.08"/><circle cx="150" cy="145" r="22" fill="#d48300" opacity="0.18"/><circle cx="330" cy="155" r="18" fill="#d48300" opacity="0.3"/><circle cx="240" cy="45" r="15" fill="#d48300" opacity="0.15"/></svg></div>
+                <div class="project-info">
+                    <h3>midi-visu</h3>
+                    <p>MIDI visualization tool</p>
+                    <div class="card-footer">
+                        <span class="lang"><span class="lang-dot" style="background:#f34b7d"></span>C++</span>
+                        <div class="card-links">
+                            <a href="https://github.com/conjius-dp/midi-visu" target="_blank" rel="noopener" title="Source"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><g transform="translate(200,100)" opacity="0.9"><!-- Leaf outline --><path d="M0,-70 Q18,-55 22,-35 Q26,-10 16,15 Q10,35 5,55 Q2,65 0,70 Q-2,65 -5,55 Q-10,35 -16,15 Q-26,-10 -22,-35 Q-18,-55 0,-70Z" fill="none" stroke="#d48300" stroke-width="3.0" opacity="0.5"/><!-- Center vein --><line x1="0" y1="-70" x2="0" y2="70" stroke="#d48300" stroke-width="2.0" opacity="0.4"/><!-- Right veins (short, inside leaf) --><path d="M0,-45 Q8,-40 13,-32" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/><path d="M0,-20 Q10,-14 16,-4" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/><path d="M0,5 Q8,12 12,20" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/><path d="M0,30 Q5,36 7,43" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/><!-- Left veins (short, inside leaf) --><path d="M0,-45 Q-8,-40 -13,-32" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/><path d="M0,-20 Q-10,-14 -16,-4" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/><path d="M0,5 Q-8,12 -12,20" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/><path d="M0,30 Q-5,36 -7,43" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.3"/></g></svg></div>
+                <div class="project-info">
+                    <h3>generative_art</h3>
+                    <p>Randomly-generated drawings of leaves</p>
+                    <div class="card-footer">
+                        <span class="lang"><span class="lang-dot" style="background:#3572A5"></span>Python</span>
+                        <div class="card-links">
+                            <a href="https://github.com/conjius-dp/generative_art" target="_blank" rel="noopener" title="Source"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><g transform="translate(200,100)"><!-- Knob circle --><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="4.0" opacity="0.5"/><!-- Pointer line at ~5 o'clock (shorter, no center dot) --><line x1="18" y1="18" x2="37" y2="37" stroke="#d48300" stroke-width="5.0" stroke-linecap="round" opacity="0.8"/><!-- "11" at pointer tip --><text x="52" y="58" text-anchor="middle" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="600" opacity="0.5">11</text></g></svg></div>
+                <div class="project-info">
+                    <h3>gainknob</h3>
+                    <p>JUCE audio gain knob plugin (VST3, AU, Standalone)</p>
+                    <div class="card-footer">
+                        <span class="lang"><span class="lang-dot" style="background:#f34b7d"></span>C++</span>
+                        <div class="card-links">
+                            <a href="https://github.com/conjius-dp/gain-knob" target="_blank" rel="noopener" title="Source"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><!-- JUCE logo (bigger) --><g transform="translate(50,55) scale(0.35)" opacity="0.4"><g fill="#d48300" fill-rule="evenodd"><path d="M128 226c-54.124 0-98-43.876-98-98s43.876-98 98-98s98 43.876 98 98s-43.876 98-98 98m0-7c50.258 0 91-40.742 91-91s-40.742-91-91-91s-91 40.742-91 91s40.742 91 91 91"/><path d="M52.163 94.493C56.357 84.463 62.375 78.633 64 76.984c1.625-1.648 3.932-.844 5.477 0c1.545.845 40.273 39.636 42.002 41.584s3.56 4.854-1.401 4.854s-53.708-.426-57.915-.716c-4.208-.291-5.45-2.745-5.45-4.841s1.255-13.341 5.45-23.372M99.015 51.34c10.059-4.127 17.23-3.856 19.545-3.872s3.377 2.183 3.873 3.872c.495 1.69.855 56.835.7 59.434c-.156 2.6-.113 5.483-3.621 1.974S81.835 74.47 79.066 71.29c-2.77-3.181-1.913-5.795-.43-7.277c1.482-1.482 10.32-8.545 20.38-12.673zm61.492.823c10.03 4.194 15.86 10.212 17.509 11.837c1.648 1.625.844 3.932 0 5.477c-.845 1.545-39.636 40.273-41.584 42.002s-4.854 3.56-4.854-1.401s.426-53.708.716-57.915c.291-4.208 2.745-5.45 4.841-5.45s13.341 1.255 23.372 5.45m43.153 46.852c4.127 10.059 3.856 17.23 3.872 19.545s-2.183 3.377-3.872 3.873c-1.69.495-56.835.855-59.434.7c-2.6-.156-5.483-.113-1.974-3.621s38.278-37.677 41.458-40.446c3.181-2.77 5.795-1.913 7.277-.43c1.482 1.482 8.545 10.32 12.673 20.38zm-.823 62.492c-4.194 10.03-10.212 15.86-11.837 17.509c-1.625 1.648-3.932.844-5.477 0c-1.545-.845-40.273-39.636-42.002-41.584s-3.56-4.854 1.401-4.854s53.708.426 57.915.716c4.208.291 5.45 2.745 5.45 4.841s-1.255 13.341-5.45 23.372m-46.852 43.153c-10.059 4.127-17.23 3.856-19.545 3.872s-3.377-2.183-3.873-3.872c-.495-1.69-.855-56.835-.7-59.434c.156-2.6.113-5.483 3.621-1.974s37.677 38.278 40.446 41.458c2.77 3.181 1.913 5.795.43 7.277c-1.482 1.482-10.32 8.545-20.38 12.673zm-61.492-.823c-10.03-4.194-15.86-10.212-17.509-11.837c-1.648-1.625-.844-3.932 0-5.477c.845-1.545 39.636-40.273 41.584-42.002s4.854-3.56 4.854 1.401s-.426 53.708-.716 57.915c-.291 4.208-2.745 5.45-4.841 5.45s-13.341-1.255-23.372-5.45M51.34 156.985c-4.127-10.059-3.856-17.23-3.872-19.545s2.183-3.377 3.872-3.873c1.69-.495 56.835-.855 59.434-.7c2.6.156 5.483.113 1.974 3.621S74.47 174.165 71.29 176.934c-3.181 2.77-5.795 1.913-7.277.43c-1.482-1.482-8.545-10.32-12.673-20.38z"/></g></g><!-- Noisy waveform (shorter) --><path d="M170,100 L174,88 L178,108 L182,80 L186,112 L190,76 L194,106 L198,84 L202,116 L206,72 L210,110 L214,78 L218,118 L222,70 L226,108 L230,85 L234,120 L238,68 L242,112 L246,80 L250,116 L254,72 L258,106 L262,88 L266,118 L270,65 L274,108 L278,82 L282,115 L286,75 L290,110 L294,80 L298,112 L302,85 L306,108 L310,90 L314,105 L318,92 L322,100" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.25"/><!-- Clean waveform (shorter, bold) --><path d="M170,100 Q195,78 220,92 Q245,112 270,85 Q295,68 322,100" fill="none" stroke="#d48300" stroke-width="5.0" opacity="0.6"/></svg></div>
+                <div class="project-info">
+                    <h3>denoiser</h3>
+                    <p>General-purpose spectral gating denoiser audio plugin (macOS VST3, AU, Standalone)</p>
+                    <div class="card-footer">
+                        <span class="lang"><span class="lang-dot" style="background:#f34b7d"></span>C++</span>
+                        <div class="card-links">
+                            <a href="https://github.com/conjius-dp/denoiser" target="_blank" rel="noopener" title="Source"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </section>
+
+    </div><!-- /sections-wrapper -->
 
     <footer>
         <p>&copy; 2026 Conjius</p>
     </footer>
 
     <script>
+    var currentSection = 'projects';
+
     function toggleSection(section) {
+        if (section === currentSection) return;
+
         var music = document.getElementById('music-section');
         var projects = document.getElementById('projects-section');
         var btns = document.querySelectorAll('.toggle-btn');
         btns.forEach(function(btn) { btn.classList.remove('active'); });
         document.querySelector('[data-target="' + section + '"]').classList.add('active');
-        if (section === 'music') {
-            music.classList.remove('hidden');
-            projects.classList.add('hidden');
-        } else {
-            projects.classList.remove('hidden');
-            music.classList.add('hidden');
-        }
-    }
 
-    var GH_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>';
-    var LINK_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-7h-2v7H5V7h7V5H5z"/></svg>';
+        var goingRight = section === 'music';
+        var outgoing = goingRight ? projects : music;
+        var incoming = goingRight ? music : projects;
 
-    // Pinned repos are defined here. To update, change this list.
-    var PINNED_REPOS = ['CivDecks','wav_decoder','midi-visu','generative_art','Kyoob','denoiser'];
+        // Slide out current section
+        outgoing.classList.add(goingRight ? 'slide-out-left' : 'slide-out-right');
 
-    function loadPinnedRepos() {
-        var grid = document.getElementById('projects-grid');
-        var promises = PINNED_REPOS.map(function(name) {
-            return fetch('https://api.github.com/repos/conjius/' + name)
-                .then(function(r) { return r.json(); });
-        });
-        Promise.all(promises).then(function(repos) {
-            grid.innerHTML = '';
-            repos.forEach(function(repo) {
-                if (!repo.name) return;
-                var hasCustomImage = repo.name === 'CivDecks';
-                var thumbHTML;
-                if (hasCustomImage) {
-                    thumbHTML = '<img src="https://repository-images.githubusercontent.com/' + repo.id + '/' + repo.name + '" alt="' + repo.name + '" loading="lazy" onerror="this.style.display=\'none\'">';
-                } else {
-                    thumbHTML = '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><circle cx="200" cy="100" r="50" fill="none" stroke="#d48300" stroke-width="1.5" opacity="0.2"/><line x1="50" y1="180" x2="350" y2="20" stroke="#d48300" stroke-width="0.8" opacity="0.1"/></svg></div>';
-                }
-                var langHTML = '';
-                if (repo.language) {
-                    var colors = {GDScript:'#355570','C++':'#f34b7d',Python:'#3572A5','C#':'#178600',JavaScript:'#f1e05a',TypeScript:'#3178c6'};
-                    var color = colors[repo.language] || '#888';
-                    langHTML = '<span class="lang"><span class="lang-dot" style="background:' + color + '"></span>' + repo.language + '</span>';
-                }
-                var linksHTML = '<a href="' + repo.html_url + '" target="_blank" rel="noopener" aria-label="Source" title="Source">' + GH_ICON + '</a>';
-                if (repo.homepage) {
-                    linksHTML += '<a href="' + repo.homepage + '" target="_blank" rel="noopener" aria-label="Live demo" title="Live Demo">' + LINK_ICON + '</a>';
-                }
-                var card = document.createElement('div');
-                card.className = 'project-card';
-                card.innerHTML = thumbHTML +
-                    '<div class="project-info">' +
-                        '<h3>' + repo.name + '</h3>' +
-                        '<p>' + (repo.description || repo.name) + '</p>' +
-                        '<div class="card-footer">' + langHTML +
-                            '<div class="card-links">' + linksHTML + '</div>' +
-                        '</div>' +
-                    '</div>';
-                grid.appendChild(card);
+        setTimeout(function() {
+            outgoing.classList.add('hidden');
+            outgoing.classList.remove('slide-out-left', 'slide-out-right');
+            outgoing.style.transform = '';
+            outgoing.style.opacity = '';
+
+            // Show and slide in new section
+            incoming.classList.remove('hidden');
+            incoming.classList.add(goingRight ? 'slide-in-right' : 'slide-in-left');
+
+            incoming.addEventListener('animationend', function handler() {
+                incoming.classList.remove('slide-in-right', 'slide-in-left');
+                incoming.removeEventListener('animationend', handler);
             });
-        })
-        .catch(function() {
-            grid.innerHTML = '<p style="color:#888;text-align:center;grid-column:1/-1">Unable to load projects. Visit <a href="https://github.com/conjius" style="color:#d48300">GitHub</a> instead.</p>';
-        });
+        }, 300);
+
+        currentSection = section;
     }
-    loadPinnedRepos();
+
     </script>
 
 </body>
