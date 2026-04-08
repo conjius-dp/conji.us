@@ -155,34 +155,11 @@
         currentSection = section;
     }
 
-    // scrape pinned repo names from GitHub profile page, then fetch details via REST
+    // pinned repos in display order (matches GitHub profile pins)
+    var PINNED_REPOS = ['gain-knob', 'denoiser', 'civ-deckbuilder', 'midi-visu', 'wav-decoder'];
+
     function loadPinnedRepos() {
-        fetch('https://github.com/' + GH_USER)
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-            // extract pinned repo names from profile HTML
-            var pinned = [];
-            var re = /class="repo"[^>]*>([^<]+)<\/span>/g;
-            var match;
-            while ((match = re.exec(html)) !== null) {
-                var name = match[1].trim();
-                if (name && pinned.indexOf(name) === -1) pinned.push(name);
-            }
-            if (pinned.length === 0) {
-                // fallback: try another pattern
-                var re2 = new RegExp('/' + GH_USER + '/([^/"]+)" class="[^"]*text-bold', 'g');
-                while ((match = re2.exec(html)) !== null) {
-                    var n = match[1].trim();
-                    if (n && pinned.indexOf(n) === -1) pinned.push(n);
-                }
-            }
-            if (pinned.length > 0) {
-                fetchRepoDetails(pinned);
-            } else {
-                loadReposREST();
-            }
-        })
-        .catch(function() { loadReposREST(); });
+        fetchRepoDetails(PINNED_REPOS);
     }
 
     // fetch details for specific repos in order
