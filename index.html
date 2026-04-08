@@ -133,9 +133,13 @@
     var wrapper = document.getElementById('sections-wrapper');
     var animFrame = null;
 
+    var PEEK = 1.5; // percentage of track width to peek
+
     function setProgress(p) {
         progress = Math.max(0, Math.min(1, p));
-        track.style.transform = 'translateX(' + (-progress * 50) + '%)';
+        // at 0: show peek of right section. at 1: show peek of left section.
+        var offset = -PEEK + progress * (-(50 - PEEK * 2));
+        track.style.transform = 'translateX(' + offset + '%)';
         toggle.style.setProperty('--pill-x', (progress * 100) + '%');
         // update button colors
         btns[0].style.color = progress < 0.5 ? 'var(--bg)' : 'var(--accent)';
