@@ -176,65 +176,89 @@
         var startX = 0, startY = 0, startProgress = 0;
         var dragging = false, moved = false, directionLocked = false, isHorizontal = false;
 
-        el.addEventListener('pointerdown', function(e) {
+        // mouse drag
+        el.addEventListener('mousedown', function(e) {
             if (e.button !== 0) return;
+            dragging = true;
+            moved = false;
+            directionLocked = false;
+            if (animFrame) cancelAnimationFrame(animFrame);
+            startX = e.clientX;
+            startY = e.clientY;
+            startProgress = progress;
+            e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', function(e) {
+            if (!dragging) return;
+            var dx = e.clientX - startX;
+            var dy = e.clientY - startY;
+            if (!directionLocked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+                directionLocked = true;
+                isHorizontal = Math.abs(dx) >= Math.abs(dy);
+            }
+            if (!directionLocked || !isHorizontal) return;
+            moved = true;
+            var delta = (isToggle ? 1 : -1) * dx / sensitivity;
+            setProgress(startProgress + delta);
+        });
+
+        window.addEventListener('mouseup', function(e) {
+            if (!dragging) return;
+            dragging = false;
+            if (!moved && isToggle) {
+                var rect = el.getBoundingClientRect();
+                animateTo(e.clientX - rect.left > rect.width / 2 ? 1 : 0);
+                return;
+            }
+            if (!moved) return;
+            var target;
+            if (startProgress < 0.5) target = progress > 0.08 ? 1 : 0;
+            else target = progress < 0.92 ? 0 : 1;
+            animateTo(target);
+        });
+
+        // touch swipe
+        el.addEventListener('touchstart', function(e) {
+            var t = e.touches[0];
             dragging = true;
             moved = false;
             directionLocked = false;
             isHorizontal = false;
             if (animFrame) cancelAnimationFrame(animFrame);
-            el.setPointerCapture(e.pointerId);
-
-            startX = e.clientX;
-            startY = e.clientY;
+            startX = t.clientX;
+            startY = t.clientY;
             startProgress = progress;
-        });
+        }, { passive: true });
 
-        el.addEventListener('pointermove', function(e) {
+        el.addEventListener('touchmove', function(e) {
             if (!dragging) return;
-            var dx = e.clientX - startX;
-            var dy = e.clientY - startY;
-
-            // lock direction on first significant movement
+            var t = e.touches[0];
+            var dx = t.clientX - startX;
+            var dy = t.clientY - startY;
             if (!directionLocked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
                 directionLocked = true;
                 isHorizontal = Math.abs(dx) >= Math.abs(dy);
-                if (!isHorizontal) {
-                    // vertical - release pointer so browser handles scroll
-                    dragging = false;
-                    try { el.releasePointerCapture(e.pointerId); } catch(err) {}
-                    return;
-                }
             }
-
-            if (!directionLocked) return;
-
-            moved = true;
+            if (!directionLocked || !isHorizontal) return;
+            // horizontal - prevent vertical scroll
             e.preventDefault();
+            moved = true;
             var delta = (isToggle ? 1 : -1) * dx / sensitivity;
             setProgress(startProgress + delta);
-        });
+        }, { passive: false });
 
-        el.addEventListener('pointerup', function(e) {
+        el.addEventListener('touchend', function() {
             if (!dragging) return;
             dragging = false;
-            if (!moved && isToggle) {
-                // tap on toggle - animate to tapped side
-                var rect = el.getBoundingClientRect();
-                var tapX = e.clientX - rect.left;
-                animateTo(tapX > rect.width / 2 ? 1 : 0);
-                return;
-            }
+            if (!moved) return;
             var target;
-            if (startProgress < 0.5) {
-                target = progress > 0.08 ? 1 : 0;
-            } else {
-                target = progress < 0.92 ? 0 : 1;
-            }
+            if (startProgress < 0.5) target = progress > 0.08 ? 1 : 0;
+            else target = progress < 0.92 ? 0 : 1;
             animateTo(target);
         });
 
-        el.addEventListener('pointercancel', function() {
+        el.addEventListener('touchcancel', function() {
             if (!dragging) return;
             dragging = false;
             animateTo(progress >= 0.5 ? 1 : 0);

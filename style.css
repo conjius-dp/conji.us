@@ -213,7 +213,6 @@ body {
     margin: 0 auto;
     padding: 0 2rem 3rem;
     overflow: hidden;
-    touch-action: pan-y;
     user-select: none;
 }
 
