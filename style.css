@@ -203,11 +203,11 @@ body {
 }
 
 .sections-track > section:first-child {
-    padding-right: 1.5rem;
+    padding-right: 0.75rem;
 }
 
 .sections-track > section:last-child {
-    padding-left: 1.5rem;
+    padding-left: 0.75rem;
 }
 
 .music h2,
