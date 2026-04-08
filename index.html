@@ -56,9 +56,15 @@
     </div>
 
     <div class="sections-wrapper">
+    <div class="sections-track" id="sections-track">
+
+    <!-- Projects (dynamically loaded from GitHub pinned repos) -->
+    <section class="projects" id="projects-section">
+        <div class="project-grid" id="projects-grid"></div>
+    </section>
 
     <!-- Music & Videos -->
-    <section class="music hidden" id="music-section">
+    <section class="music" id="music-section">
         <div class="project-grid">
 
             <a href="https://www.youtube.com/@conjius" target="_blank" rel="noopener" class="project-card">
@@ -91,15 +97,10 @@
                 <div class="project-info"><h3>SoundCloud</h3><p>Old B-Sides</p></div>
             </a>
 
-
         </div>
     </section>
 
-    <!-- Projects (dynamically loaded from GitHub pinned repos) -->
-    <section class="projects" id="projects-section">
-        <div class="project-grid" id="projects-grid"></div>
-    </section>
-
+    </div><!-- /sections-track -->
     </div><!-- /sections-wrapper -->
 
     <footer>
@@ -130,29 +131,16 @@
 
     function toggleSection(section) {
         if (section === currentSection) return;
-        var music = document.getElementById('music-section');
-        var projects = document.getElementById('projects-section');
+        var track = document.getElementById('sections-track');
         var btns = document.querySelectorAll('.toggle-btn');
         btns.forEach(function(btn) { btn.classList.remove('active'); });
         document.querySelector('[data-target="' + section + '"]').classList.add('active');
 
-        var goingRight = section === 'music';
-        var outgoing = goingRight ? projects : music;
-        var incoming = goingRight ? music : projects;
-
-        outgoing.classList.add(goingRight ? 'slide-out-left' : 'slide-out-right');
-        setTimeout(function() {
-            outgoing.classList.add('hidden');
-            outgoing.classList.remove('slide-out-left', 'slide-out-right');
-            outgoing.style.transform = '';
-            outgoing.style.opacity = '';
-            incoming.classList.remove('hidden');
-            incoming.classList.add(goingRight ? 'slide-in-right' : 'slide-in-left');
-            incoming.addEventListener('animationend', function handler() {
-                incoming.classList.remove('slide-in-right', 'slide-in-left');
-                incoming.removeEventListener('animationend', handler);
-            });
-        }, 300);
+        if (section === 'music') {
+            track.classList.add('show-music');
+        } else {
+            track.classList.remove('show-music');
+        }
         currentSection = section;
     }
 
