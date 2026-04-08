@@ -163,12 +163,33 @@
         fetchRepoDetails(PINNED_REPOS);
     }
 
+    // static fallback data when API is rate-limited
+    var FALLBACK = {
+        'gain-knob': { description: 'Simple audio gain knob plugin with full DAW automation (VST3, AU, Standalone)', language: 'C++', homepage: null },
+        'denoiser': { description: 'General-purpose spectral gating denoiser audio plugin (macOS VST3, AU, Standalone)', language: 'C++', homepage: null },
+        'CivDecks': { description: 'Hex-based civilization strategy game with deckbuilding mechanics, built in Godot 4.6', language: 'GDScript', homepage: 'https://conji.us/civdecks/' },
+        'midi-visu': { description: 'JUCE-based real-time MIDI visualizer plugin (VST3/AU/Standalone) with multiple visualization modes', language: 'C++', homepage: null },
+        'wav-decoder': { description: 'A C++20 .wav file decoder', language: 'C++', homepage: null }
+    };
+
+    function fallbackRepo(name) {
+        var fb = FALLBACK[name] || {};
+        return {
+            name: name,
+            description: fb.description || '',
+            url: 'https://github.com/' + GH_USER + '/' + name,
+            homepageUrl: fb.homepage || null,
+            primaryLanguage: fb.language ? { name: fb.language } : null
+        };
+    }
+
     // fetch details for specific repos in order
     function fetchRepoDetails(repoNames) {
         var promises = repoNames.map(function(name) {
             return fetch('https://api.github.com/repos/' + GH_USER + '/' + name)
                 .then(function(r) { return r.json(); })
                 .then(function(r) {
+                    if (!r.name) return fallbackRepo(name); // rate-limited or error
                     return {
                         name: r.name,
                         description: r.description,
@@ -178,29 +199,10 @@
                         primaryLanguage: r.language ? { name: r.language } : null
                     };
                 })
-                .catch(function() { return null; });
+                .catch(function() { return fallbackRepo(name); });
         });
         Promise.all(promises).then(function(repos) {
-            renderRepos(repos.filter(function(r) { return r !== null; }));
-        });
-    }
-
-    // fallback: fetch all public repos sorted by updated
-    function loadReposREST() {
-        fetch('https://api.github.com/users/' + GH_USER + '/repos?sort=updated&per_page=6')
-        .then(function(r) { return r.json(); })
-        .then(function(repos) {
-            var nodes = repos.map(function(r) {
-                return {
-                    name: r.name,
-                    description: r.description,
-                    url: r.html_url,
-                    homepageUrl: r.homepage,
-                    openGraphImageUrl: null,
-                    primaryLanguage: r.language ? { name: r.language } : null
-                };
-            });
-            renderRepos(nodes);
+            renderRepos(repos);
         });
     }
 
