@@ -94,7 +94,7 @@ body {
 /* ── Link pills ── */
 
 .links {
-    margin-top: 2.5rem;
+    margin-top: 0;
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
@@ -190,14 +190,39 @@ body {
     overflow-x: hidden;
 }
 
+.sections-wrapper {
+    overflow-x: hidden;
+}
+
 .music,
 .projects {
     display: none;
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-fill-mode: both;
 }
 
 .music.visible,
 .projects.visible {
     display: block;
+}
+
+.slide-from-left {
+    animation-name: slideFromLeft;
+}
+
+.slide-from-right {
+    animation-name: slideFromRight;
+}
+
+@keyframes slideFromLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes slideFromRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
 }
 
 .music h2,
@@ -373,6 +398,17 @@ footer {
     color: var(--text-muted);
     font-size: 0.85rem;
     border-top: 1px solid var(--border);
+}
+
+.footer-links {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    gap: 0.6rem;
+}
+
+.footer-links .link-pill {
+    border-width: 3px;
+    padding: 0.5rem;
 }
 
 /* ── Responsive ── */
