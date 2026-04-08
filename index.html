@@ -173,28 +173,46 @@
 
     // swipe handling for both content area and toggle
     function addSwipe(el, sensitivity, isToggle) {
-        var startX = 0, startProgress = 0, dragging = false, moved = false;
+        var startX = 0, startY = 0, startProgress = 0;
+        var dragging = false, moved = false, directionLocked = false, isHorizontal = false;
 
         el.addEventListener('pointerdown', function(e) {
             if (e.button !== 0) return;
             dragging = true;
             moved = false;
+            directionLocked = false;
+            isHorizontal = false;
             if (animFrame) cancelAnimationFrame(animFrame);
             el.setPointerCapture(e.pointerId);
 
             startX = e.clientX;
+            startY = e.clientY;
             startProgress = progress;
         });
 
         el.addEventListener('pointermove', function(e) {
             if (!dragging) return;
             var dx = e.clientX - startX;
-            if (Math.abs(dx) > 8) moved = true;
-            if (moved) {
-                e.preventDefault();
-                var delta = (isToggle ? 1 : -1) * dx / sensitivity;
-                setProgress(startProgress + delta);
+            var dy = e.clientY - startY;
+
+            // lock direction on first significant movement
+            if (!directionLocked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+                directionLocked = true;
+                isHorizontal = Math.abs(dx) >= Math.abs(dy);
+                if (!isHorizontal) {
+                    // vertical - release pointer so browser handles scroll
+                    dragging = false;
+                    try { el.releasePointerCapture(e.pointerId); } catch(err) {}
+                    return;
+                }
             }
+
+            if (!directionLocked) return;
+
+            moved = true;
+            e.preventDefault();
+            var delta = (isToggle ? 1 : -1) * dx / sensitivity;
+            setProgress(startProgress + delta);
         });
 
         el.addEventListener('pointerup', function(e) {
@@ -239,6 +257,20 @@
     addSwipe(wrapper, wrapper.offsetWidth || 600, false);
     // toggle: sensitivity = half toggle width (pill travels half the toggle)
     addSwipe(toggle, (toggle.offsetWidth || 280) / 2, true);
+
+    // horizontal scroll wheel switches sections
+    var wheelTimer = null;
+    wrapper.addEventListener('wheel', function(e) {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            e.preventDefault();
+            if (animFrame) cancelAnimationFrame(animFrame);
+            setProgress(progress + e.deltaX / (wrapper.offsetWidth || 600));
+            clearTimeout(wheelTimer);
+            wheelTimer = setTimeout(function() {
+                animateTo(progress >= 0.5 ? 1 : 0);
+            }, 150);
+        }
+    }, { passive: false });
 
     // init
     setProgress(0);
