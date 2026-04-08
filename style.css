@@ -132,7 +132,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 0;
-    margin: 0 auto 0.75rem;
+    margin: 1.5rem auto 1.5rem;
     max-width: 280px;
     border: 4px solid var(--accent);
     border-radius: 999px;
@@ -438,6 +438,7 @@ footer {
 
     .name {
         font-size: 1rem;
+        line-height: 1.5;
     }
 
     .link-label {
