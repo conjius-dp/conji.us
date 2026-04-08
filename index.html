@@ -56,10 +56,9 @@
     </div>
 
     <div class="sections-wrapper">
-    <div class="sections-track" id="sections-track">
 
     <!-- Projects (dynamically loaded from GitHub pinned repos) -->
-    <section class="projects" id="projects-section">
+    <section class="projects visible" id="projects-section">
         <div class="project-grid" id="projects-grid"></div>
     </section>
 
@@ -100,7 +99,6 @@
         </div>
     </section>
 
-    </div><!-- /sections-track -->
     </div><!-- /sections-wrapper -->
 
     <footer>
@@ -131,17 +129,20 @@
 
     function toggleSection(section) {
         if (section === currentSection) return;
-        var track = document.getElementById('sections-track');
+        var music = document.getElementById('music-section');
+        var projects = document.getElementById('projects-section');
+        var toggle = document.querySelector('.section-toggle');
         var btns = document.querySelectorAll('.toggle-btn');
         btns.forEach(function(btn) { btn.classList.remove('active'); });
         document.querySelector('[data-target="' + section + '"]').classList.add('active');
 
-        var toggle = document.querySelector('.section-toggle');
         if (section === 'music') {
-            track.classList.add('show-music');
+            projects.classList.remove('visible');
+            music.classList.add('visible');
             toggle.classList.add('music-active');
         } else {
-            track.classList.remove('show-music');
+            music.classList.remove('visible');
+            projects.classList.add('visible');
             toggle.classList.remove('music-active');
         }
         currentSection = section;
