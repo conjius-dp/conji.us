@@ -193,11 +193,12 @@ body {
 .sections-track {
     display: flex;
     width: 200%;
+    gap: 4rem;
     will-change: transform;
 }
 
 .sections-track > section {
-    width: 50%;
+    width: calc(50% - 2rem);
     flex-shrink: 0;
 }
 
