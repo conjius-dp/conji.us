@@ -164,11 +164,11 @@
     btns[1].addEventListener('click', function() { animateTo(1); });
 
     // swipe handling for both content area and toggle
-    function addSwipe(el, sensitivity) {
+    function addSwipe(el, sensitivity, isToggle) {
         var startX = 0, startProgress = 0, dragging = false, moved = false;
 
         el.addEventListener('pointerdown', function(e) {
-            if (e.button !== 0) return; // left click only
+            if (e.button !== 0) return;
             startX = e.clientX;
             startProgress = progress;
             dragging = true;
@@ -180,17 +180,24 @@
         el.addEventListener('pointermove', function(e) {
             if (!dragging) return;
             var dx = e.clientX - startX;
-            if (Math.abs(dx) > 5) moved = true;
-            var delta = -dx / sensitivity;
-            setProgress(startProgress + delta);
+            if (Math.abs(dx) > 8) moved = true;
+            if (moved) {
+                var delta = -dx / sensitivity;
+                setProgress(startProgress + delta);
+            }
         });
 
         el.addEventListener('pointerup', function(e) {
             if (!dragging) return;
             dragging = false;
-            // snap to nearest
-            var target = progress >= 0.5 ? 1 : 0;
-            animateTo(target);
+            if (moved) {
+                animateTo(progress >= 0.5 ? 1 : 0);
+            } else if (isToggle) {
+                // tap on toggle - figure out which side was tapped
+                var rect = el.getBoundingClientRect();
+                var tapX = e.clientX - rect.left;
+                animateTo(tapX > rect.width / 2 ? 1 : 0);
+            }
         });
 
         el.addEventListener('pointercancel', function() {
@@ -212,9 +219,9 @@
     wrapper.addEventListener('dragstart', function(e) { e.preventDefault(); });
 
     // content area: sensitivity = wrapper width (full swipe = full transition)
-    addSwipe(wrapper, wrapper.offsetWidth || 600);
+    addSwipe(wrapper, wrapper.offsetWidth || 600, false);
     // toggle: sensitivity = toggle width
-    addSwipe(toggle, toggle.offsetWidth || 280);
+    addSwipe(toggle, toggle.offsetWidth || 280, true);
 
     // recalc on resize
     window.addEventListener('resize', function() {
