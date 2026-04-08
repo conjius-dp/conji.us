@@ -223,6 +223,9 @@
     // toggle: sensitivity = toggle width
     addSwipe(toggle, toggle.offsetWidth || 280, true);
 
+    // init
+    setProgress(0);
+
     // recalc on resize
     window.addEventListener('resize', function() {
         // just re-apply current progress
