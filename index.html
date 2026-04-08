@@ -138,28 +138,36 @@
 
     var darkLayer = document.getElementById('toggle-dark-layer');
 
-    function setProgress(p) {
-        progress = Math.max(0, Math.min(1, p));
-        // at 0: show peek of right section. at 1: show peek of left section.
+    function setProgress(p, allowOverscroll) {
+        if (allowOverscroll) {
+            // rubber band: allow slight overscroll with resistance
+            if (p < 0) p = p * 0.3;
+            else if (p > 1) p = 1 + (p - 1) * 0.3;
+            progress = p;
+        } else {
+            progress = Math.max(0, Math.min(1, p));
+        }
+        var clamped = Math.max(0, Math.min(1, progress));
+        // track uses unclamped for rubber-band visual
         var offset = -PEEK + progress * (-(50 - PEEK * 2));
         track.style.transform = 'translateX(' + offset + '%)';
-        toggle.style.setProperty('--pill-x', (progress * 100) + '%');
-        // clip the dark text layer to match the pill position
-        var pillLeft = progress * 50;
+        // pill and text use clamped
+        toggle.style.setProperty('--pill-x', (clamped * 100) + '%');
+        var pillLeft = clamped * 50;
         var pillRight = pillLeft + 50;
         darkLayer.style.clipPath = 'inset(0 ' + (100 - pillRight) + '% 0 ' + pillLeft + '%)';
-        btns[0].classList.toggle('active', progress < 0.5);
-        btns[1].classList.toggle('active', progress >= 0.5);
+        btns[0].classList.toggle('active', clamped < 0.5);
+        btns[1].classList.toggle('active', clamped >= 0.5);
     }
 
     function animateTo(target) {
         if (animFrame) cancelAnimationFrame(animFrame);
         var start = progress;
         var startTime = performance.now();
-        var duration = 300;
+        var duration = 350;
         function step(now) {
             var t = Math.min(1, (now - startTime) / duration);
-            // ease out cubic
+            // ease out with slight overshoot for bounce feel
             t = 1 - Math.pow(1 - t, 3);
             setProgress(start + (target - start) * t);
             if (t < 1) animFrame = requestAnimationFrame(step);
@@ -200,7 +208,7 @@
             if (!directionLocked || !isHorizontal) return;
             moved = true;
             var delta = (isToggle ? 1 : -1) * dx / sensitivity;
-            setProgress(startProgress + delta);
+            setProgress(startProgress + delta, true);
         });
 
         window.addEventListener('mouseup', function(e) {
@@ -245,7 +253,7 @@
             e.preventDefault();
             moved = true;
             var delta = (isToggle ? 1 : -1) * dx / sensitivity;
-            setProgress(startProgress + delta);
+            setProgress(startProgress + delta, true);
         }, { passive: false });
 
         el.addEventListener('touchend', function() {
@@ -288,7 +296,7 @@
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
             e.preventDefault();
             if (animFrame) cancelAnimationFrame(animFrame);
-            setProgress(progress + e.deltaX / (wrapper.offsetWidth || 600));
+            setProgress(progress + e.deltaX / 200, true);
             clearTimeout(wheelTimer);
             wheelTimer = setTimeout(function() {
                 animateTo(progress >= 0.5 ? 1 : 0);
