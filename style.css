@@ -115,7 +115,7 @@ body {
     transition: background 0.2s, color 0.2s;
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
     .link-pill:hover {
         background: var(--accent);
         color: var(--bg);
@@ -175,7 +175,7 @@ body {
     transition: none;
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
     .toggle-btn:not(.active):hover {
         background: rgba(212, 131, 0, 0.1);
     }
@@ -263,7 +263,7 @@ body {
     transition: border-color 0.2s, transform 0.2s;
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
     .project-card:hover {
         border-color: var(--accent);
         transform: translateY(-4px);
@@ -343,7 +343,7 @@ body {
     transition: background 0.2s, color 0.2s;
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
     .card-links a:hover {
         background: var(--accent);
         color: var(--bg);
@@ -361,7 +361,7 @@ body {
     white-space: nowrap;
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
     .card-links a.play-pill:hover {
         background: var(--accent);
         color: var(--bg);
