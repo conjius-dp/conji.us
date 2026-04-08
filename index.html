@@ -173,43 +173,55 @@
 
         el.addEventListener('pointerdown', function(e) {
             if (e.button !== 0) return;
-            startX = e.clientX;
-            startProgress = progress;
             dragging = true;
             moved = false;
             if (animFrame) cancelAnimationFrame(animFrame);
             el.setPointerCapture(e.pointerId);
+
+            if (isToggle) {
+                // toggle: set progress to absolute finger position immediately
+                var rect = el.getBoundingClientRect();
+                var p = (e.clientX - rect.left) / rect.width;
+                setProgress(Math.max(0, Math.min(1, p)));
+                startX = e.clientX;
+                startProgress = progress;
+            } else {
+                startX = e.clientX;
+                startProgress = progress;
+            }
         });
 
         el.addEventListener('pointermove', function(e) {
             if (!dragging) return;
-            var dx = e.clientX - startX;
-            if (Math.abs(dx) > 8) moved = true;
-            if (moved) {
-                e.preventDefault();
-                var delta = -dx / sensitivity;
-                setProgress(startProgress + delta);
+            e.preventDefault();
+
+            if (isToggle) {
+                // toggle: absolute position tracking
+                var rect = el.getBoundingClientRect();
+                var p = (e.clientX - rect.left) / rect.width;
+                setProgress(Math.max(0, Math.min(1, p)));
+                moved = true;
+            } else {
+                var dx = e.clientX - startX;
+                if (Math.abs(dx) > 8) moved = true;
+                if (moved) {
+                    var delta = -dx / sensitivity;
+                    setProgress(startProgress + delta);
+                }
             }
         });
 
         el.addEventListener('pointerup', function(e) {
             if (!dragging) return;
             dragging = false;
-            if (moved) {
-                // snap with low threshold - 20% drag is enough to switch
-                var target;
-                if (startProgress < 0.5) {
-                    target = progress > 0.08 ? 1 : 0;
-                } else {
-                    target = progress < 0.92 ? 0 : 1;
-                }
-                animateTo(target);
-            } else if (isToggle) {
-                // tap on toggle - figure out which side was tapped
-                var rect = el.getBoundingClientRect();
-                var tapX = e.clientX - rect.left;
-                animateTo(tapX > rect.width / 2 ? 1 : 0);
+            // snap to nearest or to the side that was tapped/dragged toward
+            var target;
+            if (startProgress < 0.5) {
+                target = progress > 0.08 ? 1 : 0;
+            } else {
+                target = progress < 0.92 ? 0 : 1;
             }
+            animateTo(target);
         });
 
         el.addEventListener('pointercancel', function() {
