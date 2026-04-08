@@ -186,7 +186,7 @@
             var dx = e.clientX - startX;
             if (Math.abs(dx) > 8) moved = true;
             if (moved) {
-                var delta = -dx / sensitivity;
+                var delta = -dx / (sensitivity * 0.4);
                 setProgress(startProgress + delta);
             }
         });
@@ -195,7 +195,14 @@
             if (!dragging) return;
             dragging = false;
             if (moved) {
-                animateTo(progress >= 0.5 ? 1 : 0);
+                // snap with low threshold - 20% drag is enough to switch
+                var target;
+                if (startProgress < 0.5) {
+                    target = progress > 0.2 ? 1 : 0;
+                } else {
+                    target = progress < 0.8 ? 0 : 1;
+                }
+                animateTo(target);
             } else if (isToggle) {
                 // tap on toggle - figure out which side was tapped
                 var rect = el.getBoundingClientRect();
