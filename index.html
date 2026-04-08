@@ -184,28 +184,25 @@
 
         el.addEventListener('pointermove', function(e) {
             if (!dragging) return;
-            e.preventDefault();
-
-            if (isToggle) {
-                // toggle: absolute position tracking
-                var rect = el.getBoundingClientRect();
-                var p = (e.clientX - rect.left) / rect.width;
-                setProgress(Math.max(0, Math.min(1, p)));
-                moved = true;
-            } else {
-                var dx = e.clientX - startX;
-                if (Math.abs(dx) > 8) moved = true;
-                if (moved) {
-                    var delta = -dx / sensitivity;
-                    setProgress(startProgress + delta);
-                }
+            var dx = e.clientX - startX;
+            if (Math.abs(dx) > 8) moved = true;
+            if (moved) {
+                e.preventDefault();
+                var delta = -dx / sensitivity;
+                setProgress(startProgress + delta);
             }
         });
 
         el.addEventListener('pointerup', function(e) {
             if (!dragging) return;
             dragging = false;
-            // snap to nearest or to the side that was tapped/dragged toward
+            if (!moved && isToggle) {
+                // tap on toggle - animate to tapped side
+                var rect = el.getBoundingClientRect();
+                var tapX = e.clientX - rect.left;
+                animateTo(tapX > rect.width / 2 ? 1 : 0);
+                return;
+            }
             var target;
             if (startProgress < 0.5) {
                 target = progress > 0.08 ? 1 : 0;
