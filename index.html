@@ -186,7 +186,7 @@
             var dx = e.clientX - startX;
             if (Math.abs(dx) > 8) moved = true;
             if (moved) {
-                var delta = -dx / (sensitivity * 0.4);
+                var delta = -dx / sensitivity;
                 setProgress(startProgress + delta);
             }
         });
