@@ -199,6 +199,15 @@ body {
 .sections-track > section {
     width: 50%;
     flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.sections-track > section:first-child {
+    padding-right: 1.5rem;
+}
+
+.sections-track > section:last-child {
+    padding-left: 1.5rem;
 }
 
 .music h2,
