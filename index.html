@@ -188,7 +188,7 @@
             if (Math.abs(dx) > 8) moved = true;
             if (moved) {
                 e.preventDefault();
-                var delta = -dx / sensitivity;
+                var delta = (isToggle ? 1 : -1) * dx / sensitivity;
                 setProgress(startProgress + delta);
             }
         });
@@ -233,8 +233,8 @@
 
     // content area: sensitivity = wrapper width (full swipe = full transition)
     addSwipe(wrapper, wrapper.offsetWidth || 600, false);
-    // toggle: sensitivity = toggle width
-    addSwipe(toggle, toggle.offsetWidth || 280, true);
+    // toggle: sensitivity = half toggle width (pill travels half the toggle)
+    addSwipe(toggle, (toggle.offsetWidth || 280) / 2, true);
 
     // init
     setProgress(0);
