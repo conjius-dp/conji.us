@@ -349,6 +349,22 @@ body {
     color: var(--bg);
 }
 
+.card-links a.play-pill {
+    width: auto;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 2px solid var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.card-links a.play-pill:hover {
+    background: var(--accent);
+    color: var(--bg);
+}
+
 .lang {
     display: inline-flex;
     align-items: center;
