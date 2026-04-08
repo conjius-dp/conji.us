@@ -336,12 +336,7 @@ body {
     padding: 10px;
     border: none;
     border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.2s, background 0.2s, color 0.2s;
-}
-
-.project-card:hover .card-links a {
-    opacity: 1;
+    transition: background 0.2s, color 0.2s;
 }
 
 .card-links a:hover {
