@@ -31,15 +31,16 @@
     </header>
 
     <!-- Section Toggle -->
-    <div class="section-toggle">
-        <button class="toggle-btn active" data-target="projects" onclick="toggleSection('projects')">Code</button>
-        <button class="toggle-btn" data-target="music" onclick="toggleSection('music')">Music</button>
+    <div class="section-toggle" id="section-toggle">
+        <button class="toggle-btn active" data-target="projects">Code</button>
+        <button class="toggle-btn" data-target="music">Music</button>
     </div>
 
-    <div class="sections-wrapper">
+    <div class="sections-wrapper" id="sections-wrapper">
+    <div class="sections-track" id="sections-track">
 
     <!-- Projects (dynamically loaded from GitHub pinned repos) -->
-    <section class="projects visible" id="projects-section">
+    <section class="projects" id="projects-section">
         <div class="project-grid" id="projects-grid"></div>
     </section>
 
@@ -80,6 +81,7 @@
         </div>
     </section>
 
+    </div><!-- /sections-track -->
     </div><!-- /sections-wrapper -->
 
     <nav class="links footer-links">
@@ -102,7 +104,6 @@
     </footer>
 
     <script>
-    var currentSection = 'projects';
     var GH_USER = 'conjius-dp';
     var GH_ICON = '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>';
     var DEMO_ICON = '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-7h-2v7H5V7h7V5H5z"/></svg>';
@@ -123,30 +124,100 @@
         'denoiser': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><path d="M40,100 L50,88 L60,108 L70,80 L80,112 L90,76 L100,106 L110,84 L120,116 L130,72 L140,110 L150,78 L160,118 L170,70 L180,108 L190,85 L200,120 L210,68 L220,112 L230,80 L240,116 L250,72 L260,106 L270,88 L280,118 L290,65 L300,108 L310,82 L320,115 L330,75 L340,110 L350,80 L360,100" fill="none" stroke="#d48300" stroke-width="1.6" opacity="0.25"/><path d="M40,100 Q120,78 200,92 Q280,112 360,100" fill="none" stroke="#d48300" stroke-width="5.0" opacity="0.6"/></svg></div>'
     };
 
-    function toggleSection(section) {
-        if (section === currentSection) return;
-        var music = document.getElementById('music-section');
-        var projects = document.getElementById('projects-section');
-        var toggle = document.querySelector('.section-toggle');
-        var btns = document.querySelectorAll('.toggle-btn');
-        btns.forEach(function(btn) { btn.classList.remove('active'); });
-        document.querySelector('[data-target="' + section + '"]').classList.add('active');
+    // swipe system: progress 0 = code, 1 = music
+    var progress = 0;
+    var track = document.getElementById('sections-track');
+    var toggle = document.getElementById('section-toggle');
+    var togglePill = toggle.querySelector('::before'); // driven via style
+    var btns = document.querySelectorAll('.toggle-btn');
+    var wrapper = document.getElementById('sections-wrapper');
+    var animFrame = null;
 
-        var incoming = section === 'music' ? music : projects;
-        var outgoing = section === 'music' ? projects : music;
-        var slideIn = section === 'music' ? 'slide-from-right' : 'slide-from-left';
-
-        outgoing.classList.remove('visible', 'slide-from-left', 'slide-from-right');
-        incoming.classList.remove('slide-from-left', 'slide-from-right');
-        incoming.classList.add('visible', slideIn);
-
-        if (section === 'music') {
-            toggle.classList.add('music-active');
-        } else {
-            toggle.classList.remove('music-active');
-        }
-        currentSection = section;
+    function setProgress(p) {
+        progress = Math.max(0, Math.min(1, p));
+        track.style.transform = 'translateX(' + (-progress * 50) + '%)';
+        toggle.style.setProperty('--pill-x', (progress * 100) + '%');
+        // update button colors
+        btns[0].style.color = progress < 0.5 ? 'var(--bg)' : 'var(--accent)';
+        btns[1].style.color = progress >= 0.5 ? 'var(--bg)' : 'var(--accent)';
+        btns[0].classList.toggle('active', progress < 0.5);
+        btns[1].classList.toggle('active', progress >= 0.5);
     }
+
+    function animateTo(target) {
+        if (animFrame) cancelAnimationFrame(animFrame);
+        var start = progress;
+        var startTime = performance.now();
+        var duration = 300;
+        function step(now) {
+            var t = Math.min(1, (now - startTime) / duration);
+            // ease out cubic
+            t = 1 - Math.pow(1 - t, 3);
+            setProgress(start + (target - start) * t);
+            if (t < 1) animFrame = requestAnimationFrame(step);
+        }
+        animFrame = requestAnimationFrame(step);
+    }
+
+    // toggle button clicks
+    btns[0].addEventListener('click', function() { animateTo(0); });
+    btns[1].addEventListener('click', function() { animateTo(1); });
+
+    // swipe handling for both content area and toggle
+    function addSwipe(el, sensitivity) {
+        var startX = 0, startProgress = 0, dragging = false, moved = false;
+
+        el.addEventListener('pointerdown', function(e) {
+            if (e.button !== 0) return; // left click only
+            startX = e.clientX;
+            startProgress = progress;
+            dragging = true;
+            moved = false;
+            if (animFrame) cancelAnimationFrame(animFrame);
+            el.setPointerCapture(e.pointerId);
+        });
+
+        el.addEventListener('pointermove', function(e) {
+            if (!dragging) return;
+            var dx = e.clientX - startX;
+            if (Math.abs(dx) > 5) moved = true;
+            var delta = -dx / sensitivity;
+            setProgress(startProgress + delta);
+        });
+
+        el.addEventListener('pointerup', function(e) {
+            if (!dragging) return;
+            dragging = false;
+            // snap to nearest
+            var target = progress >= 0.5 ? 1 : 0;
+            animateTo(target);
+        });
+
+        el.addEventListener('pointercancel', function() {
+            if (!dragging) return;
+            dragging = false;
+            animateTo(progress >= 0.5 ? 1 : 0);
+        });
+
+        // prevent clicks on links/cards when swiping
+        el.addEventListener('click', function(e) {
+            if (moved) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+    }
+
+    // content area: sensitivity = wrapper width (full swipe = full transition)
+    addSwipe(wrapper, wrapper.offsetWidth || 600);
+    // toggle: sensitivity = toggle width
+    addSwipe(toggle, toggle.offsetWidth || 280);
+
+    // recalc on resize
+    window.addEventListener('resize', function() {
+        // just re-apply current progress
+        setProgress(progress);
+    });
 
     // pinned repos in display order (matches GitHub profile pins)
     var PINNED_REPOS = ['gain-knob', 'denoiser', 'CivDecks', 'midi-visu', 'wav-decoder'];

@@ -148,12 +148,14 @@ body {
     height: 100%;
     background: var(--accent);
     border-radius: 999px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 0;
+    will-change: transform;
+    transform: translateX(var(--pill-x, 0%));
 }
 
-.section-toggle.music-active::before {
-    transform: translateX(100%);
+.section-toggle {
+    touch-action: pan-y;
+    user-select: none;
 }
 
 .toggle-btn {
@@ -171,10 +173,6 @@ body {
     transition: color 0.3s;
 }
 
-.toggle-btn.active {
-    color: var(--bg);
-}
-
 .toggle-btn:not(.active):hover {
     background: rgba(212, 131, 0, 0.1);
 }
@@ -187,42 +185,20 @@ body {
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 2rem 3rem;
-    overflow-x: hidden;
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
 }
 
-.sections-wrapper {
-    overflow-x: hidden;
+.sections-track {
+    display: flex;
+    width: 200%;
+    will-change: transform;
 }
 
-.music,
-.projects {
-    display: none;
-    animation-duration: 0.35s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    animation-fill-mode: both;
-}
-
-.music.visible,
-.projects.visible {
-    display: block;
-}
-
-.slide-from-left {
-    animation-name: slideFromLeft;
-}
-
-.slide-from-right {
-    animation-name: slideFromRight;
-}
-
-@keyframes slideFromLeft {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
-}
-
-@keyframes slideFromRight {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
+.sections-track > section {
+    width: 50%;
+    flex-shrink: 0;
 }
 
 .music h2,
@@ -403,7 +379,8 @@ footer {
 .footer-links {
     position: relative;
     z-index: 1;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+    padding-bottom: 1.5rem;
     gap: 0.6rem;
 }
 
