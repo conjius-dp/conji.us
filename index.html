@@ -164,11 +164,11 @@
         if (animFrame) cancelAnimationFrame(animFrame);
         var start = progress;
         var startTime = performance.now();
-        var duration = 350;
+        var duration = 450;
         function step(now) {
             var t = Math.min(1, (now - startTime) / duration);
-            // ease out with slight overshoot for bounce feel
-            t = 1 - Math.pow(1 - t, 3);
+            // ease out quint - very gentle deceleration at the end
+            t = 1 - Math.pow(1 - t, 5);
             setProgress(start + (target - start) * t);
             if (t < 1) animFrame = requestAnimationFrame(step);
         }
