@@ -64,7 +64,7 @@ body {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    border: 5px solid var(--accent);
+    border: 2.5px solid var(--accent);
     margin-bottom: 1.5rem;
     object-fit: cover;
 }
@@ -106,7 +106,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.25rem;
-    border: 4px solid var(--accent);
+    border: 2px solid var(--accent);
     border-radius: 999px;
     color: var(--accent);
     text-decoration: none;
@@ -136,7 +136,7 @@ body {
     gap: 0;
     margin: 1.5rem auto 1.5rem;
     max-width: 280px;
-    border: 4px solid var(--accent);
+    border: 2px solid var(--accent);
     border-radius: 999px;
     overflow: hidden;
     touch-action: pan-y;
@@ -277,7 +277,7 @@ body {
     display: flex;
     flex-direction: column;
     background: var(--surface);
-    border: 5px solid var(--border);
+    border: 2.5px solid var(--border);
     border-radius: 60px;
     overflow: hidden;
     text-decoration: none;
@@ -427,7 +427,7 @@ footer {
 }
 
 .footer-links .link-pill {
-    border-width: 3px;
+    border-width: 2px;
     padding: 0.5rem;
 }
 
@@ -472,7 +472,7 @@ footer {
 
     .project-card {
         border-radius: 30px;
-        border-width: 3px;
+        border-width: 2px;
     }
 
     .project-info {
