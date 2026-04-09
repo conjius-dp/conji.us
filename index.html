@@ -177,6 +177,7 @@
     function makeDraggable(el, sign, getSensitivity) {
         var lastX = 0, lastY = 0, startProg = 0, moved = false;
         var activeId = -1, sensitivity = 600;
+        var velocity = 0, lastTime = 0;
 
         function endDrag(e) {
             if (activeId === -1) return;
@@ -187,10 +188,26 @@
                 return;
             }
             if (!moved) { animateTo(progress >= 0.5 ? 1 : 0); return; }
-            var target = startProg < 0.5
-                ? (progress > 0.08 ? 1 : 0)
-                : (progress < 0.92 ? 0 : 1);
-            animateTo(target);
+            // coast with momentum then snap
+            coastThenSnap(velocity);
+        }
+
+        function coastThenSnap(vel) {
+            if (animFrame) cancelAnimationFrame(animFrame);
+            var friction = 0.92;
+            function step() {
+                vel *= friction;
+                if (Math.abs(vel) < 0.0001) {
+                    var target = startProg < 0.5
+                        ? (progress > 0.08 ? 1 : 0)
+                        : (progress < 0.92 ? 0 : 1);
+                    animateTo(target);
+                    return;
+                }
+                setProgress(progress + vel);
+                animFrame = requestAnimationFrame(step);
+            }
+            animFrame = requestAnimationFrame(step);
         }
 
         function startDrag(x, y, target) {
@@ -203,6 +220,8 @@
             moved = false;
             isDragging = true;
             activeId = 1;
+            velocity = 0;
+            lastTime = performance.now();
             return true;
         }
 
@@ -214,7 +233,15 @@
             moved = true;
             lastX = x;
             lastY = y;
-            setProgress(progress + sign * dx / sensitivity);
+            var delta = sign * dx / sensitivity;
+            // track velocity with smoothing
+            var now = performance.now();
+            var dt = now - lastTime;
+            lastTime = now;
+            if (dt > 0 && dt < 100) {
+                velocity = velocity * 0.6 + delta * 0.4;
+            }
+            setProgress(progress + delta);
             if (sign === -1 && dy !== 0) window.scrollBy(0, -dy);
         }
 
