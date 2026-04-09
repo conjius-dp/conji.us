@@ -266,21 +266,21 @@ body {
     object-fit: contain;
 }
 
-.music .project-grid {
-    grid-auto-rows: calc(var(--card-height) / 2);
-}
-
 .music .project-card {
-    height: 100%;
+    height: calc(var(--card-height) / 2) !important;
+    max-height: calc(var(--card-height) / 2) !important;
+    min-height: calc(var(--card-height) / 2) !important;
 }
 
 .music .card-thumb {
-    height: 50%;
+    height: 50% !important;
+    min-height: 0;
     border-bottom: none;
 }
 
 .music .project-info {
-    height: 50%;
+    height: 50% !important;
+    min-height: 0;
     padding: 0.75rem 1.5rem;
     border-top: 1px solid var(--border);
 }
