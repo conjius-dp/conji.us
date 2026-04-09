@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=77">
+    <link rel="stylesheet" href="style.css?v=78">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -248,7 +248,9 @@
         }
 
         // touch events (mobile — reliable on iOS)
+        var lastTouchTime = 0;
         el.addEventListener('touchstart', function(e) {
+            lastTouchTime = Date.now();
             var t = e.touches[0];
             if (startDrag(t.clientX, t.clientY, e.target)) {
                 e.preventDefault();
@@ -265,8 +267,9 @@
         el.addEventListener('touchend', function(e) { endDrag(null); });
         el.addEventListener('touchcancel', function(e) { endDrag(null); });
 
-        // mouse events (desktop)
+        // mouse events (desktop only — skip synthetic mouse events after touch on iOS)
         el.addEventListener('mousedown', function(e) {
+            if (Date.now() - lastTouchTime < 500) return;
             if (e.button !== 0) return;
             if (startDrag(e.clientX, e.clientY, e.target)) {
                 e.preventDefault();
