@@ -168,23 +168,19 @@ body {
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    position: relative;
-    z-index: 2;
+    position: static;
     transition: none;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: var(--accent);
 }
 
 .toggle-dark-layer {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
-    z-index: 3;
     pointer-events: none;
-    clip-path: inset(0 calc(100% - var(--pill-right, 50%)) 0 var(--pill-left, 0%));
+    z-index: 3;
 }
 
 .toggle-dark-layer span {
@@ -195,7 +191,7 @@ body {
     font-family: inherit;
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--bg);
+    color: #000000;
 }
 
 @media (hover: hover) and (pointer: fine) {
