@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=73">
+    <link rel="stylesheet" href="style.css?v=74">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -177,7 +177,7 @@
     function makeDraggable(el, sign, getSensitivity) {
         var lastX = 0, lastY = 0, startProg = 0, moved = false;
         var activeId = -1, sensitivity = 600;
-        var velocity = 0, lastTime = 0;
+        var velPx = 0, lastTime = 0;
 
         function endDrag(e) {
             if (activeId === -1) return;
@@ -189,16 +189,17 @@
             }
             if (!moved) { animateTo(progress >= 0.5 ? 1 : 0); return; }
             // coast with momentum then snap
-            coastThenSnap(velocity);
+            // convert px/ms velocity to progress/frame (~16ms per frame)
+            var vel = sign * velPx * 16 / sensitivity;
+            coastThenSnap(vel);
         }
 
         function coastThenSnap(vel) {
             if (animFrame) cancelAnimationFrame(animFrame);
-            vel *= 8;
-            var friction = 0.94;
+            var friction = 0.92;
             function step() {
                 vel *= friction;
-                if (Math.abs(vel) < 0.001) {
+                if (Math.abs(vel) < 0.0005) {
                     var target = startProg < 0.5
                         ? (progress > 0.08 ? 1 : 0)
                         : (progress < 0.92 ? 0 : 1);
@@ -221,7 +222,7 @@
             moved = false;
             isDragging = true;
             activeId = 1;
-            velocity = 0;
+            velPx = 0;
             lastTime = performance.now();
             return true;
         }
@@ -235,12 +236,12 @@
             lastX = x;
             lastY = y;
             var delta = sign * dx / sensitivity;
-            // track velocity with smoothing
+            // track velocity in px/ms for momentum
             var now = performance.now();
             var dt = now - lastTime;
             lastTime = now;
             if (dt > 0 && dt < 100) {
-                velocity = velocity * 0.6 + delta * 0.4;
+                velPx = velPx * 0.3 + (dx / dt) * 0.7;
             }
             setProgress(progress + delta);
             if (sign === -1 && dy !== 0) window.scrollBy(0, -dy);
