@@ -252,7 +252,6 @@ body {
 
 .card-thumb--icon {
     color: var(--accent);
-    height: 80px !important;
 }
 
 .card-thumb--icon svg {
@@ -267,10 +266,15 @@ body {
 }
 
 .music .project-card {
-    height: 160px;
+    height: calc(320px / 2);
+}
+
+.music .card-thumb {
+    height: calc(320px / 4);
 }
 
 .music .project-info {
+    height: calc(320px / 4);
     padding: 0.75rem 1.5rem;
 }
 
