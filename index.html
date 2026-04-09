@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=76">
+    <link rel="stylesheet" href="style.css?v=77">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -155,18 +155,22 @@
         fade.style.webkitMaskImage = mask;
     })();
 
-    function animateTo(target) {
+    var springVel = 0;
+    function animateTo(target, initialVel) {
         if (animFrame) cancelAnimationFrame(animFrame);
-        var start = progress;
-        var startTime = performance.now();
-        var dist = Math.abs(target - start);
-        var duration = Math.max(150, dist * 300);
-        function step(now) {
-            var t = Math.min(1, (now - startTime) / duration);
-            // smooth ease-out cubic
-            var eased = 1 - Math.pow(1 - t, 3);
-            setProgress(start + (target - start) * eased);
-            if (t < 1) animFrame = requestAnimationFrame(step);
+        springVel = initialVel || 0;
+        var stiffness = 0.06;
+        var damping = 0.72;
+        function step() {
+            var force = (target - progress) * stiffness;
+            springVel = (springVel + force) * damping;
+            var next = progress + springVel;
+            setProgress(next);
+            if (Math.abs(next - target) < 0.0005 && Math.abs(springVel) < 0.0005) {
+                setProgress(target);
+                return;
+            }
+            animFrame = requestAnimationFrame(step);
         }
         animFrame = requestAnimationFrame(step);
     }
@@ -188,11 +192,9 @@
                 return;
             }
             if (!moved) { animateTo(progress >= 0.5 ? 1 : 0); return; }
-            // compute velocity from move history — find the fastest 100ms segment
-            var now = performance.now();
+            // compute velocity from move history — find fastest segment
             var velPxMs = 0;
             if (moveHistory.length >= 2) {
-                // check windows ending at each point in history
                 for (var i = moveHistory.length - 1; i >= 1; i--) {
                     for (var j = i - 1; j >= 0; j--) {
                         var dt = moveHistory[i].t - moveHistory[j].t;
@@ -202,33 +204,17 @@
                     }
                 }
             }
-            // convert px/ms to progress/frame (~16ms), boost for feel
-            var vel = sign * velPxMs * 16 / sensitivity * 1.5;
-            coastThenSnap(vel);
-        }
-
-        function coastThenSnap(vel) {
-            if (animFrame) cancelAnimationFrame(animFrame);
-            // if velocity is negligible, snap immediately
-            if (Math.abs(vel) < 0.001) {
-                var target = progress >= 0.5 ? 1 : 0;
-                animateTo(target);
-                return;
+            // convert px/ms to progress/frame
+            var vel = sign * velPxMs * 16 / sensitivity;
+            // pick target: if flicking hard enough, go in flick direction
+            var target;
+            if (Math.abs(vel) > 0.008) {
+                target = vel > 0 ? 1 : 0;
+            } else {
+                target = progress >= 0.5 ? 1 : 0;
             }
-            var friction = 0.95;
-            function step() {
-                setProgress(progress + vel);
-                vel *= friction;
-                if (Math.abs(vel) < 0.0003) {
-                    var target = startProg < 0.5
-                        ? (progress > 0.08 ? 1 : 0)
-                        : (progress < 0.92 ? 0 : 1);
-                    animateTo(target);
-                    return;
-                }
-                animFrame = requestAnimationFrame(step);
-            }
-            animFrame = requestAnimationFrame(step);
+            // spring toward target, starting with swipe velocity
+            animateTo(target, vel);
         }
 
         function startDrag(x, y, target) {
