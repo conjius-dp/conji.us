@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=69">
+    <link rel="stylesheet" href="style.css?v=71">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -449,11 +449,21 @@
         var COLOR = '#d48300';
         var scrollY = 0;
 
+        var lastW = 0;
+        var lockedH = 0;
         function resize() {
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            canvas.style.width = window.innerWidth + 'px';
-            canvas.style.height = window.innerHeight + 'px';
+            var w = window.innerWidth;
+            var h = window.innerHeight;
+            // on mobile, only resize if width changed (ignore address bar height changes)
+            if (!isDesktop && lastW > 0 && w === lastW && Math.abs(h - lockedH) < 150) {
+                return;
+            }
+            lastW = w;
+            lockedH = h;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
         resize();
@@ -523,7 +533,7 @@
                 vy: Math.sin(angle) * speed,
                 size: size,
                 depth: depth,
-                parallax: 0.02 + (1 - depth) * 1.6,
+                parallax: 0.1 + (1 - depth) * 0.6,
                 rot: rand(0, 360) * Math.PI / 180,
                 rotSpeed: rand(-0.01, 0.01) * Math.PI / 180,
                 opacity: opacity,
