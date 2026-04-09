@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=72">
+    <link rel="stylesheet" href="style.css?v=73">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -193,47 +193,66 @@
             animateTo(target);
         }
 
-        el.addEventListener('pointerdown', function(e) {
-            if (e.button && e.button !== 0) return;
-            // let text selection happen natively on desktop
-            if (window.innerWidth > 600 && (e.target.tagName === 'H3' || e.target.tagName === 'P') && e.target.closest('.projects .project-info')) return;
-            activeId = e.pointerId;
+        function startDrag(x, y, target) {
+            if (window.innerWidth > 600 && (target.tagName === 'H3' || target.tagName === 'P') && target.closest('.projects .project-info')) return false;
             sensitivity = getSensitivity();
             if (animFrame) cancelAnimationFrame(animFrame);
-            lastX = e.clientX;
-            lastY = e.clientY;
+            lastX = x;
+            lastY = y;
             startProg = progress;
             moved = false;
             isDragging = true;
-        });
+            activeId = 1;
+            return true;
+        }
 
-        el.addEventListener('pointermove', function(e) {
-            if (e.pointerId !== activeId) return;
-            var dx = e.clientX - lastX;
-            var dy = e.clientY - lastY;
+        function moveDrag(x, y) {
+            if (activeId === -1) return;
+            var dx = x - lastX;
+            var dy = y - lastY;
             if (!moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
-            if (!moved) {
-                el.setPointerCapture(e.pointerId);
-            }
             moved = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
+            lastX = x;
+            lastY = y;
             setProgress(progress + sign * dx / sensitivity);
             if (sign === -1 && dy !== 0) window.scrollBy(0, -dy);
+        }
+
+        // touch events (mobile — reliable on iOS)
+        el.addEventListener('touchstart', function(e) {
+            var t = e.touches[0];
+            if (startDrag(t.clientX, t.clientY, e.target)) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        el.addEventListener('touchmove', function(e) {
+            if (activeId === -1) return;
+            var t = e.touches[0];
+            moveDrag(t.clientX, t.clientY);
+            e.preventDefault();
+        }, { passive: false });
+
+        el.addEventListener('touchend', function(e) { endDrag(null); });
+        el.addEventListener('touchcancel', function(e) { endDrag(null); });
+
+        // mouse events (desktop)
+        el.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            if (startDrag(e.clientX, e.clientY, e.target)) {
+                e.preventDefault();
+            }
         });
 
-        el.addEventListener('pointerup', function(e) {
-            if (e.pointerId !== activeId) return;
+        window.addEventListener('mousemove', function(e) {
+            if (activeId === -1) return;
+            moveDrag(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mouseup', function(e) {
+            if (activeId === -1) return;
             endDrag(e);
         });
-
-        window.addEventListener('pointerup', function(e) {
-            if (e.pointerId !== activeId) return;
-            endDrag(e);
-        });
-
-        el.addEventListener('pointercancel', function(e) { endDrag(null); });
-        el.addEventListener('lostpointercapture', function(e) { endDrag(null); });
 
         // block clicks after drag
         el.addEventListener('click', function(e) {
@@ -242,15 +261,6 @@
 
         // prevent native image/link drag
         el.addEventListener('dragstart', function(e) { e.preventDefault(); });
-
-        // iOS: claim touch to prevent native scroll/back-swipe
-        el.addEventListener('touchstart', function(e) {
-            if (window.innerWidth > 600 && e.target.closest('.projects .project-info')) return;
-            e.preventDefault();
-        }, { passive: false });
-        el.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-        }, { passive: false });
     }
 
     // content: sensitivity = visual travel distance, computed live
