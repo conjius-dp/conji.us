@@ -252,17 +252,26 @@ body {
 
 .card-thumb--icon {
     color: var(--accent);
+    height: 80px !important;
 }
 
 .card-thumb--icon svg {
-    width: 96px !important;
-    height: 96px !important;
+    width: 56px !important;
+    height: 56px !important;
 }
 
 .brand-icon {
-    width: 96px !important;
-    height: 96px !important;
+    width: 56px !important;
+    height: 56px !important;
     object-fit: contain;
+}
+
+.music .project-card {
+    height: 160px;
+}
+
+.music .project-info {
+    padding: 0.75rem 1.5rem;
 }
 
 /* ── Projects section ── */
