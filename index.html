@@ -243,11 +243,11 @@
         // prevent native image/link drag
         el.addEventListener('dragstart', function(e) { e.preventDefault(); });
 
-        // iOS: claim touch immediately to prevent native gestures
+        // iOS: claim touch to prevent native scroll/back-swipe
         el.addEventListener('touchstart', function(e) {
-            // don't prevent on text for desktop selection
             if (window.innerWidth > 600 && e.target.closest('.projects .project-info')) return;
-        }, { passive: true });
+            e.preventDefault();
+        }, { passive: false });
         el.addEventListener('touchmove', function(e) {
             e.preventDefault();
         }, { passive: false });
