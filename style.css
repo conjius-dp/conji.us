@@ -266,8 +266,12 @@ body {
     object-fit: contain;
 }
 
+.music .project-grid {
+    grid-auto-rows: calc(var(--card-height) / 2);
+}
+
 .music .project-card {
-    height: calc(var(--card-height) / 2);
+    height: 100%;
 }
 
 .music .card-thumb {
