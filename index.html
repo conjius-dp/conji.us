@@ -242,6 +242,11 @@
 
         // prevent native image/link drag
         el.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+        // iOS: prevent native scroll/swipe during drag
+        el.addEventListener('touchmove', function(e) {
+            if (activeId !== -1) e.preventDefault();
+        }, { passive: false });
     }
 
     // content: sensitivity = visual travel distance, computed live
