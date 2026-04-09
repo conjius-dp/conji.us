@@ -6,6 +6,21 @@
     box-sizing: border-box;
 }
 
+img, svg, a {
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+::-moz-selection {
+    background: var(--accent);
+    color: var(--bg);
+}
+
 :root {
     --bg: #0a0a0a;
     --surface: #141414;
@@ -15,32 +30,35 @@
     --accent: #d48300;
     --accent-hover: #e89a1a;
     --card-height: 320px;
+    --card-gap: 30px;
 }
 
 body {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Inconsolata", monospace;
+    font-weight: 200;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 /* ── Background art ── */
 
 .bg-art {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
 }
 
-.bg-art svg {
+.bg-art canvas {
     width: 100%;
     height: 100%;
     display: block;
@@ -69,25 +87,35 @@ body {
 }
 
 .avatar {
-    width: 120px;
-    height: 120px;
+    width: 144px;
+    height: 144px;
     border-radius: 50%;
-    border: 2.5px solid var(--accent);
+    border: 2px solid var(--accent);
     margin-bottom: 1.5rem;
     object-fit: cover;
 }
 
 .name {
     font-size: clamp(0.85rem, 2vw, 1.15rem);
-    font-weight: 400;
+    font-weight: 600;
     letter-spacing: 0.02em;
     line-height: 1;
+}
+
+.name-pill {
+    display: inline-block;
+    padding: 0.6rem 1.25rem;
+    background: #000;
+    border-radius: 999px;
+    color: var(--accent);
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .handle {
     margin-top: 0.4rem;
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 200;
     color: var(--accent);
     letter-spacing: 0.05em;
 }
@@ -95,7 +123,7 @@ body {
 .tagline {
     margin-top: 0.5rem;
     font-size: 1.05rem;
-    font-weight: 400;
+    font-weight: 200;
     color: var(--text-muted);
 }
 
@@ -119,12 +147,13 @@ body {
     color: var(--accent);
     text-decoration: none;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 200;
     transition: background 0.2s, color 0.2s;
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .link-pill:hover {
+    .link-pill:hover,
+    .footer-links .link-pill:hover {
         background: var(--accent);
         color: var(--bg);
     }
@@ -169,11 +198,11 @@ body {
 .toggle-btn {
     flex: 1;
     padding: 0.6rem 1.25rem;
-    background: transparent;
+    background: #000;
     color: var(--accent);
     border: none;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: clamp(0.85rem, 2vw, 1.15rem);
     font-weight: 600;
     cursor: pointer;
     position: static;
@@ -197,27 +226,34 @@ body {
     align-items: center;
     justify-content: center;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: clamp(0.85rem, 2vw, 1.15rem);
     font-weight: 600;
     color: #000000;
 }
 
 @media (hover: hover) and (pointer: fine) {
     .toggle-btn:not(.active):hover {
-        background: rgba(212, 131, 0, 0.1);
+        background: #111;
     }
 }
 
 /* ── Sections ── */
 
-.sections-wrapper {
+.sections-fade {
     position: relative;
     z-index: 1;
-    max-width: 900px;
+    width: 100%;
     margin: 0 auto;
-    padding: 0 2rem 3rem;
     overflow: hidden;
+}
+
+.sections-wrapper {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+    overflow: visible;
     user-select: none;
+    touch-action: pan-y;
 }
 
 .sections-track {
@@ -233,17 +269,17 @@ body {
 }
 
 .sections-track > section:first-child {
-    padding-right: 0.75rem;
+    padding-right: calc(var(--card-gap) / 2);
 }
 
 .sections-track > section:last-child {
-    padding-left: 0.75rem;
+    padding-left: calc(var(--card-gap) / 2);
 }
 
 .music h2,
 .projects h2 {
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 200;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -261,28 +297,42 @@ body {
 }
 
 .brand-icon {
-    width: 56px !important;
-    height: 56px !important;
+    width: 72px !important;
+    height: 72px !important;
     object-fit: contain;
 }
 
+.music .project-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--card-gap);
+}
+
 .music .project-card {
-    height: calc(var(--card-height) / 2) !important;
-    max-height: calc(var(--card-height) / 2) !important;
-    min-height: calc(var(--card-height) / 2) !important;
+    flex-direction: row !important;
+    height: calc((var(--card-height) - var(--card-gap)) / 2) !important;
+    max-height: calc((var(--card-height) - var(--card-gap)) / 2) !important;
+    min-height: calc((var(--card-height) - var(--card-gap)) / 2) !important;
+    overflow: hidden;
 }
 
 .music .card-thumb {
-    height: 50% !important;
-    min-height: 0;
+    height: auto !important;
+    aspect-ratio: 1 !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
     border-bottom: none;
+    border-right: 1px solid var(--border);
+    align-self: stretch;
 }
 
 .music .project-info {
-    height: 50% !important;
-    min-height: 0;
-    padding: 0.75rem 1.5rem;
-    border-top: 1px solid var(--border);
+    height: auto !important;
+    flex: 1 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.05rem 1.25rem;
+    border-top: none;
 }
 
 /* ── Projects section ── */
@@ -290,7 +340,7 @@ body {
 .project-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: var(--card-gap);
     padding-top: 6px;
 }
 
@@ -311,7 +361,6 @@ body {
 @media (hover: hover) and (pointer: fine) {
     .project-card:hover {
         border-color: var(--accent);
-        transform: translateY(-4px);
     }
 }
 
@@ -343,6 +392,19 @@ body {
     height: 100%;
 }
 
+.projects .project-grid .project-card:nth-child(2) .card-thumb {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.projects .project-grid .project-card:nth-child(2) .card-thumb svg {
+    transform: scaleY(2.5) translateY(4%);
+}
+
+
+
 .project-info {
     padding: 1.5rem;
     display: flex;
@@ -351,13 +413,22 @@ body {
     flex: 1;
 }
 
+.projects .project-info h3,
+.projects .project-info p {
+    user-select: text;
+    -webkit-user-select: text;
+    cursor: text;
+    width: fit-content;
+}
+
+
 .project-info h3 {
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .project-info p {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: var(--text-muted);
     line-height: 1.4;
     flex: 1;
@@ -402,7 +473,7 @@ body {
     border-radius: 999px;
     border: 2px solid var(--accent);
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 200;
     gap: 6px;
     white-space: nowrap;
 }
@@ -429,6 +500,20 @@ body {
     display: inline-block;
 }
 
+/* ── Black outer glow ── */
+
+.avatar,
+.section-toggle,
+.name-pill,
+.project-card,
+.link-pill,
+.footer-links .link-pill {
+    box-shadow:
+        0 0 12px 4px rgba(0, 0, 0, 0.5),
+        0 0 32px 12px rgba(0, 0, 0, 0.35),
+        0 0 60px 24px rgba(0, 0, 0, 0.2);
+}
+
 /* ── Footer ── */
 
 footer {
@@ -443,6 +528,19 @@ footer {
     margin-top: auto;
 }
 
+.footer-logo {
+    width: 38px;
+    height: 38px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: transform 0.1s;
+    -webkit-user-drag: none;
+}
+
+.footer-logo:active {
+    transform: scale(0.85);
+}
+
 .footer-links {
     position: relative;
     z-index: 1;
@@ -454,6 +552,7 @@ footer {
 .footer-links .link-pill {
     border-width: 2px;
     padding: 0.5rem;
+    background: #000;
 }
 
 /* ── Responsive ── */
@@ -468,8 +567,8 @@ footer {
     }
 
     .avatar {
-        width: 90px;
-        height: 90px;
+        width: 108px;
+        height: 108px;
     }
 
     .name {
@@ -490,23 +589,106 @@ footer {
         max-width: 220px;
     }
 
+    :root {
+        --card-gap: 15px;
+        --mobile-pad: 14vw;
+    }
+
+    .sections-wrapper {
+        padding: 0 var(--mobile-pad) 3rem;
+    }
+
     .project-grid {
         grid-template-columns: 1fr !important;
-        gap: 1rem;
+        gap: var(--card-gap);
+    }
+
+    .projects .project-card {
+        height: auto !important;
+        aspect-ratio: 1;
+    }
+
+    .music .project-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .music .project-card {
+        /* 2 music cards + 1 gap = 1 big card height (square = card width) */
+        height: calc((100vw - 2 * var(--mobile-pad) - var(--card-gap)) / 2) !important;
+        max-height: calc((100vw - 2 * var(--mobile-pad) - var(--card-gap)) / 2) !important;
+        min-height: calc((100vw - 2 * var(--mobile-pad) - var(--card-gap)) / 2) !important;
     }
 
     .project-card {
-        border-radius: 30px;
+        border-radius: 20px;
         border-width: 2px;
     }
 
     .project-info {
-        padding: 1.25rem;
+        padding: 0.8rem;
     }
+
+    .project-card > img,
+    .card-thumb {
+        height: 90px;
+    }
+
+    .project-card > img {
+        padding: 10px 10px 0 10px;
+    }
+
 
     .card-links a {
         width: 36px;
         height: 36px;
         padding: 7px;
     }
+
+    .projects .project-info h3,
+    .projects .project-info p {
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: default;
+    }
+}
+
+/* ── Tactile press effects ── */
+
+.project-card {
+    transition: transform 0.1s, border-color 0.1s;
+}
+
+.music .project-card:active,
+.projects .project-card:active:not(:has(h3:active, p:active)) {
+    transform: scale(0.97);
+    border-color: var(--accent);
+}
+
+.section-toggle {
+    transition: transform 0.1s;
+}
+
+.section-toggle:active {
+    transform: scale(0.95);
+}
+
+.avatar {
+    transition: transform 0.1s;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.avatar:active {
+    transform: scale(0.9);
+}
+
+.link-pill {
+    transition: transform 0.1s, border-color 0.1s;
+}
+
+.link-pill:active {
+    transform: scale(0.93);
+    border-color: var(--accent-hover);
 }

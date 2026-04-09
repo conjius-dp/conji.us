@@ -6,51 +6,21 @@
     <title>Conjius</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=69">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
 
-    <!-- Decorative SVG background -->
+    <!-- Decorative background -->
     <div class="bg-art" aria-hidden="true">
-        <svg viewBox="0 0 1440 3600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-            <!-- Band 1: 0–900 -->
-            <polygon points="1100,0 1440,0 1440,320 1020,180" fill="#d48300" opacity="0.06"/>
-            <circle cx="120" cy="750" r="180" fill="#d48300" opacity="0.05"/>
-            <circle cx="220" cy="680" r="80" fill="#d48300" opacity="0.03"/>
-            <line x1="0" y1="600" x2="500" y2="300" stroke="#d48300" stroke-width="3" opacity="0.12"/>
-            <polygon points="1300,500 1380,620 1220,620" fill="#d48300" opacity="0.04"/>
-            <circle cx="900" cy="150" r="100" fill="none" stroke="#d48300" stroke-width="4" opacity="0.1"/>
-            <polyline points="0,100 200,50 180,200" fill="none" stroke="#d48300" stroke-width="3" opacity="0.1"/>
-            <!-- Band 2: 900–1800 -->
-            <circle cx="1300" cy="1050" r="140" fill="#d48300" opacity="0.04"/>
-            <line x1="900" y1="1100" x2="1440" y2="1400" stroke="#d48300" stroke-width="3" opacity="0.1"/>
-            <polygon points="200,1200 320,1350 80,1350" fill="#d48300" opacity="0.05"/>
-            <circle cx="700" cy="1500" r="90" fill="none" stroke="#d48300" stroke-width="4" opacity="0.08"/>
-            <polyline points="1200,1600 1400,1550 1380,1700" fill="none" stroke="#d48300" stroke-width="3" opacity="0.1"/>
-            <circle cx="400" cy="1700" r="60" fill="#d48300" opacity="0.03"/>
-            <!-- Band 3: 1800–2700 -->
-            <polygon points="50,1900 250,1850 200,2050" fill="#d48300" opacity="0.05"/>
-            <circle cx="1100" cy="2100" r="120" fill="#d48300" opacity="0.04"/>
-            <line x1="0" y1="2200" x2="600" y2="2500" stroke="#d48300" stroke-width="3" opacity="0.08"/>
-            <circle cx="800" cy="2400" r="70" fill="none" stroke="#d48300" stroke-width="4" opacity="0.1"/>
-            <polygon points="1250,2300 1350,2450 1150,2450" fill="#d48300" opacity="0.04"/>
-            <polyline points="300,2600 500,2550 480,2700" fill="none" stroke="#d48300" stroke-width="3" opacity="0.1"/>
-            <!-- Band 4: 2700–3600 -->
-            <circle cx="200" cy="2900" r="150" fill="#d48300" opacity="0.04"/>
-            <line x1="800" y1="2800" x2="1300" y2="3100" stroke="#d48300" stroke-width="3" opacity="0.1"/>
-            <circle cx="1000" cy="3200" r="80" fill="none" stroke="#d48300" stroke-width="4" opacity="0.08"/>
-            <polygon points="600,3300 720,3450 480,3450" fill="#d48300" opacity="0.05"/>
-            <circle cx="1350" cy="3400" r="50" fill="#d48300" opacity="0.03"/>
-            <polyline points="100,3500 300,3450 280,3600" fill="none" stroke="#d48300" stroke-width="3" opacity="0.1"/>
-        </svg>
+        <canvas id="bg-canvas"></canvas>
     </div>
 
     <!-- Hero -->
     <header class="hero">
         <img src="https://avatars.githubusercontent.com/u/24496156?v=4" alt="Danny Priymak" class="avatar">
-        <h2 class="name">Software Engineer & Electronic Musician</h2>
+        <h2 class="name"><span class="name-pill">Software Engineer &amp; Electronic Musician</span></h2>
     </header>
 
     <!-- Section Toggle -->
@@ -60,6 +30,7 @@
         <div class="toggle-dark-layer" id="toggle-dark-layer"><span>Code</span><span style="padding-left:7px">Music</span></div>
     </div>
 
+    <div class="sections-fade" id="sections-fade">
     <div class="sections-wrapper" id="sections-wrapper">
     <div class="sections-track" id="sections-track">
 
@@ -107,6 +78,7 @@
 
     </div><!-- /sections-track -->
     </div><!-- /sections-wrapper -->
+    </div><!-- /sections-fade -->
 
     <nav class="links footer-links">
             <a href="https://github.com/conjius-dp" target="_blank" rel="noopener" class="link-pill">
@@ -124,7 +96,7 @@
         </nav>
 
     <footer>
-        <p><img src="favicon.ico" alt="" style="width:38px;height:38px;vertical-align:middle;"> Danny Priymak 2026</p>
+        <p><img src="favicon.ico" alt="" class="footer-logo"> Danny Priymak 2026</p>
     </footer>
 
     <script>
@@ -142,10 +114,10 @@
     // custom SVG thumbnails for repos that don't have a social image
     var CUSTOM_THUMBS = {
         'CivDecks': '<div class="card-thumb" style="background:#0a0a0a"><img src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
-        'wav-decoder': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="18" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>',
+        'wav-decoder': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="27" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><circle cx="80" cy="55" r="35" fill="#d48300" opacity="0.12"/><circle cx="200" cy="130" r="28" fill="#d48300" opacity="0.25"/><circle cx="310" cy="60" r="42" fill="#d48300" opacity="0.08"/><circle cx="150" cy="145" r="22" fill="#d48300" opacity="0.18"/><circle cx="330" cy="155" r="18" fill="#d48300" opacity="0.3"/><circle cx="240" cy="45" r="15" fill="#d48300" opacity="0.15"/></svg></div>',
         'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><g transform="translate(200,100)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5" opacity="0.5"/><line x1="18" y1="18" x2="37" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round" opacity="0.8"/><text x="52" y="58" text-anchor="middle" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="600" opacity="0.5">11</text></g></svg></div>',
-        'denoiser': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><path d="M40,100 L50,88 L60,108 L70,80 L80,112 L90,76 L100,106 L110,84 L120,116 L130,72 L140,110 L150,78 L160,118 L170,70 L180,108 L190,85 L200,120 L210,68 L220,112 L230,80 L240,116 L250,72 L260,106 L270,88 L280,118 L290,65 L300,108 L310,82 L320,115 L330,75 L340,110 L350,80 L360,100" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0.25"/><path d="M40,100 Q120,78 200,92 Q280,112 360,100" fill="none" stroke="#d48300" stroke-width="6" opacity="0.6"/></svg></div>'
+        'denoiser': '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><path d="M40,100 L50,88 L60,108 L70,80 L80,112 L90,76 L100,106 L110,84 L120,116 L130,72 L140,110 L150,78 L160,118 L170,70 L180,108 L190,85 L200,120 L210,68 L220,112 L230,80 L240,116 L250,72 L260,106 L270,88 L280,118 L290,65 L300,108 L310,82 L320,115 L330,75 L340,110 L350,80 L360,100" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0.25"/><path d="M40,100 Q120,78 200,92 Q280,112 360,100" fill="none" stroke="#d48300" stroke-width="6" opacity="0.6"/></svg></div>'
     };
 
     // swipe system: progress 0 = code, 1 = music
@@ -157,201 +129,137 @@
     var wrapper = document.getElementById('sections-wrapper');
     var animFrame = null;
 
-    var PEEK = 1.2; // percentage of track width to peek
+    var PEEK = 0.9; // percentage of track width to peek — centers grid gap on screen
 
     var darkLayer = document.getElementById('toggle-dark-layer');
 
-    function setProgress(p, allowOverscroll) {
-        if (allowOverscroll) {
-            // rubber band: allow overscroll with resistance
-            if (p < 0) p = p * 0.4;
-            else if (p > 1) p = 1 + (p - 1) * 0.4;
-            progress = p;
-        } else {
-            progress = Math.max(0, Math.min(1, p));
-        }
-        var clamped = Math.max(0, Math.min(1, progress));
-        // track uses unclamped for rubber-band visual
-        var offset = -PEEK + progress * (-(50 - PEEK * 2));
+    function setProgress(p) {
+        progress = Math.max(0, Math.min(1, p));
+        var offset = PEEK + progress * (-(50 + PEEK * 2));
         track.style.transform = 'translateX(' + offset + '%)';
-        // pill and text use clamped
-        toggle.style.setProperty('--pill-x', (clamped * 100) + '%');
-        var pillLeft = clamped * 50;
+        toggle.style.setProperty('--pill-x', (progress * 100) + '%');
+        var pillLeft = progress * 50;
         var pillRight = pillLeft + 50;
         darkLayer.style.clipPath = 'inset(0 ' + (100 - pillRight) + '% 0 ' + pillLeft + '%)';
-        btns[0].classList.toggle('active', clamped < 0.5);
-        btns[1].classList.toggle('active', clamped >= 0.5);
-        updateFadeMask(clamped);
+        btns[0].classList.toggle('active', progress < 0.5);
+        btns[1].classList.toggle('active', progress >= 0.5);
     }
 
     var isDragging = false;
 
-    function updateFadeMask(p) {
-        // Fade the edge where the unfocused column peeks in
-        // p=0: code focused, fade right edge; p=1: music focused, fade left edge
-        // During drag, no fade
-        if (isDragging) {
-            wrapper.style.maskImage = 'none';
-            wrapper.style.webkitMaskImage = 'none';
-            return;
-        }
-        var fadeSize = '8%';
-        var mask;
-        if (p < 0.1) {
-            // Code focused: fade right
-            mask = 'linear-gradient(to right, black 0%, black 92%, transparent 100%)';
-        } else if (p > 0.9) {
-            // Music focused: fade left
-            mask = 'linear-gradient(to right, transparent 0%, black 8%, black 100%)';
-        } else {
-            mask = 'none';
-        }
-        wrapper.style.maskImage = mask;
-        wrapper.style.webkitMaskImage = mask;
-    }
+    // static fade mask — never moves
+    (function() {
+        var fade = document.getElementById('sections-fade');
+        var mask = 'linear-gradient(to right, transparent 0%, black 12.5%, black 87.5%, transparent 100%)';
+        fade.style.maskImage = mask;
+        fade.style.webkitMaskImage = mask;
+    })();
 
     function animateTo(target) {
         if (animFrame) cancelAnimationFrame(animFrame);
         var start = progress;
         var startTime = performance.now();
-        var duration = 600;
+        var dist = Math.abs(target - start);
+        var duration = Math.max(150, dist * 300);
         function step(now) {
             var t = Math.min(1, (now - startTime) / duration);
-            // ease out expo - gentle deceleration
-            t = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-            setProgress(start + (target - start) * t);
+            // smooth ease-out cubic
+            var eased = 1 - Math.pow(1 - t, 3);
+            setProgress(start + (target - start) * eased);
             if (t < 1) animFrame = requestAnimationFrame(step);
         }
         animFrame = requestAnimationFrame(step);
     }
 
-    // toggle button clicks
-    btns[0].addEventListener('click', function() { animateTo(0); });
-    btns[1].addEventListener('click', function() { animateTo(1); });
+    // toggle button clicks disabled — handled by drag system tap detection
 
-    // swipe handling for both content area and toggle
-    function addSwipe(el, sensitivity, isToggle) {
-        var startX = 0, startY = 0, startProgress = 0;
-        var dragging = false, moved = false, directionLocked = false, isHorizontal = false;
+    // unified drag — works for mouse and touch via pointer events
+    function makeDraggable(el, sign, getSensitivity) {
+        var lastX = 0, lastY = 0, startProg = 0, moved = false;
+        var activeId = -1, sensitivity = 600;
 
-        // mouse drag
-        el.addEventListener('mousedown', function(e) {
-            if (e.button !== 0) return;
-            dragging = true;
-            isDragging = true;
-            moved = false;
-            directionLocked = false;
-            if (animFrame) cancelAnimationFrame(animFrame);
-            startX = e.clientX;
-            startY = e.clientY;
-            startProgress = progress;
-            e.preventDefault();
-        });
-
-        window.addEventListener('mousemove', function(e) {
-            if (!dragging) return;
-            var dx = e.clientX - startX;
-            var dy = e.clientY - startY;
-            if (!directionLocked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-                directionLocked = true;
-                isHorizontal = Math.abs(dx) >= Math.abs(dy);
-            }
-            if (!directionLocked || !isHorizontal) return;
-            moved = true;
-            var delta = (isToggle ? 1 : -1) * dx / sensitivity;
-            setProgress(startProgress + delta, true);
-        });
-
-        window.addEventListener('mouseup', function(e) {
-            if (!dragging) return;
-            dragging = false;
+        function endDrag(e) {
+            if (activeId === -1) return;
+            activeId = -1;
             isDragging = false;
-            if (!moved && isToggle) {
-                var rect = el.getBoundingClientRect();
-                animateTo(e.clientX - rect.left > rect.width / 2 ? 1 : 0);
+            if (!moved && sign === 1) {
+                animateTo(progress >= 0.5 ? 0 : 1);
                 return;
             }
-            if (!moved) return;
-            var target;
-            if (startProgress < 0.5) target = progress > 0.08 ? 1 : 0;
-            else target = progress < 0.92 ? 0 : 1;
+            if (!moved) { animateTo(progress >= 0.5 ? 1 : 0); return; }
+            var target = startProg < 0.5
+                ? (progress > 0.08 ? 1 : 0)
+                : (progress < 0.92 ? 0 : 1);
             animateTo(target);
-        });
+        }
 
-        // touch swipe
-        el.addEventListener('touchstart', function(e) {
-            var t = e.touches[0];
-            dragging = true;
-            isDragging = true;
-            moved = false;
-            directionLocked = false;
-            isHorizontal = false;
+        el.addEventListener('pointerdown', function(e) {
+            if (e.button && e.button !== 0) return;
+            // let text selection happen natively on desktop
+            if (window.innerWidth > 600 && (e.target.tagName === 'H3' || e.target.tagName === 'P') && e.target.closest('.projects .project-info')) return;
+            activeId = e.pointerId;
+            sensitivity = getSensitivity();
             if (animFrame) cancelAnimationFrame(animFrame);
-            startX = t.clientX;
-            startY = t.clientY;
-            startProgress = progress;
-        }, { passive: true });
+            lastX = e.clientX;
+            lastY = e.clientY;
+            startProg = progress;
+            moved = false;
+            isDragging = true;
+        });
 
-        el.addEventListener('touchmove', function(e) {
-            if (!dragging) return;
-            var t = e.touches[0];
-            var dx = t.clientX - startX;
-            var dy = t.clientY - startY;
-            if (!directionLocked && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-                directionLocked = true;
-                isHorizontal = Math.abs(dx) >= Math.abs(dy);
+        el.addEventListener('pointermove', function(e) {
+            if (e.pointerId !== activeId) return;
+            var dx = e.clientX - lastX;
+            var dy = e.clientY - lastY;
+            if (!moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+            if (!moved) {
+                el.setPointerCapture(e.pointerId);
             }
-            if (!directionLocked || !isHorizontal) return;
-            // horizontal - prevent vertical scroll
-            e.preventDefault();
             moved = true;
-            var delta = (isToggle ? 1 : -1) * dx / sensitivity;
-            setProgress(startProgress + delta, true);
-        }, { passive: false });
-
-        el.addEventListener('touchend', function() {
-            if (!dragging) return;
-            dragging = false;
-            isDragging = false;
-            if (!moved) return;
-            var target;
-            if (startProgress < 0.5) target = progress > 0.08 ? 1 : 0;
-            else target = progress < 0.92 ? 0 : 1;
-            animateTo(target);
+            lastX = e.clientX;
+            lastY = e.clientY;
+            setProgress(progress + sign * dx / sensitivity);
+            if (sign === -1 && dy !== 0) window.scrollBy(0, -dy);
         });
 
-        el.addEventListener('touchcancel', function() {
-            if (!dragging) return;
-            dragging = false;
-            isDragging = false;
-            animateTo(progress >= 0.5 ? 1 : 0);
+        el.addEventListener('pointerup', function(e) {
+            if (e.pointerId !== activeId) return;
+            endDrag(e);
         });
 
-        // prevent clicks on links/cards when swiping
+        window.addEventListener('pointerup', function(e) {
+            if (e.pointerId !== activeId) return;
+            endDrag(e);
+        });
+
+        el.addEventListener('pointercancel', function(e) { endDrag(null); });
+        el.addEventListener('lostpointercapture', function(e) { endDrag(null); });
+
+        // block clicks after drag
         el.addEventListener('click', function(e) {
-            if (moved) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+            if (moved) { e.preventDefault(); e.stopPropagation(); }
         }, true);
+
+        // prevent native image/link drag
+        el.addEventListener('dragstart', function(e) { e.preventDefault(); });
     }
 
-    // prevent native link/image drag inside swipeable areas
-    wrapper.addEventListener('dragstart', function(e) { e.preventDefault(); });
-    toggle.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    // content: sensitivity = visual travel distance, computed live
+    makeDraggable(wrapper, -1, function() {
+        return track.offsetWidth * (50 + PEEK * 2) / 100;
+    });
+    // toggle: sensitivity = half toggle width
+    makeDraggable(toggle, 1, function() {
+        return (toggle.offsetWidth || 280) / 2;
+    });
 
-    // content area: sensitivity = wrapper width (full swipe = full transition)
-    addSwipe(wrapper, wrapper.offsetWidth || 600, false);
-    // toggle: sensitivity = half toggle width (pill travels half the toggle)
-    addSwipe(toggle, (toggle.offsetWidth || 280) / 2, true);
-
-    // horizontal scroll wheel switches sections
+    // horizontal scroll wheel
     var wheelTimer = null;
     wrapper.addEventListener('wheel', function(e) {
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
             e.preventDefault();
             if (animFrame) cancelAnimationFrame(animFrame);
-            setProgress(progress + e.deltaX / 350, true);
+            setProgress(progress + e.deltaX / 350);
             clearTimeout(wheelTimer);
             wheelTimer = setTimeout(function() {
                 animateTo(progress >= 0.5 ? 1 : 0);
@@ -359,14 +267,76 @@
         }
     }, { passive: false });
 
-    // init
     setProgress(0);
+    window.addEventListener('resize', function() { setProgress(progress); });
 
-    // recalc on resize
-    window.addEventListener('resize', function() {
-        // just re-apply current progress
-        setProgress(progress);
-    });
+    // springy avatar drag
+    (function() {
+        var avatar = document.querySelector('.avatar');
+        var ax = 0, ay = 0, vx = 0, vy = 0;
+        var dragging = false, dragId = -1, lastX = 0, lastY = 0;
+        var MAX_DIST = 60;
+        var springFrame = null;
+
+        avatar.style.willChange = 'transform';
+
+        avatar.addEventListener('pointerdown', function(e) {
+            if (e.button && e.button !== 0) return;
+            avatar.setPointerCapture(e.pointerId);
+            dragId = e.pointerId;
+            dragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            vx = 0; vy = 0;
+            if (springFrame) { cancelAnimationFrame(springFrame); springFrame = null; }
+            e.preventDefault();
+        });
+
+        avatar.addEventListener('pointermove', function(e) {
+            if (e.pointerId !== dragId || !dragging) return;
+            var dx = e.clientX - lastX;
+            var dy = e.clientY - lastY;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            ax += dx; ay += dy;
+            // clamp to max radius
+            var dist = Math.sqrt(ax * ax + ay * ay);
+            if (dist > MAX_DIST) {
+                var s = MAX_DIST / dist;
+                ax *= s; ay *= s;
+            }
+            avatar.style.transform = 'translate(' + ax + 'px,' + ay + 'px)';
+        });
+
+        function springBack() {
+            var stiffness = 0.25, damping = 0.7;
+            vx += -ax * stiffness;
+            vy += -ay * stiffness;
+            vx *= damping;
+            vy *= damping;
+            ax += vx;
+            ay += vy;
+            avatar.style.transform = 'translate(' + ax + 'px,' + ay + 'px)';
+            if (Math.abs(ax) < 0.3 && Math.abs(ay) < 0.3 && Math.abs(vx) < 0.3 && Math.abs(vy) < 0.3) {
+                ax = 0; ay = 0; vx = 0; vy = 0;
+                avatar.style.transform = '';
+                springFrame = null;
+                return;
+            }
+            springFrame = requestAnimationFrame(springBack);
+        }
+
+        function release() {
+            if (!dragging) return;
+            dragging = false;
+            dragId = -1;
+            springBack();
+        }
+
+        avatar.addEventListener('pointerup', function(e) { release(); });
+        avatar.addEventListener('pointercancel', function(e) { release(); });
+        avatar.addEventListener('lostpointercapture', function(e) { release(); });
+    })();
 
     // pinned repos in display order (matches GitHub profile pins)
     var PINNED_REPOS = ['gain-knob', 'denoiser', 'CivDecks', 'midi-visu', 'wav-decoder'];
@@ -467,6 +437,179 @@
     }
 
     loadPinnedRepos();
+
+    // Animated floating background shapes (Canvas)
+    (function() {
+        var canvas = document.getElementById('bg-canvas');
+        var ctx = canvas.getContext('2d');
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var particles = [];
+        var isDesktop = window.innerWidth > 600;
+        var MAX_PARTICLES = isDesktop ? 180 : 45;
+        var COLOR = '#d48300';
+        var scrollY = 0;
+
+        function resize() {
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resize();
+        window.addEventListener('resize', resize, { passive: true });
+
+        function rand(min, max) { return min + Math.random() * (max - min); }
+
+        function createParticle(scatter) {
+            var w = window.innerWidth, h = window.innerHeight;
+            var size = rand(60, 195);
+            var segments = Math.floor(rand(3, 6));
+            // pre-compute base points + wiggle as flat typed arrays
+            var nPts = 1 + segments * 3;
+            var baseX = new Float32Array(nPts);
+            var baseY = new Float32Array(nPts);
+            var wPhaseX = new Float32Array(nPts);
+            var wPhaseY = new Float32Array(nPts);
+            var wFreqX = new Float32Array(nPts);
+            var wFreqY = new Float32Array(nPts);
+            var wAmpX = new Float32Array(nPts);
+            var wAmpY = new Float32Array(nPts);
+
+            baseX[0] = 0; baseY[0] = 0;
+            var bx = 0, by = 0, bAngle = rand(0, Math.PI * 2);
+            var idx = 1;
+            for (var seg = 0; seg < segments; seg++) {
+                bAngle += rand(-Math.PI * 0.8, Math.PI * 0.8);
+                var len = rand(size * 0.8, size * 2.0);
+                var ca = Math.cos(bAngle), sa = Math.sin(bAngle);
+                baseX[idx] = bx + Math.cos(bAngle + rand(-0.8, 0.8)) * len;
+                baseY[idx] = by + Math.sin(bAngle + rand(-0.8, 0.8)) * len;
+                var bex = (bx + ca * len * rand(0.3, 0.9)) * rand(0.7, 1.0);
+                var bey = (by + sa * len * rand(0.3, 0.9)) * rand(0.7, 1.0);
+                baseX[idx+1] = bex + rand(-size * 0.4, size * 0.4);
+                baseY[idx+1] = bey + rand(-size * 0.4, size * 0.4);
+                baseX[idx+2] = bex;
+                baseY[idx+2] = bey;
+                for (var wp = 0; wp < 3; wp++) {
+                    var j = idx + wp;
+                    wPhaseX[j] = rand(0, Math.PI * 2);
+                    wPhaseY[j] = rand(0, Math.PI * 2);
+                    wFreqX[j] = rand(0.02, 1.5);
+                    wFreqY[j] = rand(0.02, 1.5);
+                    wAmpX[j] = rand(30, size * 1.5);
+                    wAmpY[j] = rand(30, size * 1.5);
+                }
+                bx = bex; by = bey;
+                idx += 3;
+            }
+
+            var depth = rand(0, 1);
+            var speedMul = 1 - depth * 0.85;
+            var opacity = 1.0;
+            // deeper snakes get a darker color (darken by up to 60%)
+            var bright = 1.0 - depth * 0.85;
+            var r = Math.round(0xd4 * bright);
+            var g = Math.round(0x83 * bright);
+            var b = Math.round(0x00 * bright);
+            var color = 'rgb(' + r + ',' + g + ',' + b + ')';
+            var angle = rand(0, Math.PI * 2);
+            var speed = rand(0.00375, 0.03125) * speedMul;
+
+            return {
+                x: scatter ? rand(-size, w + size) : 0,
+                y: scatter ? rand(-size, h + size) : 0,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: size,
+                depth: depth,
+                parallax: 0.02 + (1 - depth) * 1.6,
+                rot: rand(0, 360) * Math.PI / 180,
+                rotSpeed: rand(-0.01, 0.01) * Math.PI / 180,
+                opacity: opacity,
+                color: color,
+                strokeWidth: 3.0,
+                time: rand(0, 100),
+                nPts: nPts,
+                baseX: baseX, baseY: baseY,
+                wPhaseX: wPhaseX, wPhaseY: wPhaseY,
+                wFreqX: wFreqX, wFreqY: wFreqY,
+                wAmpX: wAmpX, wAmpY: wAmpY
+            };
+        }
+
+        // seed
+        for (var i = 0; i < MAX_PARTICLES; i++) {
+            particles.push(createParticle(true));
+        }
+
+        window.addEventListener('scroll', function() { scrollY = window.scrollY; }, { passive: true });
+
+        function tick() {
+            var w = window.innerWidth, h = window.innerHeight;
+            ctx.clearRect(0, 0, w, h);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            for (var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.rot += p.rotSpeed;
+                p.time += 0.0005;
+
+                var drawY = p.y - scrollY * p.parallax;
+
+                // respawn based on drawn position (accounts for parallax)
+                var margin = p.size + 50;
+                if (p.x < -margin || p.x > w + margin || drawY < -margin || drawY > h + margin) {
+                    if (p.x < -margin) { p.x = w + p.size; p.y = rand(0, h) + scrollY * p.parallax; }
+                    else if (p.x > w + margin) { p.x = -p.size; p.y = rand(0, h) + scrollY * p.parallax; }
+                    else if (drawY < -margin) { p.y = (h + p.size) + scrollY * p.parallax; p.x = rand(0, w); }
+                    else if (drawY > h + margin) { p.y = -p.size + scrollY * p.parallax; p.x = rand(0, w); }
+                    var angle = Math.atan2(p.vy, p.vx) + rand(-0.4, 0.4);
+                    var spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                    p.vx = Math.cos(angle) * spd;
+                    p.vy = Math.sin(angle) * spd;
+                    drawY = p.y - scrollY * p.parallax;
+                }
+
+                if (drawY < -p.size - 150 || drawY > h + p.size + 150) continue;
+
+                var t = p.time;
+                var bx = p.baseX, by = p.baseY;
+                var wpx = p.wPhaseX, wpy = p.wPhaseY;
+                var wfx = p.wFreqX, wfy = p.wFreqY;
+                var wax = p.wAmpX, way = p.wAmpY;
+                var cosR = Math.cos(p.rot), sinR = Math.sin(p.rot);
+                var px = p.x, py = drawY;
+
+                ctx.lineWidth = p.strokeWidth;
+                ctx.beginPath();
+                ctx.moveTo(bx[0] * cosR - by[0] * sinR + px, bx[0] * sinR + by[0] * cosR + py);
+                for (var k = 1; k < p.nPts; k += 3) {
+                    var x1 = bx[k]   + Math.sin(t * wfx[k]   + wpx[k])   * wax[k];
+                    var y1 = by[k]   + Math.sin(t * wfy[k]   + wpy[k])   * way[k];
+                    var x2 = bx[k+1] + Math.sin(t * wfx[k+1] + wpx[k+1]) * wax[k+1];
+                    var y2 = by[k+1] + Math.sin(t * wfy[k+1] + wpy[k+1]) * way[k+1];
+                    var x3 = bx[k+2] + Math.sin(t * wfx[k+2] + wpx[k+2]) * wax[k+2];
+                    var y3 = by[k+2] + Math.sin(t * wfy[k+2] + wpy[k+2]) * way[k+2];
+                    ctx.bezierCurveTo(
+                        x1 * cosR - y1 * sinR + px, x1 * sinR + y1 * cosR + py,
+                        x2 * cosR - y2 * sinR + px, x2 * sinR + y2 * cosR + py,
+                        x3 * cosR - y3 * sinR + px, x3 * sinR + y3 * cosR + py
+                    );
+                }
+                ctx.globalAlpha = p.opacity;
+                ctx.strokeStyle = p.color;
+                ctx.stroke();
+
+            }
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(tick);
+        }
+        tick();
+    })();
     </script>
 
 </body>
