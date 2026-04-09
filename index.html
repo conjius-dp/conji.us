@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=75">
+    <link rel="stylesheet" href="style.css?v=76">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -188,18 +188,22 @@
                 return;
             }
             if (!moved) { animateTo(progress >= 0.5 ? 1 : 0); return; }
-            // compute velocity from recent move history (last 80ms)
+            // compute velocity from move history — find the fastest 100ms segment
             var now = performance.now();
-            var cutoff = now - 80;
-            var recent = moveHistory.filter(function(m) { return m.t >= cutoff; });
             var velPxMs = 0;
-            if (recent.length >= 2) {
-                var first = recent[0], last = recent[recent.length - 1];
-                var dt = last.t - first.t;
-                if (dt > 0) velPxMs = (last.x - first.x) / dt;
+            if (moveHistory.length >= 2) {
+                // check windows ending at each point in history
+                for (var i = moveHistory.length - 1; i >= 1; i--) {
+                    for (var j = i - 1; j >= 0; j--) {
+                        var dt = moveHistory[i].t - moveHistory[j].t;
+                        if (dt < 10 || dt > 150) continue;
+                        var v = (moveHistory[i].x - moveHistory[j].x) / dt;
+                        if (Math.abs(v) > Math.abs(velPxMs)) velPxMs = v;
+                    }
+                }
             }
-            // convert px/ms to progress/frame (~16ms)
-            var vel = sign * velPxMs * 16 / sensitivity;
+            // convert px/ms to progress/frame (~16ms), boost for feel
+            var vel = sign * velPxMs * 16 / sensitivity * 1.5;
             coastThenSnap(vel);
         }
 
@@ -252,7 +256,7 @@
             var delta = sign * dx / sensitivity;
             // record move for velocity calculation on release
             moveHistory.push({ x: x, t: performance.now() });
-            if (moveHistory.length > 10) moveHistory.shift();
+            if (moveHistory.length > 20) moveHistory.shift();
             setProgress(progress + delta);
             if (sign === -1 && dy !== 0) window.scrollBy(0, -dy);
         }
