@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=71">
+    <link rel="stylesheet" href="style.css?v=72">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -243,9 +243,13 @@
         // prevent native image/link drag
         el.addEventListener('dragstart', function(e) { e.preventDefault(); });
 
-        // iOS: prevent native scroll/swipe during drag
+        // iOS: claim touch immediately to prevent native gestures
+        el.addEventListener('touchstart', function(e) {
+            // don't prevent on text for desktop selection
+            if (window.innerWidth > 600 && e.target.closest('.projects .project-info')) return;
+        }, { passive: true });
         el.addEventListener('touchmove', function(e) {
-            if (activeId !== -1) e.preventDefault();
+            e.preventDefault();
         }, { passive: false });
     }
 

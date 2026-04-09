@@ -260,12 +260,14 @@ body {
     display: flex;
     width: 200%;
     will-change: transform;
+    touch-action: none;
 }
 
 .sections-track > section {
     width: 50%;
     flex-shrink: 0;
     box-sizing: border-box;
+    touch-action: none;
 }
 
 .sections-track > section:first-child {
