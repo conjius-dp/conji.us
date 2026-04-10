@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=90">
+    <link rel="stylesheet" href="style.css?v=92">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -113,11 +113,11 @@
 
     // custom SVG thumbnails for repos that don't have a social image
     var CUSTOM_THUMBS = {
-        'CivDecks': '<div class="card-thumb" style="background:#0a0a0a"><img src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
-        'wav-decoder': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="27" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>',
-        'midi-visu': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><circle cx="80" cy="55" r="35" fill="#d48300" opacity="0.12"/><circle cx="200" cy="130" r="28" fill="#d48300" opacity="0.25"/><circle cx="310" cy="60" r="42" fill="#d48300" opacity="0.08"/><circle cx="150" cy="145" r="22" fill="#d48300" opacity="0.18"/><circle cx="330" cy="155" r="18" fill="#d48300" opacity="0.3"/><circle cx="240" cy="45" r="15" fill="#d48300" opacity="0.15"/></svg></div>',
-        'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><g transform="translate(200,100)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5" opacity="0.5"/><line x1="18" y1="18" x2="37" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round" opacity="0.8"/><text x="52" y="58" text-anchor="middle" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="600" opacity="0.5">11</text></g></svg></div>',
-        'denoiser': '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><path d="M40,100 L50,88 L60,108 L70,80 L80,112 L90,76 L100,106 L110,84 L120,116 L130,72 L140,110 L150,78 L160,118 L170,70 L180,108 L190,85 L200,120 L210,68 L220,112 L230,80 L240,116 L250,72 L260,106 L270,88 L280,118 L290,65 L300,108 L310,82 L320,115 L330,75 L340,110 L350,80 L360,100" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0.25"/><path d="M40,100 Q120,78 200,92 Q280,112 360,100" fill="none" stroke="#d48300" stroke-width="6" opacity="0.6"/></svg></div>'
+        'CivDecks': '<div class="card-thumb" style="background:#111"><img src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
+        'wav-decoder': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="27" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>',
+        'midi-visu': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><circle cx="45" cy="35" r="30" fill="#d48300"/><circle cx="160" cy="25" r="18" fill="#d48300"/><circle cx="290" cy="20" r="14" fill="#d48300"/><circle cx="370" cy="50" r="24" fill="#d48300"/><circle cx="100" cy="100" r="22" fill="#d48300"/><circle cx="220" cy="80" r="35" fill="#d48300"/><circle cx="350" cy="110" r="16" fill="#d48300"/><circle cx="50" cy="165" r="20" fill="#d48300"/><circle cx="170" cy="160" r="28" fill="#d48300"/><circle cx="300" cy="170" r="12" fill="#d48300"/><circle cx="380" cy="175" r="19" fill="#d48300"/></svg></div>',
+        'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5" opacity="0.5"/><line x1="18" y1="18" x2="37" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round" opacity="0.8"/><text x="52" y="58" text-anchor="middle" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="600" opacity="0.5">11</text></g></svg></div>',
+        'denoiser': '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(1,0.8) translate(-200,-100)"><path d="M40,100 L50,88 L60,108 L70,80 L80,112 L90,76 L100,106 L110,84 L120,116 L130,72 L140,110 L150,78 L160,118 L170,70 L180,108 L190,85 L200,120 L210,68 L220,112 L230,80 L240,116 L250,72 L260,106 L270,88 L280,118 L290,65 L300,108 L310,82 L320,115 L330,75 L340,110 L350,80 L360,100" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0.25"/><path d="M40,100 Q120,78 200,92 Q280,112 360,100" fill="none" stroke="#d48300" stroke-width="6" opacity="0.6"/></g></svg></div>'
     };
 
     // swipe system: progress 0 = code, 1 = music
@@ -524,7 +524,7 @@
             } else if (repo.openGraphImageUrl && !repo.openGraphImageUrl.includes('opengraph.githubassets.com')) {
                 thumb = '<img src="' + repo.openGraphImageUrl + '" alt="' + repo.name + '" loading="lazy">';
             } else {
-                thumb = '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#0a0a0a"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="26" font-weight="600" opacity="0.3">' + repo.name + '</text></svg></div>';
+                thumb = '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="26" font-weight="600" opacity="0.3">' + repo.name + '</text></svg></div>';
             }
 
             // language
@@ -567,10 +567,10 @@
     (function() {
         var canvas = document.getElementById('bg-canvas');
         var ctx = canvas.getContext('2d');
-        var dpr = Math.min(window.devicePixelRatio || 1, 2);
-        var particles = [];
         var isDesktop = window.innerWidth > 600;
-        var MAX_PARTICLES = isDesktop ? 120 : 30;
+        var dpr = isDesktop ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+        var particles = [];
+        var MAX_PARTICLES = isDesktop ? 120 : 18;
         var COLOR = '#d48300';
         var scrollY = 0;
 
@@ -592,6 +592,8 @@
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
         resize();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         window.addEventListener('resize', resize, { passive: true });
 
         function rand(min, max) { return min + Math.random() * (max - min); }
@@ -684,15 +686,17 @@
         var cw = window.innerWidth, ch = window.innerHeight;
         window.addEventListener('resize', function() { cw = window.innerWidth; ch = window.innerHeight; }, { passive: true });
 
-        var isDraggingGlobal = false;
+        var skipFrame = false;
 
         function tick() {
+            // on mobile, skip every other frame during drag to free CPU for touch handling
+            if (!isDesktop && isDragging) {
+                skipFrame = !skipFrame;
+                if (skipFrame) { requestAnimationFrame(tick); return; }
+            }
             var w = cw, h = ch;
             ctx.clearRect(0, 0, w, h);
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
 
-            // slow time increment during drag for smoother interaction
             var timeInc = isDragging ? 0.00025 : 0.0005;
 
             for (var i = 0; i < particles.length; i++) {
