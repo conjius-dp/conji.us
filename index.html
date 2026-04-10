@@ -508,7 +508,17 @@
             if (physFrame) return;
             function step() {
                 if (dragging) { physFrame = null; return; }
-                vel *= friction;
+
+                // higher friction near center, lower when far
+                var centerDist = Math.abs(fx);
+                var centerZone = 60;
+                var t = Math.max(0, 1 - centerDist / centerZone);
+                var localFriction = friction - t * 0.02;
+                vel *= localFriction;
+
+                // gentle spring pull toward center
+                vel -= fx * 0.003;
+
                 fx += vel;
 
                 // elastic bounce off edges
@@ -523,8 +533,17 @@
 
                 applyTransform();
 
-                if (Math.abs(vel) < 0.3) {
+                if (Math.abs(vel) < 0.2 && centerDist < 0.5) {
                     vel = 0;
+                    fx = 0;
+                    applyTransform();
+                    physFrame = null;
+                    return;
+                }
+                if (Math.abs(vel) < 0.05 && Math.abs(fx) < 0.5) {
+                    vel = 0;
+                    fx = 0;
+                    applyTransform();
                     physFrame = null;
                     return;
                 }
