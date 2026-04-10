@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=100">
+    <link rel="stylesheet" href="style.css?v=101">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -1650,16 +1650,29 @@
             var speed = rand(0.00375, 0.03125) * speedMul;
             var initRot = rand(0, 360) * Math.PI / 180;
 
+            // per-point push offsets for ripple effect
+            var pushX = new Float32Array(nPts);
+            var pushY = new Float32Array(nPts);
+            var pushVX = new Float32Array(nPts);
+            var pushVY = new Float32Array(nPts);
+
+            var baseVX = Math.cos(angle) * speed;
+            var baseVY = Math.sin(angle) * speed;
+            var baseRS = rand(-0.01, 0.01) * Math.PI / 180;
+
             return {
                 x: scatter ? rand(-size, w + size) : 0,
                 y: scatter ? rand(-size, h + size) : 0,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
+                vx: baseVX,
+                vy: baseVY,
+                baseVX: baseVX,
+                baseVY: baseVY,
                 size: size,
                 depth: depth,
                 parallax: 0.1 + (1 - depth) * 0.6,
                 rot: initRot,
-                rotSpeed: rand(-0.01, 0.01) * Math.PI / 180,
+                rotSpeed: baseRS,
+                baseRotSpeed: baseRS,
                 cosR: Math.cos(initRot),
                 sinR: Math.sin(initRot),
                 opacity: opacity,
@@ -1670,7 +1683,9 @@
                 baseX: baseX, baseY: baseY,
                 wPhaseX: wPhaseX, wPhaseY: wPhaseY,
                 wFreqX: wFreqX, wFreqY: wFreqY,
-                wAmpX: wAmpX, wAmpY: wAmpY
+                wAmpX: wAmpX, wAmpY: wAmpY,
+                pushX: pushX, pushY: pushY,
+                pushVX: pushVX, pushVY: pushVY
             };
         }
 
@@ -1687,12 +1702,133 @@
         var cw = window.innerWidth, ch = window.innerHeight;
         window.addEventListener('resize', function() { cw = window.innerWidth; ch = window.innerHeight; }, { passive: true });
 
+        // Ripple: stone-in-puddle effect on tap/click (not drag)
+        var RIPPLE_RADIUS = 300; // max influence radius in px
+        var RIPPLE_STRENGTH = 8; // max push force
+        var PUSH_DAMPING = 0.88; // velocity decay per frame (no spring, just friction)
+
+        var tapStartX = 0, tapStartY = 0, tapMoved = false, tapActive = false;
+        // continuous drag tracking
+        var fingerDown = false, fingerX = 0, fingerY = 0;
+
+        function isBgTarget(el) {
+            while (el) {
+                if (el.classList && (el.classList.contains('project-card') || el.classList.contains('footer-brand') ||
+                    el.classList.contains('footer-links') || el.tagName === 'A' || el.tagName === 'BUTTON')) return false;
+                el = el.parentElement;
+            }
+            return true;
+        }
+
+        // one-shot impulse ripple (for tap)
+        function applyRipple(cx, cy) {
+            for (var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+                var drawY = p.y - scrollY * p.parallax;
+                var dx = p.x - cx, dy = drawY - cy;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < RIPPLE_RADIUS && dist > 0.1) {
+                    var falloff = 1 - dist / RIPPLE_RADIUS;
+                    falloff = falloff * falloff;
+                    var force = RIPPLE_STRENGTH * falloff;
+                    var nx = dx / dist, ny = dy / dist;
+                    p.vx += nx * force;
+                    p.vy += ny * force;
+                    var cross = dx * ny - dy * nx;
+                    p.rotSpeed += (cross > 0 ? 1 : -1) * force * 0.002;
+                    applyDeform(p, cx, cy, RIPPLE_RADIUS, 6);
+                }
+            }
+        }
+
+        // continuous push (called every frame while finger is down)
+        var CONT_RADIUS = 150;
+        function applyContinuousPush(cx, cy) {
+            var CONT_STRENGTH = 0.8;
+            for (var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+                var drawY = p.y - scrollY * p.parallax;
+                var dx = p.x - cx, dy = drawY - cy;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < CONT_RADIUS && dist > 0.1) {
+                    var falloff = 1 - dist / CONT_RADIUS;
+                    falloff = falloff * falloff;
+                    var force = CONT_STRENGTH * falloff;
+                    var nx = dx / dist, ny = dy / dist;
+                    p.vx += nx * force;
+                    p.vy += ny * force;
+                    var cross = dx * ny - dy * nx;
+                    p.rotSpeed += (cross > 0 ? 1 : -1) * force * 0.0005;
+                }
+                // deform per-point even if snake center is outside push radius
+                applyDeform(p, cx, cy, CONT_RADIUS, 3);
+            }
+        }
+
+        function applyDeform(p, cx, cy, radius, strength) {
+            var cosR = p.cosR, sinR = p.sinR;
+            var px = p.x, py = p.y - scrollY * p.parallax;
+            var t = p.time;
+            for (var k = 0; k < p.nPts; k++) {
+                // compute world position of this control point
+                var lx = p.baseX[k] + fastSin(t * p.wFreqX[k] + p.wPhaseX[k]) * p.wAmpX[k] + p.pushX[k];
+                var ly = p.baseY[k] + fastSin(t * p.wFreqY[k] + p.wPhaseY[k]) * p.wAmpY[k] + p.pushY[k];
+                var wx = lx * cosR - ly * sinR + px;
+                var wy = lx * sinR + ly * cosR + py;
+                var dx = wx - cx, dy = wy - cy;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < radius && dist > 0.1) {
+                    var falloff = 1 - dist / radius;
+                    falloff = falloff * falloff;
+                    var force = strength * falloff;
+                    var nx = dx / dist, ny = dy / dist;
+                    // convert force direction to local space
+                    var flx = nx * cosR + ny * sinR;
+                    var fly = -nx * sinR + ny * cosR;
+                    p.pushVX[k] += flx * force;
+                    p.pushVY[k] += fly * force;
+                }
+            }
+        }
+
+        document.addEventListener('mousedown', function(e) {
+            if (!isBgTarget(e.target)) return;
+            tapStartX = e.clientX; tapStartY = e.clientY; tapMoved = false; tapActive = true;
+            fingerDown = true; fingerX = e.clientX; fingerY = e.clientY;
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!tapActive) return;
+            fingerX = e.clientX; fingerY = e.clientY;
+            if (Math.abs(e.clientX - tapStartX) + Math.abs(e.clientY - tapStartY) > 10) tapMoved = true;
+        });
+        document.addEventListener('mouseup', function(e) {
+            if (tapActive && !tapMoved) applyRipple(e.clientX, e.clientY);
+            tapActive = false; fingerDown = false;
+        });
+        document.addEventListener('touchstart', function(e) {
+            if (!isBgTarget(e.target)) return;
+            var t = e.touches[0]; tapStartX = t.clientX; tapStartY = t.clientY; tapMoved = false; tapActive = true;
+            fingerDown = true; fingerX = t.clientX; fingerY = t.clientY;
+        }, { passive: true });
+        document.addEventListener('touchmove', function(e) {
+            if (!tapActive) return;
+            var t = e.touches[0]; fingerX = t.clientX; fingerY = t.clientY;
+            if (Math.abs(t.clientX - tapStartX) + Math.abs(t.clientY - tapStartY) > 10) tapMoved = true;
+        }, { passive: true });
+        document.addEventListener('touchend', function(e) {
+            if (tapActive && !tapMoved) { var t = e.changedTouches[0]; applyRipple(t.clientX, t.clientY); }
+            tapActive = false; fingerDown = false;
+        });
+
         // update rotation cache every N frames (rotation is barely visible per-frame)
         var rotUpdateCounter = 0;
 
         function tick() {
             var w = cw, h = ch;
             ctx.clearRect(0, 0, w, h);
+
+            // continuous finger push — like dragging through a puddle
+            if (fingerDown && tapMoved) applyContinuousPush(fingerX, fingerY);
 
             var timeInc = isDragging ? 0.00025 : 0.0005;
             rotUpdateCounter++;
@@ -1702,6 +1838,10 @@
 
             for (var i = 0; i < particles.length; i++) {
                 var p = particles[i];
+                // friction on push velocity — decay back to base drift speed
+                p.vx += (p.baseVX - p.vx) * 0.06;
+                p.vy += (p.baseVY - p.vy) * 0.06;
+                p.rotSpeed += (p.baseRotSpeed - p.rotSpeed) * 0.06;
                 p.x += p.vx;
                 p.y += p.vy;
                 p.time += timeInc;
@@ -1736,20 +1876,31 @@
                 var wpx = p.wPhaseX, wpy = p.wPhaseY;
                 var wfx = p.wFreqX, wfy = p.wFreqY;
                 var wax = p.wAmpX, way = p.wAmpY;
+                var ppx = p.pushX, ppy = p.pushY;
+                var pvx = p.pushVX, pvy = p.pushVY;
                 var cosR = p.cosR, sinR = p.sinR;
                 var px = p.x, py = drawY;
+
+                // update push physics for all control points
+                for (var k = 0; k < p.nPts; k++) {
+                    pvx[k] *= PUSH_DAMPING;
+                    pvy[k] *= PUSH_DAMPING;
+                    ppx[k] += pvx[k];
+                    ppy[k] += pvy[k];
+                }
 
                 ctx.strokeStyle = p.color;
                 ctx.globalAlpha = p.opacity;
                 ctx.beginPath();
-                ctx.moveTo(bx[0] * cosR - by[0] * sinR + px, bx[0] * sinR + by[0] * cosR + py);
+                var mx = bx[0] + ppx[0], my = by[0] + ppy[0];
+                ctx.moveTo(mx * cosR - my * sinR + px, mx * sinR + my * cosR + py);
                 for (var k = 1; k < p.nPts; k += 3) {
-                    var x1 = bx[k]   + fastSin(t * wfx[k]   + wpx[k])   * wax[k];
-                    var y1 = by[k]   + fastSin(t * wfy[k]   + wpy[k])   * way[k];
-                    var x2 = bx[k+1] + fastSin(t * wfx[k+1] + wpx[k+1]) * wax[k+1];
-                    var y2 = by[k+1] + fastSin(t * wfy[k+1] + wpy[k+1]) * way[k+1];
-                    var x3 = bx[k+2] + fastSin(t * wfx[k+2] + wpx[k+2]) * wax[k+2];
-                    var y3 = by[k+2] + fastSin(t * wfy[k+2] + wpy[k+2]) * way[k+2];
+                    var x1 = bx[k]   + fastSin(t * wfx[k]   + wpx[k])   * wax[k]   + ppx[k];
+                    var y1 = by[k]   + fastSin(t * wfy[k]   + wpy[k])   * way[k]   + ppy[k];
+                    var x2 = bx[k+1] + fastSin(t * wfx[k+1] + wpx[k+1]) * wax[k+1] + ppx[k+1];
+                    var y2 = by[k+1] + fastSin(t * wfy[k+1] + wpy[k+1]) * way[k+1] + ppy[k+1];
+                    var x3 = bx[k+2] + fastSin(t * wfx[k+2] + wpx[k+2]) * wax[k+2] + ppx[k+2];
+                    var y3 = by[k+2] + fastSin(t * wfy[k+2] + wpy[k+2]) * way[k+2] + ppy[k+2];
                     ctx.bezierCurveTo(
                         x1 * cosR - y1 * sinR + px, x1 * sinR + y1 * cosR + py,
                         x2 * cosR - y2 * sinR + px, x2 * sinR + y2 * cosR + py,
