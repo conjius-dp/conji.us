@@ -1114,28 +1114,32 @@
         }
 
         function wallCollide(b) {
+            // straight walls
+            if (b.x - b.r < 0) { b.x = b.r; b.vx = Math.abs(b.vx) * bounce; }
+            if (b.x + b.r > W) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * bounce; }
+            if (b.y - b.r < 0) { b.y = b.r; b.vy = Math.abs(b.vy) * bounce; }
+            if (b.y + b.r > H) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * bounce; }
+            // corner arcs — only when ball center is in the corner square
             var corners = [
                 { cx: CR, cy: CR },
                 { cx: W - CR, cy: CR },
                 { cx: CR, cy: H - CR },
                 { cx: W - CR, cy: H - CR }
             ];
-            // corner collisions first — ball must stay inside the arc
             for (var c = 0; c < 4; c++) {
-                var corner = corners[c];
-                // check if ball is in the corner quadrant
-                var inX = (c % 2 === 0) ? b.x < CR + b.r : b.x > W - CR - b.r;
-                var inY = (c < 2) ? b.y < CR + b.r : b.y > H - CR - b.r;
+                var co = corners[c];
+                var inX = (c % 2 === 0) ? b.x < co.cx : b.x > co.cx;
+                var inY = (c < 2) ? b.y < co.cy : b.y > co.cy;
                 if (!inX || !inY) continue;
-                var dx = b.x - corner.cx;
-                var dy = b.y - corner.cy;
+                var dx = b.x - co.cx;
+                var dy = b.y - co.cy;
                 var dist = Math.sqrt(dx * dx + dy * dy);
-                var maxDist = CR - b.r;
-                if (maxDist <= 0) maxDist = 0.5;
-                if (dist > maxDist) {
+                var limit = CR - b.r;
+                if (limit < 1) limit = 1;
+                if (dist > limit) {
                     var nx = dx / dist, ny = dy / dist;
-                    b.x = corner.cx + nx * maxDist;
-                    b.y = corner.cy + ny * maxDist;
+                    b.x = co.cx + nx * limit;
+                    b.y = co.cy + ny * limit;
                     var dot = b.vx * nx + b.vy * ny;
                     if (dot > 0) {
                         b.vx = (b.vx - 2 * dot * nx) * bounce;
@@ -1143,11 +1147,6 @@
                     }
                 }
             }
-            // straight walls (only for the flat sections, not corners)
-            if (b.x - b.r < 0) { b.x = b.r; b.vx = Math.abs(b.vx) * bounce; }
-            if (b.x + b.r > W) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * bounce; }
-            if (b.y - b.r < 0) { b.y = b.r; b.vy = Math.abs(b.vy) * bounce; }
-            if (b.y + b.r > H) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * bounce; }
         }
 
         function hardClamp(b) {
