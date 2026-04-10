@@ -1006,7 +1006,8 @@
             var phase = 0;
             var animFrame = null;
             var fading = false;
-            var curScale = 1, curOpacity = 1;
+            var curScale = 1, curOpacity = 0.7;
+            logo.style.opacity = '0.7';
             var speed = Math.PI / 480;
 
             function applyStyle() {
@@ -1017,12 +1018,12 @@
             function tick() {
                 if (fading) {
                     curScale += (1 - curScale) * 0.08;
-                    curOpacity += (1 - curOpacity) * 0.08;
+                    curOpacity += (0.7 - curOpacity) * 0.08;
                     applyStyle();
-                    if (Math.abs(curScale - 1) < 0.001 && Math.abs(curOpacity - 1) < 0.001) {
-                        curScale = 1; curOpacity = 1;
+                    if (Math.abs(curScale - 1) < 0.001 && Math.abs(curOpacity - 0.7) < 0.001) {
+                        curScale = 1; curOpacity = 0.7;
                         logo.style.transform = '';
-                        logo.style.opacity = '';
+                        logo.style.opacity = '0.7';
                         fading = false;
                         phase = 0;
                         animFrame = null;
@@ -1035,7 +1036,7 @@
                 phase += speed;
                 var t = (1 - Math.cos(phase)) / 2; // starts at 0, goes to 1 and back
                 curScale = 1 + t * 0.15;
-                curOpacity = 1 - t * 0.3;
+                curOpacity = 0.7 + t * 0.3;
                 applyStyle();
                 animFrame = requestAnimationFrame(tick);
             }
