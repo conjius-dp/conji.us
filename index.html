@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=92">
+    <link rel="stylesheet" href="style.css?v=93">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -594,7 +594,21 @@
         resize();
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        window.addEventListener('resize', resize, { passive: true });
+        window.addEventListener('resize', function() {
+            resize();
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }, { passive: true });
+
+        // fast sin lookup table (4096 entries, covers 0..2PI)
+        var SIN_N = 4096;
+        var SIN_TABLE = new Float32Array(SIN_N);
+        var SIN_SCALE = SIN_N / (Math.PI * 2);
+        for (var si = 0; si < SIN_N; si++) SIN_TABLE[si] = Math.sin(si / SIN_SCALE);
+        function fastSin(x) {
+            var i = ((x % (Math.PI * 2)) + Math.PI * 2) * SIN_SCALE | 0;
+            return SIN_TABLE[i & (SIN_N - 1)];
+        }
 
         function rand(min, max) { return min + Math.random() * (max - min); }
 
@@ -652,6 +666,7 @@
             var color = 'rgb(' + r + ',' + g + ',' + b + ')';
             var angle = rand(0, Math.PI * 2);
             var speed = rand(0.00375, 0.03125) * speedMul;
+            var initRot = rand(0, 360) * Math.PI / 180;
 
             return {
                 x: scatter ? rand(-size, w + size) : 0,
@@ -661,8 +676,10 @@
                 size: size,
                 depth: depth,
                 parallax: 0.1 + (1 - depth) * 0.6,
-                rot: rand(0, 360) * Math.PI / 180,
+                rot: initRot,
                 rotSpeed: rand(-0.01, 0.01) * Math.PI / 180,
+                cosR: Math.cos(initRot),
+                sinR: Math.sin(initRot),
                 opacity: opacity,
                 color: color,
                 strokeWidth: 3.0,
@@ -686,25 +703,31 @@
         var cw = window.innerWidth, ch = window.innerHeight;
         window.addEventListener('resize', function() { cw = window.innerWidth; ch = window.innerHeight; }, { passive: true });
 
-        var skipFrame = false;
+        // update rotation cache every N frames (rotation is barely visible per-frame)
+        var rotUpdateCounter = 0;
 
         function tick() {
-            // on mobile, skip every other frame during drag to free CPU for touch handling
-            if (!isDesktop && isDragging) {
-                skipFrame = !skipFrame;
-                if (skipFrame) { requestAnimationFrame(tick); return; }
-            }
             var w = cw, h = ch;
             ctx.clearRect(0, 0, w, h);
 
             var timeInc = isDragging ? 0.00025 : 0.0005;
+            rotUpdateCounter++;
+            var updateRot = (rotUpdateCounter & 3) === 0; // every 4th frame
+
+            ctx.lineWidth = 3.0;
 
             for (var i = 0; i < particles.length; i++) {
                 var p = particles[i];
                 p.x += p.vx;
                 p.y += p.vy;
-                p.rot += p.rotSpeed;
                 p.time += timeInc;
+
+                // update rotation cache periodically
+                if (updateRot) {
+                    p.rot += p.rotSpeed * 4;
+                    p.cosR = Math.cos(p.rot);
+                    p.sinR = Math.sin(p.rot);
+                }
 
                 var drawY = p.y - scrollY * p.parallax;
 
@@ -729,21 +752,20 @@
                 var wpx = p.wPhaseX, wpy = p.wPhaseY;
                 var wfx = p.wFreqX, wfy = p.wFreqY;
                 var wax = p.wAmpX, way = p.wAmpY;
-                var cosR = Math.cos(p.rot), sinR = Math.sin(p.rot);
+                var cosR = p.cosR, sinR = p.sinR;
                 var px = p.x, py = drawY;
 
-                ctx.lineWidth = p.strokeWidth;
                 ctx.strokeStyle = p.color;
                 ctx.globalAlpha = p.opacity;
                 ctx.beginPath();
                 ctx.moveTo(bx[0] * cosR - by[0] * sinR + px, bx[0] * sinR + by[0] * cosR + py);
                 for (var k = 1; k < p.nPts; k += 3) {
-                    var x1 = bx[k]   + Math.sin(t * wfx[k]   + wpx[k])   * wax[k];
-                    var y1 = by[k]   + Math.sin(t * wfy[k]   + wpy[k])   * way[k];
-                    var x2 = bx[k+1] + Math.sin(t * wfx[k+1] + wpx[k+1]) * wax[k+1];
-                    var y2 = by[k+1] + Math.sin(t * wfy[k+1] + wpy[k+1]) * way[k+1];
-                    var x3 = bx[k+2] + Math.sin(t * wfx[k+2] + wpx[k+2]) * wax[k+2];
-                    var y3 = by[k+2] + Math.sin(t * wfy[k+2] + wpy[k+2]) * way[k+2];
+                    var x1 = bx[k]   + fastSin(t * wfx[k]   + wpx[k])   * wax[k];
+                    var y1 = by[k]   + fastSin(t * wfy[k]   + wpy[k])   * way[k];
+                    var x2 = bx[k+1] + fastSin(t * wfx[k+1] + wpx[k+1]) * wax[k+1];
+                    var y2 = by[k+1] + fastSin(t * wfy[k+1] + wpy[k+1]) * way[k+1];
+                    var x3 = bx[k+2] + fastSin(t * wfx[k+2] + wpx[k+2]) * wax[k+2];
+                    var y3 = by[k+2] + fastSin(t * wfy[k+2] + wpy[k+2]) * way[k+2];
                     ctx.bezierCurveTo(
                         x1 * cosR - y1 * sinR + px, x1 * sinR + y1 * cosR + py,
                         x2 * cosR - y2 * sinR + px, x2 * sinR + y2 * cosR + py,
