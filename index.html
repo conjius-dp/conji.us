@@ -931,25 +931,52 @@
 
             var active = false;
             var phase = 0;
+            var curAmpMul = 1;
+            var curNoisePhase = 0;
             var animFrame = null;
+            var fading = false;
+            var staticClean = buildCleanPath(1);
+            var staticNoisy = buildNoisyPath(0);
 
             function tick() {
+                if (fading) {
+                    curAmpMul += (1 - curAmpMul) * 0.06;
+                    curNoisePhase *= 0.94;
+                    cleanPath.setAttribute('d', buildCleanPath(curAmpMul));
+                    noisyPath.setAttribute('d', buildNoisyPath(curNoisePhase));
+                    if (Math.abs(curAmpMul - 1) < 0.005 && Math.abs(curNoisePhase) < 0.01) {
+                        cleanPath.setAttribute('d', staticClean);
+                        noisyPath.setAttribute('d', staticNoisy);
+                        fading = false;
+                        phase = 0;
+                        curAmpMul = 1;
+                        curNoisePhase = 0;
+                        animFrame = null;
+                        return;
+                    }
+                    animFrame = requestAnimationFrame(tick);
+                    return;
+                }
                 if (!active) { animFrame = null; return; }
                 phase += 0.025;
-                var ampMul = Math.cos(phase);
-                cleanPath.setAttribute('d', buildCleanPath(ampMul));
-                noisyPath.setAttribute('d', buildNoisyPath(phase));
+                curAmpMul = Math.cos(phase);
+                curNoisePhase = phase;
+                cleanPath.setAttribute('d', buildCleanPath(curAmpMul));
+                noisyPath.setAttribute('d', buildNoisyPath(curNoisePhase));
                 animFrame = requestAnimationFrame(tick);
             }
 
             function activate() {
                 if (active) return;
                 active = true;
+                fading = false;
                 if (!animFrame) animFrame = requestAnimationFrame(tick);
             }
 
             function deactivate() {
                 active = false;
+                fading = true;
+                if (!animFrame) animFrame = requestAnimationFrame(tick);
             }
 
             card.addEventListener('mouseenter', activate);
@@ -978,30 +1005,52 @@
             var active = false;
             var phase = 0;
             var animFrame = null;
-            // 1s per direction at 60fps = ~0.105 rad/frame for a half cycle
-            var speed = Math.PI / 240;
+            var fading = false;
+            var curScale = 1, curOpacity = 1;
+            var speed = Math.PI / 480;
+
+            function applyStyle() {
+                logo.style.transform = 'scale(' + curScale + ')';
+                logo.style.opacity = curOpacity;
+            }
 
             function tick() {
+                if (fading) {
+                    curScale += (1 - curScale) * 0.08;
+                    curOpacity += (1 - curOpacity) * 0.08;
+                    applyStyle();
+                    if (Math.abs(curScale - 1) < 0.001 && Math.abs(curOpacity - 1) < 0.001) {
+                        curScale = 1; curOpacity = 1;
+                        logo.style.transform = '';
+                        logo.style.opacity = '';
+                        fading = false;
+                        phase = 0;
+                        animFrame = null;
+                        return;
+                    }
+                    animFrame = requestAnimationFrame(tick);
+                    return;
+                }
                 if (!active) { animFrame = null; return; }
                 phase += speed;
-                var t = (Math.cos(phase) + 1) / 2; // 0 to 1
-                var scale = 1 + t * 0.15; // 1.0 to 1.15
-                var opacity = 0.7 + t * 0.3; // 0.7 to 1.0
-                logo.style.transform = 'scale(' + scale + ')';
-                logo.style.opacity = opacity;
+                var t = (1 - Math.cos(phase)) / 2; // starts at 0, goes to 1 and back
+                curScale = 1 + t * 0.15;
+                curOpacity = 1 - t * 0.3;
+                applyStyle();
                 animFrame = requestAnimationFrame(tick);
             }
 
             function activate() {
                 if (active) return;
                 active = true;
+                fading = false;
                 if (!animFrame) animFrame = requestAnimationFrame(tick);
             }
 
             function deactivate() {
                 active = false;
-                logo.style.transform = '';
-                logo.style.opacity = '';
+                fading = true;
+                if (!animFrame) animFrame = requestAnimationFrame(tick);
             }
 
             card.addEventListener('mouseenter', activate);
