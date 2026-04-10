@@ -897,20 +897,15 @@
             [271, 0.06], [320, 0.05]
         ];
 
-        function buildPaths(phase) {
-            var noisy = 'M', clean = 'M';
+        function buildCleanPath(ampMul) {
+            var clean = 'M';
             for (var i = 0; i <= pts; i++) {
                 var t = i / pts;
                 var x = (x0 + t * w).toFixed(1);
-                var s = Math.sin(t * Math.PI * 4 + phase) * amp;
+                var s = Math.sin(t * Math.PI * 4) * amp * ampMul;
                 clean += (i ? ' L' : '') + x + ',' + (cy - s).toFixed(1);
-                var n = s;
-                for (var h = 0; h < harmonics.length; h++) {
-                    n += Math.sin(t * Math.PI * harmonics[h][0] + phase * harmonics[h][0] / 2) * amp * harmonics[h][1];
-                }
-                noisy += (i ? ' L' : '') + x + ',' + (cy - n).toFixed(1);
             }
-            return { clean: clean, noisy: noisy };
+            return clean;
         }
 
         function setupDenoiserAnim() {
@@ -926,10 +921,9 @@
 
             function tick() {
                 if (!active) { animFrame = null; return; }
-                phase += 0.04;
-                var paths = buildPaths(phase);
-                cleanPath.setAttribute('d', paths.clean);
-                noisyPath.setAttribute('d', paths.noisy);
+                phase += 0.025;
+                var ampMul = Math.cos(phase);
+                cleanPath.setAttribute('d', buildCleanPath(ampMul));
                 animFrame = requestAnimationFrame(tick);
             }
 
