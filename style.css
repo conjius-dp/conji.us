@@ -657,9 +657,9 @@ footer p {
 
 
     .card-links a {
-        width: 36px;
-        height: 36px;
-        padding: 7px;
+        width: 54px;
+        height: 54px;
+        padding: 11px;
     }
 
     .projects .project-info h3,
@@ -677,9 +677,16 @@ footer p {
 }
 
 .music .project-card:active,
-.projects .project-card:active:not(:has(h3:active, p:active)) {
+.projects .project-card:active {
     transform: scale(0.97);
     border-color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .projects .project-card:active:has(h3:active, p:active) {
+        transform: none;
+        border-color: var(--border);
+    }
 }
 
 .section-toggle {
