@@ -657,7 +657,7 @@ footer p {
 
 
     .card-links {
-        gap: 0.15rem;
+        gap: 0;
     }
 
     .card-links a {
