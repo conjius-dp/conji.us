@@ -406,6 +406,7 @@
             lastY = e.clientY;
             vx = 0; vy = 0;
             if (springFrame) { cancelAnimationFrame(springFrame); springFrame = null; }
+            avatar.style.transform = 'translate(' + ax + 'px,' + ay + 'px) scale(0.9)';
             e.preventDefault();
         });
 
@@ -422,7 +423,7 @@
                 var s = MAX_DIST / dist;
                 ax *= s; ay *= s;
             }
-            avatar.style.transform = 'translate(' + ax + 'px,' + ay + 'px)';
+            avatar.style.transform = 'translate(' + ax + 'px,' + ay + 'px) scale(0.9)';
         });
 
         function springBack() {

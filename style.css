@@ -708,15 +708,10 @@ footer {
 }
 
 .avatar {
-    transition: transform 0.1s;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
-}
-
-.avatar:active {
-    transform: scale(0.9);
 }
 
 .link-pill {
