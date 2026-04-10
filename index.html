@@ -569,15 +569,19 @@
             lastX = x;
             startX = x;
             vel = 0;
+            prevVel = 0;
             if (physFrame) { cancelAnimationFrame(physFrame); physFrame = null; }
-            applyTransform(0.93);
+            applyTransform(0.93, 0);
         }
 
         function moveDrag(x) {
             if (!dragging) return;
             var dx = x - lastX;
             if (Math.abs(x - startX) > 5) moved = true;
-            vel = Math.max(-maxVel, Math.min(maxVel, dx));
+            var newVel = Math.max(-maxVel, Math.min(maxVel, dx));
+            var accel = newVel - prevVel;
+            prevVel = newVel;
+            vel = newVel;
             lastX = x;
             fx += dx;
 
@@ -586,7 +590,7 @@
             if (fx < bounds.min) fx = bounds.min + (fx - bounds.min) * 0.3;
             if (fx > bounds.max) fx = bounds.max + (fx - bounds.max) * 0.3;
 
-            applyTransform(0.93);
+            applyTransform(0.93, accel);
         }
 
         function release() {
