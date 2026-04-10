@@ -477,7 +477,7 @@
     // footer brand horizontal slide physics
     (function() {
         var brand = document.querySelector('.footer-brand');
-        var fx = 0, vel = 0;
+        var fx = 0, vel = 0, prevVel = 0;
         var dragging = false, lastX = 0, startX = 0, moved = false;
         var friction = 0.995;
         var bounce = 1.0;
@@ -500,8 +500,16 @@
             return { min: minX, max: maxX };
         }
 
-        function applyTransform(scale) {
-            brand.style.transform = 'translateX(' + fx + 'px)' + (scale ? ' scale(' + scale + ')' : '');
+        function applyTransform(scale, accel) {
+            var sx = 1, sy = 1;
+            if (scale) { sx = scale; sy = scale; }
+            if (accel !== undefined) {
+                // stretch/squash based on acceleration, clamped subtly
+                var stretch = 1 + Math.max(-0.08, Math.min(0.08, accel * 0.006));
+                sx *= stretch;
+                sy *= (1 / stretch);
+            }
+            brand.style.transform = 'translateX(' + fx + 'px) scale(' + sx + ',' + sy + ')';
         }
 
         function startPhysics() {
@@ -520,6 +528,8 @@
                 vel -= fx * 0.012 * t;
 
                 fx += vel;
+                var accel = vel - prevVel;
+                prevVel = vel;
 
                 // elastic bounce off edges
                 var bounds = getMinMax();
@@ -531,7 +541,7 @@
                     vel = -Math.abs(vel) * bounce;
                 }
 
-                applyTransform();
+                applyTransform(null, accel);
 
                 if (Math.abs(vel) < 0.2 && centerDist < 0.5) {
                     vel = 0;
@@ -582,6 +592,7 @@
         function release() {
             if (!dragging) return;
             dragging = false;
+            prevVel = vel;
 
             // snap back from overscroll
             var bounds = getMinMax();
