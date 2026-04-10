@@ -234,8 +234,15 @@
                     requestAnimationFrame(scrollCoast);
                 }
             }
-            // snap to nearest section
-            animateTo(progress >= 0.5 ? 1 : 0);
+            // snap based on swipe direction — small swipe is enough
+            var target;
+            var dragDelta = progress - startProg;
+            if (Math.abs(dragDelta) > 0.05) {
+                target = dragDelta > 0 ? 1 : 0;
+            } else {
+                target = progress >= 0.5 ? 1 : 0;
+            }
+            animateTo(target);
         }
 
         function startDrag(x, y, target) {
