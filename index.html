@@ -897,6 +897,8 @@
         for (var i = 0; i < MAX_PARTICLES; i++) {
             particles.push(createParticle(true));
         }
+        // sort deepest first so shallow snakes draw on top
+        particles.sort(function(a, b) { return b.depth - a.depth; });
 
         window.addEventListener('scroll', function() { scrollY = window.scrollY; }, { passive: true });
 
