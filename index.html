@@ -392,6 +392,10 @@
         var springFrame = null;
 
         avatar.style.willChange = 'transform';
+        avatar.style.touchAction = 'none';
+
+        // block native iOS long-press and gesture handling
+        avatar.addEventListener('touchstart', function(e) { e.preventDefault(); }, { passive: false });
 
         avatar.addEventListener('pointerdown', function(e) {
             if (e.button && e.button !== 0) return;
