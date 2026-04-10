@@ -915,7 +915,7 @@
                 var x = (x0 + t * w).toFixed(1);
                 var n = Math.sin(t * Math.PI * 4) * amp;
                 for (var h = 0; h < harmonics.length; h++) {
-                    n += Math.sin(t * Math.PI * harmonics[h][0] + phase * 6.0 * (h % 3 === 0 ? 1 : h % 3 === 1 ? -0.7 : 0.5)) * amp * harmonics[h][1];
+                    n += Math.sin(t * Math.PI * harmonics[h][0] + phase * 12.0 * (h % 3 === 0 ? 1 : h % 3 === 1 ? -0.7 : 0.5)) * amp * harmonics[h][1];
                 }
                 noisy += (i ? ' L' : '') + x + ',' + (cy - n).toFixed(1);
             }
