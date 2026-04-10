@@ -940,8 +940,8 @@
 
             function tick() {
                 if (fading) {
-                    curAmpMul += (1 - curAmpMul) * 0.06;
-                    curNoisePhase *= 0.94;
+                    curAmpMul += (1 - curAmpMul) * 0.12;
+                    curNoisePhase *= 0.88;
                     cleanPath.setAttribute('d', buildCleanPath(curAmpMul));
                     noisyPath.setAttribute('d', buildNoisyPath(curNoisePhase));
                     if (Math.abs(curAmpMul - 1) < 0.005 && Math.abs(curNoisePhase) < 0.01) {
