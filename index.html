@@ -301,13 +301,15 @@
             // lock axes until total offset exceeds 30px threshold
             if (!hLocked && Math.abs(x - startTouchX) > 30) hLocked = true;
             if (!vLocked && Math.abs(y - startTouchY) > 30) vLocked = true;
-            var delta = hLocked ? sign * dx / sensitivity : 0;
+            // slight acceleration on mobile (1.3x)
+            var accel = window.innerWidth <= 600 ? 1.3 : 1;
+            var delta = hLocked ? sign * dx * accel / sensitivity : 0;
             // record move for velocity calculation on release
             var now = performance.now();
             moveHistory.push({ x: x, y: y, t: now });
             if (moveHistory.length > 20) moveHistory.shift();
             setProgress(progress + delta);
-            if (sign === -1 && vLocked && dy !== 0) window.scrollBy(0, -dy);
+            if (sign === -1 && vLocked && dy !== 0) window.scrollBy(0, -dy * accel);
         }
 
         // touch events (mobile — reliable on iOS)
