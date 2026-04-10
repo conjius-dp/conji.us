@@ -1147,6 +1147,18 @@
             }
         }
 
+        function hardClamp(b) {
+            var maxV = 8;
+            if (b.vx > maxV) b.vx = maxV;
+            if (b.vx < -maxV) b.vx = -maxV;
+            if (b.vy > maxV) b.vy = maxV;
+            if (b.vy < -maxV) b.vy = -maxV;
+            if (b.x - b.r < 0) b.x = b.r;
+            if (b.x + b.r > W) b.x = W - b.r;
+            if (b.y - b.r < 0) b.y = b.r;
+            if (b.y + b.r > H) b.y = H - b.r;
+        }
+
         function circleCollide(a, b) {
             var dx = b.x - a.x, dy = b.y - a.y;
             var dist = Math.sqrt(dx * dx + dy * dy);
@@ -1259,6 +1271,7 @@
                     }
                 }
                 for (var i = 0; i < balls.length; i++) {
+                    hardClamp(balls[i]);
                     balls[i].el.setAttribute('cx', balls[i].x.toFixed(1));
                     balls[i].el.setAttribute('cy', balls[i].y.toFixed(1));
                 }
