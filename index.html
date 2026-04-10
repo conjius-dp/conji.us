@@ -571,7 +571,7 @@
             vel = 0;
             prevVel = 0;
             if (physFrame) { cancelAnimationFrame(physFrame); physFrame = null; }
-            applyTransform(0.93, 0);
+            applyTransform(null, 0);
         }
 
         function moveDrag(x) {
@@ -590,7 +590,7 @@
             if (fx < bounds.min) fx = bounds.min + (fx - bounds.min) * 0.3;
             if (fx > bounds.max) fx = bounds.max + (fx - bounds.max) * 0.3;
 
-            applyTransform(0.93, accel);
+            applyTransform(null, accel);
         }
 
         function release() {
