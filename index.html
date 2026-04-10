@@ -505,13 +505,13 @@
         var stretchFrame = null;
 
         function renderStretch() {
-            curStretch += (targetStretch - curStretch) * 0.15;
+            curStretch += (targetStretch - curStretch) * 0.06;
             if (Math.abs(curStretch - 1) < 0.001 && Math.abs(targetStretch - 1) < 0.001) curStretch = 1;
             brand.style.transform = 'translateX(' + fx + 'px) scale(' + curStretch + ',' + (1 / curStretch) + ')';
         }
 
         function setStretch(accel) {
-            targetStretch = 1 + Math.max(-0.12, Math.min(0.12, accel * 0.04));
+            targetStretch = 1 + Math.max(-0.25, Math.min(0.25, accel * 0.12));
             if (!stretchFrame) startStretchLoop();
         }
 
