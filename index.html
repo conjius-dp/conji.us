@@ -510,8 +510,8 @@
             brand.style.transform = 'translateX(' + fx + 'px) scaleX(' + curStretch + ')';
         }
 
-        function setStretch(accel) {
-            targetStretch = 1 + Math.max(-0.5, Math.min(0.5, accel * 0.5));
+        function setStretch(speedDelta) {
+            targetStretch = 1 + Math.max(-0.5, Math.min(0.5, speedDelta * 0.5));
             if (!stretchFrame) startStretchLoop();
         }
 
@@ -548,7 +548,7 @@
                 vel -= fx * 0.012 * t;
 
                 fx += vel;
-                var accel = vel - prevVel;
+                var speedDelta = Math.abs(vel) - Math.abs(prevVel);
                 prevVel = vel;
 
                 // elastic bounce off edges
@@ -561,7 +561,7 @@
                     vel = -Math.abs(vel) * bounce;
                 }
 
-                setStretch(accel);
+                setStretch(speedDelta);
 
                 if (Math.abs(vel) < 0.2 && centerDist < 0.5) {
                     vel = 0;
@@ -601,7 +601,7 @@
             var dx = x - lastX;
             if (Math.abs(x - startX) > 5) moved = true;
             var newVel = Math.max(-maxVel, Math.min(maxVel, dx));
-            var accel = newVel - prevVel;
+            var speedDelta = Math.abs(newVel) - Math.abs(prevVel);
             prevVel = newVel;
             vel = newVel;
             lastX = x;
@@ -612,7 +612,7 @@
             if (fx < bounds.min) fx = bounds.min + (fx - bounds.min) * 0.3;
             if (fx > bounds.max) fx = bounds.max + (fx - bounds.max) * 0.3;
 
-            setStretch(accel);
+            setStretch(speedDelta);
         }
 
         function release() {
