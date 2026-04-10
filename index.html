@@ -897,66 +897,78 @@
             [271, 0.06], [320, 0.05]
         ];
 
-        function buildCleanPath(ampMul) {
-            var clean = 'M';
-            for (var i = 0; i <= pts; i++) {
-                var t = i / pts;
-                var x = (x0 + t * w).toFixed(1);
-                var s = Math.sin(t * Math.PI * 4) * amp * ampMul;
-                clean += (i ? ' L' : '') + x + ',' + (cy - s).toFixed(1);
+        // precompute static Y values and X positions
+        var xs = new Float32Array(pts + 1);
+        var staticCleanY = new Float32Array(pts + 1);
+        var staticNoisyY = new Float32Array(pts + 1);
+        for (var i = 0; i <= pts; i++) {
+            var t = i / pts;
+            xs[i] = x0 + t * w;
+            var s = Math.sin(t * Math.PI * 4) * amp;
+            staticCleanY[i] = cy - s;
+            var n = s;
+            for (var h = 0; h < harmonics.length; h++) {
+                n += Math.sin(t * Math.PI * harmonics[h][0]) * amp * harmonics[h][1];
             }
-            return clean;
+            staticNoisyY[i] = cy - n;
         }
 
-        function buildNoisyPath(phase) {
-            var noisy = 'M';
-            for (var i = 0; i <= pts; i++) {
-                var t = i / pts;
-                var x = (x0 + t * w).toFixed(1);
-                var n = Math.sin(t * Math.PI * 4) * amp;
-                for (var h = 0; h < harmonics.length; h++) {
-                    n += Math.sin(t * Math.PI * harmonics[h][0] + phase * 12.0 * (h % 3 === 0 ? 1 : h % 3 === 1 ? -0.7 : 0.5)) * amp * harmonics[h][1];
-                }
-                noisy += (i ? ' L' : '') + x + ',' + (cy - n).toFixed(1);
+        function getCleanY(i, ampMul) {
+            var t = i / pts;
+            return cy - Math.sin(t * Math.PI * 4) * amp * ampMul;
+        }
+
+        function getNoisyY(i, phase) {
+            var t = i / pts;
+            var n = Math.sin(t * Math.PI * 4) * amp;
+            for (var h = 0; h < harmonics.length; h++) {
+                n += Math.sin(t * Math.PI * harmonics[h][0] + phase * 12.0 * (h % 3 === 0 ? 1 : h % 3 === 1 ? -0.7 : 0.5)) * amp * harmonics[h][1];
             }
-            return noisy;
+            return cy - n;
+        }
+
+        function buildPath(ys) {
+            var d = 'M';
+            for (var i = 0; i <= pts; i++) {
+                d += (i ? ' L' : '') + xs[i].toFixed(1) + ',' + ys[i].toFixed(1);
+            }
+            return d;
         }
 
         function setupDenoiserAnim() {
-            var cleanPath = document.querySelector('.denoiser-clean');
-            var noisyPath = document.querySelector('.denoiser-noisy');
-            if (!cleanPath || !noisyPath) return;
-            var card = cleanPath.closest('.project-card');
+            var cleanEl = document.querySelector('.denoiser-clean');
+            var noisyEl = document.querySelector('.denoiser-noisy');
+            if (!cleanEl || !noisyEl) return;
+            var card = cleanEl.closest('.project-card');
             if (!card) return;
 
             var active = false;
             var phase = 0;
-            var curAmpMul = 1;
-            var curNoisePhase = 0;
             var animFrame = null;
             var fading = false;
-            var staticClean = buildCleanPath(1);
-            var staticNoisy = buildNoisyPath(0);
-
-            var fadeBlend = 0;
+            var curCleanY = new Float32Array(staticCleanY);
+            var curNoisyY = new Float32Array(staticNoisyY);
 
             function tick() {
                 if (fading) {
-                    fadeBlend = Math.min(1, fadeBlend + 0.04);
-                    // lerp ampMul toward 1
-                    curAmpMul += (1 - curAmpMul) * 0.12;
-                    cleanPath.setAttribute('d', buildCleanPath(curAmpMul));
-                    // lerp noisy phase slowly so shape morphs smoothly to static
-                    curNoisePhase += (0 - curNoisePhase) * 0.04;
-                    noisyPath.setAttribute('d', buildNoisyPath(curNoisePhase));
-                    if (Math.abs(curAmpMul - 1) < 0.005 && fadeBlend >= 1) {
-                        cleanPath.setAttribute('d', staticClean);
-                        noisyPath.setAttribute('d', staticNoisy);
+                    var done = true;
+                    for (var i = 0; i <= pts; i++) {
+                        curCleanY[i] += (staticCleanY[i] - curCleanY[i]) * 0.12;
+                        curNoisyY[i] += (staticNoisyY[i] - curNoisyY[i]) * 0.12;
+                        if (Math.abs(curCleanY[i] - staticCleanY[i]) > 0.05 ||
+                            Math.abs(curNoisyY[i] - staticNoisyY[i]) > 0.05) done = false;
+                    }
+                    cleanEl.setAttribute('d', buildPath(curCleanY));
+                    noisyEl.setAttribute('d', buildPath(curNoisyY));
+                    if (done) {
+                        for (var j = 0; j <= pts; j++) {
+                            curCleanY[j] = staticCleanY[j];
+                            curNoisyY[j] = staticNoisyY[j];
+                        }
+                        cleanEl.setAttribute('d', buildPath(staticCleanY));
+                        noisyEl.setAttribute('d', buildPath(staticNoisyY));
                         fading = false;
                         phase = 0;
-                        curAmpMul = 1;
-                        curNoisePhase = 0;
-                        fadeBlend = 0;
                         animFrame = null;
                         return;
                     }
@@ -965,10 +977,13 @@
                 }
                 if (!active) { animFrame = null; return; }
                 phase += 0.025;
-                curAmpMul = Math.cos(phase);
-                curNoisePhase = phase;
-                cleanPath.setAttribute('d', buildCleanPath(curAmpMul));
-                noisyPath.setAttribute('d', buildNoisyPath(curNoisePhase));
+                var ampMul = Math.cos(phase);
+                for (var i = 0; i <= pts; i++) {
+                    curCleanY[i] = getCleanY(i, ampMul);
+                    curNoisyY[i] = getNoisyY(i, phase);
+                }
+                cleanEl.setAttribute('d', buildPath(curCleanY));
+                noisyEl.setAttribute('d', buildPath(curNoisyY));
                 animFrame = requestAnimationFrame(tick);
             }
 
