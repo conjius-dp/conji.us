@@ -113,7 +113,7 @@
 
     // custom SVG thumbnails for repos that don't have a social image
     var CUSTOM_THUMBS = {
-        'CivDecks': '<div class="card-thumb" style="background:#111"><img src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
+        'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="27" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><circle cx="50" cy="40" r="22" fill="#e89a1a"/><circle cx="150" cy="35" r="12" fill="#a06000"/><circle cx="260" cy="48" r="30" fill="#d48300"/><circle cx="355" cy="38" r="15" fill="#b37200"/><circle cx="95" cy="100" r="18" fill="#c07800"/><circle cx="210" cy="95" r="32" fill="#e89a1a"/><circle cx="340" cy="105" r="10" fill="#a06000"/><circle cx="50" cy="158" r="20" fill="#d48300"/><circle cx="160" cy="155" r="25" fill="#b37200"/><circle cx="290" cy="165" r="8" fill="#c07800"/><circle cx="360" cy="160" r="18" fill="#e89a1a"/></svg></div>',
         'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,74)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="18" x2="0" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round"/></g><line x1="-48" y1="48" x2="-58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><line x1="48" y1="48" x2="58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><text x="-72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">0</text><text x="72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">11</text></g></svg></div>',
@@ -963,6 +963,58 @@
             if (document.querySelector('.denoiser-clean')) {
                 clearInterval(check);
                 setupDenoiserAnim();
+            }
+        }, 100);
+    })();
+
+    // CivDecks logo animation
+    (function() {
+        function setup() {
+            var logo = document.querySelector('.civdecks-logo');
+            if (!logo) return;
+            var card = logo.closest('.project-card');
+            if (!card) return;
+
+            var active = false;
+            var phase = 0;
+            var animFrame = null;
+            // 1s per direction at 60fps = ~0.105 rad/frame for a half cycle
+            var speed = Math.PI / 60;
+
+            function tick() {
+                if (!active) { animFrame = null; return; }
+                phase += speed;
+                var t = (Math.cos(phase) + 1) / 2; // 0 to 1
+                var scale = 1 + t * 0.15; // 1.0 to 1.15
+                var opacity = 0.7 + t * 0.3; // 0.7 to 1.0
+                logo.style.transform = 'scale(' + scale + ')';
+                logo.style.opacity = opacity;
+                animFrame = requestAnimationFrame(tick);
+            }
+
+            function activate() {
+                if (active) return;
+                active = true;
+                if (!animFrame) animFrame = requestAnimationFrame(tick);
+            }
+
+            function deactivate() {
+                active = false;
+                logo.style.transform = '';
+                logo.style.opacity = '';
+            }
+
+            card.addEventListener('mouseenter', activate);
+            card.addEventListener('mouseleave', deactivate);
+            card.addEventListener('touchstart', function() { activate(); }, { passive: true });
+            card.addEventListener('touchend', function() { deactivate(); });
+            card.addEventListener('touchcancel', function() { deactivate(); });
+        }
+
+        var check = setInterval(function() {
+            if (document.querySelector('.civdecks-logo')) {
+                clearInterval(check);
+                setup();
             }
         }, 100);
     })();
