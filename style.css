@@ -260,6 +260,7 @@ body {
     display: flex;
     width: 200%;
     will-change: transform;
+    transform: translateZ(0);
     touch-action: none;
 }
 
@@ -358,6 +359,8 @@ body {
     cursor: pointer;
     transition: border-color 0.2s, transform 0.2s;
     height: var(--card-height);
+    contain: layout style paint;
+    will-change: transform;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -510,10 +513,7 @@ body {
 .project-card,
 .link-pill,
 .footer-links .link-pill {
-    box-shadow:
-        0 0 12px 4px rgba(0, 0, 0, 0.5),
-        0 0 32px 12px rgba(0, 0, 0, 0.35),
-        0 0 60px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Footer ── */

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=89">
+    <link rel="stylesheet" href="style.css?v=90">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -152,6 +152,26 @@
     var PEEK = 0.9; // percentage of track width to peek — centers grid gap on screen
 
     var darkLayer = document.getElementById('toggle-dark-layer');
+
+    // FPS counter
+    (function() {
+        var el = document.createElement('div');
+        el.id = 'fps';
+        el.style.cssText = 'position:fixed;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#0f0;font:bold 18px monospace;padding:4px 10px;z-index:99999;pointer-events:none;border-radius:4px';
+        document.body.appendChild(el);
+        var frames = 0, last = performance.now();
+        function update() {
+            frames++;
+            var now = performance.now();
+            if (now - last >= 500) {
+                el.textContent = Math.round(frames * 1000 / (now - last)) + ' fps';
+                frames = 0;
+                last = now;
+            }
+            requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    })();
 
     function setProgress(p) {
         progress = Math.max(0, Math.min(1, p));
@@ -541,7 +561,7 @@
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
         var particles = [];
         var isDesktop = window.innerWidth > 600;
-        var MAX_PARTICLES = isDesktop ? 180 : 45;
+        var MAX_PARTICLES = isDesktop ? 120 : 30;
         var COLOR = '#d48300';
         var scrollY = 0;
 
@@ -651,18 +671,27 @@
 
         window.addEventListener('scroll', function() { scrollY = window.scrollY; }, { passive: true });
 
+        // cache dimensions to avoid layout thrashing
+        var cw = window.innerWidth, ch = window.innerHeight;
+        window.addEventListener('resize', function() { cw = window.innerWidth; ch = window.innerHeight; }, { passive: true });
+
+        var isDraggingGlobal = false;
+
         function tick() {
-            var w = window.innerWidth, h = window.innerHeight;
+            var w = cw, h = ch;
             ctx.clearRect(0, 0, w, h);
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
+
+            // slow time increment during drag for smoother interaction
+            var timeInc = isDragging ? 0.00025 : 0.0005;
 
             for (var i = 0; i < particles.length; i++) {
                 var p = particles[i];
                 p.x += p.vx;
                 p.y += p.vy;
                 p.rot += p.rotSpeed;
-                p.time += 0.0005;
+                p.time += timeInc;
 
                 var drawY = p.y - scrollY * p.parallax;
 
@@ -691,6 +720,8 @@
                 var px = p.x, py = drawY;
 
                 ctx.lineWidth = p.strokeWidth;
+                ctx.strokeStyle = p.color;
+                ctx.globalAlpha = p.opacity;
                 ctx.beginPath();
                 ctx.moveTo(bx[0] * cosR - by[0] * sinR + px, bx[0] * sinR + by[0] * cosR + py);
                 for (var k = 1; k < p.nPts; k += 3) {
@@ -706,8 +737,6 @@
                         x3 * cosR - y3 * sinR + px, x3 * sinR + y3 * cosR + py
                     );
                 }
-                ctx.globalAlpha = p.opacity;
-                ctx.strokeStyle = p.color;
                 ctx.stroke();
 
             }
