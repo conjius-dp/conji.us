@@ -979,8 +979,10 @@
                 phase += 0.025;
                 var ampMul = Math.cos(phase);
                 for (var i = 0; i <= pts; i++) {
-                    curCleanY[i] = getCleanY(i, ampMul);
-                    curNoisyY[i] = getNoisyY(i, phase);
+                    var targetClean = getCleanY(i, ampMul);
+                    var targetNoisy = getNoisyY(i, phase);
+                    curCleanY[i] += (targetClean - curCleanY[i]) * 0.12;
+                    curNoisyY[i] += (targetNoisy - curNoisyY[i]) * 0.12;
                 }
                 cleanEl.setAttribute('d', buildPath(curCleanY));
                 noisyEl.setAttribute('d', buildPath(curNoisyY));
