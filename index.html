@@ -115,7 +115,7 @@
     var CUSTOM_THUMBS = {
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="27" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>',
-        'midi-visu': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><circle cx="50" cy="40" r="22" fill="#e89a1a"/><circle cx="150" cy="35" r="12" fill="#a06000"/><circle cx="260" cy="48" r="30" fill="#d48300"/><circle cx="355" cy="38" r="15" fill="#b37200"/><circle cx="95" cy="100" r="18" fill="#c07800"/><circle cx="210" cy="95" r="32" fill="#e89a1a"/><circle cx="340" cy="105" r="10" fill="#a06000"/><circle cx="50" cy="158" r="20" fill="#d48300"/><circle cx="160" cy="155" r="25" fill="#b37200"/><circle cx="290" cy="165" r="8" fill="#c07800"/><circle cx="360" cy="160" r="18" fill="#e89a1a"/></svg></div>',
+        'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111" rx="20"/><circle cx="50" cy="40" r="22" fill="#e89a1a"/><circle cx="150" cy="35" r="12" fill="#a06000"/><circle cx="260" cy="48" r="30" fill="#d48300"/><circle cx="355" cy="38" r="15" fill="#b37200"/><circle cx="95" cy="100" r="18" fill="#c07800"/><circle cx="210" cy="95" r="32" fill="#e89a1a"/><circle cx="340" cy="105" r="10" fill="#a06000"/><circle cx="50" cy="158" r="20" fill="#d48300"/><circle cx="160" cy="155" r="25" fill="#b37200"/><circle cx="290" cy="165" r="8" fill="#c07800"/><circle cx="360" cy="160" r="18" fill="#e89a1a"/></svg></div>',
         'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,74)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="18" x2="0" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round"/></g><line x1="-48" y1="48" x2="-58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><line x1="48" y1="48" x2="58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><text x="-72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">0</text><text x="72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">11</text></g></svg></div>',
         'denoiser': (function() {
             var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
@@ -1089,6 +1089,197 @@
 
         var check = setInterval(function() {
             if (document.querySelector('.civdecks-logo')) {
+                clearInterval(check);
+                setup();
+            }
+        }, 100);
+    })();
+
+    // Midi-visu circles physics animation
+    (function() {
+        var W = 400, H = 200, CR = 25; // container width, height, corner radius
+        var friction = 0.985;
+        var bounce = 0.7;
+
+        function isInRoundedRect(x, y, r) {
+            // check if circle at (x,y) with radius r fits inside rounded rect
+            // clamp to inner regions, then check corners
+            var minX = r, maxX = W - r, minY = r, maxY = H - r;
+            var nx = x, ny = y, hit = false;
+            if (nx < minX) { nx = minX; hit = true; }
+            if (nx > maxX) { nx = maxX; hit = true; }
+            if (ny < minY) { ny = minY; hit = true; }
+            if (ny > maxY) { ny = maxY; hit = true; }
+            return { x: nx, y: ny, hit: hit };
+        }
+
+        function wallCollide(b) {
+            // top-left corner center
+            var corners = [
+                { cx: CR, cy: CR },
+                { cx: W - CR, cy: CR },
+                { cx: CR, cy: H - CR },
+                { cx: W - CR, cy: H - CR }
+            ];
+            // straight walls
+            if (b.x - b.r < 0) { b.x = b.r; b.vx = Math.abs(b.vx) * bounce; }
+            if (b.x + b.r > W) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * bounce; }
+            if (b.y - b.r < 0) { b.y = b.r; b.vy = Math.abs(b.vy) * bounce; }
+            if (b.y + b.r > H) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * bounce; }
+            // corner collisions
+            for (var c = 0; c < 4; c++) {
+                var corner = corners[c];
+                var inCorner = (c < 2 ? b.y < CR : b.y > H - CR) &&
+                               (c % 2 === 0 ? b.x < CR : b.x > W - CR);
+                if (!inCorner) continue;
+                var dx = b.x - corner.cx;
+                var dy = b.y - corner.cy;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var maxDist = CR - b.r;
+                if (maxDist > 0 && dist > maxDist) {
+                    var nx = dx / dist, ny = dy / dist;
+                    b.x = corner.cx + nx * maxDist;
+                    b.y = corner.cy + ny * maxDist;
+                    var dot = b.vx * nx + b.vy * ny;
+                    b.vx = (b.vx - 2 * dot * nx) * bounce;
+                    b.vy = (b.vy - 2 * dot * ny) * bounce;
+                }
+            }
+        }
+
+        function circleCollide(a, b) {
+            var dx = b.x - a.x, dy = b.y - a.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            var minDist = a.r + b.r;
+            if (dist < minDist && dist > 0.01) {
+                var nx = dx / dist, ny = dy / dist;
+                var overlap = minDist - dist;
+                var totalMass = a.r * a.r + b.r * b.r;
+                var aRatio = b.r * b.r / totalMass;
+                var bRatio = a.r * a.r / totalMass;
+                a.x -= nx * overlap * aRatio;
+                a.y -= ny * overlap * aRatio;
+                b.x += nx * overlap * bRatio;
+                b.y += ny * overlap * bRatio;
+                var relVx = a.vx - b.vx, relVy = a.vy - b.vy;
+                var relDot = relVx * nx + relVy * ny;
+                if (relDot > 0) {
+                    a.vx -= relDot * nx * aRatio * (1 + bounce);
+                    a.vy -= relDot * ny * aRatio * (1 + bounce);
+                    b.vx += relDot * nx * bRatio * (1 + bounce);
+                    b.vy += relDot * ny * bRatio * (1 + bounce);
+                }
+            }
+        }
+
+        function setup() {
+            var svg = document.querySelector('.midi-visu-svg');
+            if (!svg) return;
+            var card = svg.closest('.project-card');
+            if (!card) return;
+            var circleEls = svg.querySelectorAll('circle');
+            var balls = [];
+            for (var i = 0; i < circleEls.length; i++) {
+                var el = circleEls[i];
+                var ix = parseFloat(el.getAttribute('cx'));
+                var iy = parseFloat(el.getAttribute('cy'));
+                balls.push({
+                    el: el,
+                    ix: ix, iy: iy,
+                    x: ix, y: iy,
+                    r: parseFloat(el.getAttribute('r')),
+                    vx: 0, vy: 0
+                });
+            }
+
+            var active = false;
+            var returning = false;
+            var animFrame = null;
+
+            function tick() {
+                if (returning) {
+                    var done = true;
+                    for (var i = 0; i < balls.length; i++) {
+                        var b = balls[i];
+                        b.vx += (b.ix - b.x) * 0.06;
+                        b.vy += (b.iy - b.y) * 0.06;
+                        b.vx *= 0.75;
+                        b.vy *= 0.75;
+                        b.x += b.vx;
+                        b.y += b.vy;
+                        b.el.setAttribute('cx', b.x.toFixed(1));
+                        b.el.setAttribute('cy', b.y.toFixed(1));
+                        if (Math.abs(b.x - b.ix) > 0.1 || Math.abs(b.y - b.iy) > 0.1 ||
+                            Math.abs(b.vx) > 0.05 || Math.abs(b.vy) > 0.05) done = false;
+                    }
+                    if (done) {
+                        for (var j = 0; j < balls.length; j++) {
+                            balls[j].x = balls[j].ix;
+                            balls[j].y = balls[j].iy;
+                            balls[j].vx = 0;
+                            balls[j].vy = 0;
+                            balls[j].el.setAttribute('cx', balls[j].ix);
+                            balls[j].el.setAttribute('cy', balls[j].iy);
+                        }
+                        returning = false;
+                        animFrame = null;
+                        return;
+                    }
+                    animFrame = requestAnimationFrame(tick);
+                    return;
+                }
+                if (!active) { animFrame = null; return; }
+
+                for (var i = 0; i < balls.length; i++) {
+                    var b = balls[i];
+                    b.vx *= friction;
+                    b.vy *= friction;
+                    b.x += b.vx;
+                    b.y += b.vy;
+                    wallCollide(b);
+                }
+                // circle-circle collisions
+                for (var i = 0; i < balls.length; i++) {
+                    for (var j = i + 1; j < balls.length; j++) {
+                        circleCollide(balls[i], balls[j]);
+                    }
+                }
+                for (var i = 0; i < balls.length; i++) {
+                    balls[i].el.setAttribute('cx', balls[i].x.toFixed(1));
+                    balls[i].el.setAttribute('cy', balls[i].y.toFixed(1));
+                }
+                animFrame = requestAnimationFrame(tick);
+            }
+
+            function activate() {
+                if (active) return;
+                active = true;
+                returning = false;
+                // give each ball a random push
+                for (var i = 0; i < balls.length; i++) {
+                    var angle = Math.random() * Math.PI * 2;
+                    var force = 1.5 + Math.random() * 2.5;
+                    balls[i].vx += Math.cos(angle) * force;
+                    balls[i].vy += Math.sin(angle) * force;
+                }
+                if (!animFrame) animFrame = requestAnimationFrame(tick);
+            }
+
+            function deactivate() {
+                active = false;
+                returning = true;
+                if (!animFrame) animFrame = requestAnimationFrame(tick);
+            }
+
+            card.addEventListener('mouseenter', activate);
+            card.addEventListener('mouseleave', deactivate);
+            card.addEventListener('touchstart', function() { activate(); }, { passive: true });
+            card.addEventListener('touchend', function() { deactivate(); });
+            card.addEventListener('touchcancel', function() { deactivate(); });
+        }
+
+        var check = setInterval(function() {
+            if (document.querySelector('.midi-visu-svg')) {
                 clearInterval(check);
                 setup();
             }
