@@ -1097,7 +1097,7 @@
 
     // Midi-visu circles physics animation
     (function() {
-        var W = 500, H = 200, CR = 25; // container width, height, corner radius
+        var W = 500, H = 200, CR = 25, PAD = 5; // container width, height, corner radius, padding
         var friction = 0.985;
         var bounce = 0.7;
 
@@ -1114,17 +1114,18 @@
         }
 
         function wallCollide(b) {
-            // straight walls
-            if (b.x - b.r < 0) { b.x = b.r; b.vx = Math.abs(b.vx) * bounce; }
-            if (b.x + b.r > W) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * bounce; }
-            if (b.y - b.r < 0) { b.y = b.r; b.vy = Math.abs(b.vy) * bounce; }
-            if (b.y + b.r > H) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * bounce; }
+            // straight walls with padding
+            if (b.x - b.r < PAD) { b.x = PAD + b.r; b.vx = Math.abs(b.vx) * bounce; }
+            if (b.x + b.r > W - PAD) { b.x = W - PAD - b.r; b.vx = -Math.abs(b.vx) * bounce; }
+            if (b.y - b.r < PAD) { b.y = PAD + b.r; b.vy = Math.abs(b.vy) * bounce; }
+            if (b.y + b.r > H - PAD) { b.y = H - PAD - b.r; b.vy = -Math.abs(b.vy) * bounce; }
             // corner arcs — only when ball center is in the corner square
+            var cri = CR - PAD; // inset corner radius
             var corners = [
-                { cx: CR, cy: CR },
-                { cx: W - CR, cy: CR },
-                { cx: CR, cy: H - CR },
-                { cx: W - CR, cy: H - CR }
+                { cx: PAD + cri, cy: PAD + cri },
+                { cx: W - PAD - cri, cy: PAD + cri },
+                { cx: PAD + cri, cy: H - PAD - cri },
+                { cx: W - PAD - cri, cy: H - PAD - cri }
             ];
             for (var c = 0; c < 4; c++) {
                 var co = corners[c];
@@ -1134,7 +1135,7 @@
                 var dx = b.x - co.cx;
                 var dy = b.y - co.cy;
                 var dist = Math.sqrt(dx * dx + dy * dy);
-                var limit = CR - b.r;
+                var limit = cri - b.r;
                 if (limit < 1) limit = 1;
                 if (dist > limit) {
                     var nx = dx / dist, ny = dy / dist;
@@ -1155,10 +1156,10 @@
             if (b.vx < -maxV) b.vx = -maxV;
             if (b.vy > maxV) b.vy = maxV;
             if (b.vy < -maxV) b.vy = -maxV;
-            if (b.x - b.r < 0) b.x = b.r;
-            if (b.x + b.r > W) b.x = W - b.r;
-            if (b.y - b.r < 0) b.y = b.r;
-            if (b.y + b.r > H) b.y = H - b.r;
+            if (b.x - b.r < PAD) b.x = PAD + b.r;
+            if (b.x + b.r > W - PAD) b.x = W - PAD - b.r;
+            if (b.y - b.r < PAD) b.y = PAD + b.r;
+            if (b.y + b.r > H - PAD) b.y = H - PAD - b.r;
             wallCollide(b);
         }
 
