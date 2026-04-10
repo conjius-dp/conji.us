@@ -946,6 +946,7 @@
             var phase = 0;
             var animFrame = null;
             var fading = false;
+            var phaseSpeed = 0;
             var curCleanY = new Float32Array(staticCleanY);
             var curNoisyY = new Float32Array(staticNoisyY);
 
@@ -976,7 +977,8 @@
                     return;
                 }
                 if (!active) { animFrame = null; return; }
-                phase += 0.025;
+                phaseSpeed += (0.025 - phaseSpeed) * 0.03;
+                phase += phaseSpeed;
                 var ampMul = Math.cos(phase);
                 for (var i = 0; i <= pts; i++) {
                     var targetClean = getCleanY(i, ampMul);
@@ -993,6 +995,7 @@
                 if (active) return;
                 active = true;
                 fading = false;
+                phaseSpeed = 0;
                 if (!animFrame) animFrame = requestAnimationFrame(tick);
             }
 
