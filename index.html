@@ -153,20 +153,27 @@
 
     var darkLayer = document.getElementById('toggle-dark-layer');
 
-    // FPS counter
+    // FPS counter — measures actual frame-to-frame delivery time
     (function() {
         var el = document.createElement('div');
         el.id = 'fps';
-        el.style.cssText = 'position:fixed;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#0f0;font:bold 18px monospace;padding:4px 10px;z-index:99999;pointer-events:none;border-radius:4px';
+        el.style.cssText = 'position:fixed;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#0f0;font:bold 18px monospace;padding:4px 10px;z-index:99999;pointer-events:none;border-radius:4px;min-width:100px';
         document.body.appendChild(el);
-        var frames = 0, last = performance.now();
-        function update() {
-            frames++;
-            var now = performance.now();
-            if (now - last >= 500) {
-                el.textContent = Math.round(frames * 1000 / (now - last)) + ' fps';
-                frames = 0;
-                last = now;
+        var frameTimes = [];
+        var lastFrame = 0;
+        function update(now) {
+            if (lastFrame) {
+                var dt = now - lastFrame;
+                frameTimes.push(dt);
+                if (frameTimes.length > 60) frameTimes.shift();
+            }
+            lastFrame = now;
+            if (frameTimes.length > 5 && frameTimes.length % 10 === 0) {
+                var sorted = frameTimes.slice().sort(function(a, b) { return a - b; });
+                var avg = sorted.reduce(function(s, v) { return s + v; }, 0) / sorted.length;
+                var p95 = sorted[Math.floor(sorted.length * 0.95)];
+                el.textContent = Math.round(1000 / avg) + ' fps | ' + p95.toFixed(1) + 'ms p95';
+                el.style.color = p95 > 33 ? '#f44' : p95 > 20 ? '#ff0' : '#0f0';
             }
             requestAnimationFrame(update);
         }
