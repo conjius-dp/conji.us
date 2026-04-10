@@ -938,19 +938,25 @@
             var staticClean = buildCleanPath(1);
             var staticNoisy = buildNoisyPath(0);
 
+            var fadeBlend = 0;
+
             function tick() {
                 if (fading) {
+                    fadeBlend = Math.min(1, fadeBlend + 0.04);
+                    // lerp ampMul toward 1
                     curAmpMul += (1 - curAmpMul) * 0.12;
-                    curNoisePhase *= 0.88;
                     cleanPath.setAttribute('d', buildCleanPath(curAmpMul));
+                    // lerp noisy phase slowly so shape morphs smoothly to static
+                    curNoisePhase += (0 - curNoisePhase) * 0.04;
                     noisyPath.setAttribute('d', buildNoisyPath(curNoisePhase));
-                    if (Math.abs(curAmpMul - 1) < 0.005 && Math.abs(curNoisePhase) < 0.01) {
+                    if (Math.abs(curAmpMul - 1) < 0.005 && fadeBlend >= 1) {
                         cleanPath.setAttribute('d', staticClean);
                         noisyPath.setAttribute('d', staticNoisy);
                         fading = false;
                         phase = 0;
                         curAmpMul = 1;
                         curNoisePhase = 0;
+                        fadeBlend = 0;
                         animFrame = null;
                         return;
                     }
