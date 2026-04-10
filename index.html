@@ -314,8 +314,9 @@
         el.addEventListener('touchstart', function(e) {
             lastTouchTime = Date.now();
             var t = e.touches[0];
-            // don't intercept taps on links
-            if (e.target.closest('a')) return;
+            // don't intercept taps on small link icons (card-links), but DO intercept card <a> tags
+            var link = e.target.closest('a');
+            if (link && link.closest('.card-links')) return;
             if (startDrag(t.clientX, t.clientY, e.target)) {
                 e.preventDefault();
             }
