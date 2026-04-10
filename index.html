@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=96">
+    <link rel="stylesheet" href="style.css?v=97">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -467,6 +467,136 @@
         window.addEventListener('mousemove', function(e) {
             if (!dragging) return;
             moveDrag(e.clientX, e.clientY);
+        });
+        window.addEventListener('mouseup', function() {
+            if (!dragging) return;
+            release();
+        });
+    })();
+
+    // footer brand horizontal slide physics
+    (function() {
+        var brand = document.querySelector('.footer-brand');
+        var fx = 0, vel = 0;
+        var dragging = false, lastX = 0, startX = 0, moved = false;
+        var friction = 0.97;
+        var bounce = 0.5;
+        var physFrame = null;
+        var pressed = false;
+
+        brand.style.willChange = 'transform';
+
+        function getMinMax() {
+            var footer = brand.parentElement;
+            var fw = footer.clientWidth;
+            var bw = brand.offsetWidth;
+            var half = bw / 2;
+            var center = fw / 2;
+            var brandCenter = brand.offsetLeft + half;
+            var offset = center - brandCenter;
+            return { min: -brandCenter + half, max: fw - brandCenter - half, offset: offset };
+        }
+
+        function applyTransform(scale) {
+            brand.style.transform = 'translateX(' + fx + 'px)' + (scale ? ' scale(' + scale + ')' : '');
+        }
+
+        function startPhysics() {
+            if (physFrame) return;
+            function step() {
+                if (dragging) { physFrame = null; return; }
+                vel *= friction;
+                fx += vel;
+
+                // elastic bounce off edges
+                var bounds = getMinMax();
+                if (fx < bounds.min) {
+                    fx = bounds.min;
+                    vel = Math.abs(vel) * bounce;
+                } else if (fx > bounds.max) {
+                    fx = bounds.max;
+                    vel = -Math.abs(vel) * bounce;
+                }
+
+                applyTransform();
+
+                if (Math.abs(vel) < 0.3) {
+                    vel = 0;
+                    physFrame = null;
+                    return;
+                }
+                physFrame = requestAnimationFrame(step);
+            }
+            physFrame = requestAnimationFrame(step);
+        }
+
+        function startDrag(x) {
+            dragging = true;
+            pressed = true;
+            moved = false;
+            lastX = x;
+            startX = x;
+            vel = 0;
+            if (physFrame) { cancelAnimationFrame(physFrame); physFrame = null; }
+            applyTransform(0.93);
+        }
+
+        function moveDrag(x) {
+            if (!dragging) return;
+            var dx = x - lastX;
+            if (Math.abs(x - startX) > 5) moved = true;
+            vel = dx;
+            lastX = x;
+            fx += dx;
+
+            // soft clamp during drag (allow slight overscroll)
+            var bounds = getMinMax();
+            if (fx < bounds.min) fx = bounds.min + (fx - bounds.min) * 0.3;
+            if (fx > bounds.max) fx = bounds.max + (fx - bounds.max) * 0.3;
+
+            applyTransform(0.93);
+        }
+
+        function release() {
+            if (!dragging) return;
+            dragging = false;
+
+            // snap back from overscroll
+            var bounds = getMinMax();
+            if (fx < bounds.min) { fx = bounds.min; vel = Math.abs(vel) * bounce; }
+            if (fx > bounds.max) { fx = bounds.max; vel = -Math.abs(vel) * bounce; }
+
+            applyTransform();
+
+            if (!moved && pressed) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            pressed = false;
+            startPhysics();
+        }
+
+        // touch events
+        brand.addEventListener('touchstart', function(e) {
+            startDrag(e.touches[0].clientX);
+            e.preventDefault();
+        }, { passive: false });
+        brand.addEventListener('touchmove', function(e) {
+            if (!dragging) return;
+            moveDrag(e.touches[0].clientX);
+            e.preventDefault();
+        }, { passive: false });
+        brand.addEventListener('touchend', function() { release(); });
+        brand.addEventListener('touchcancel', function() { release(); });
+
+        // mouse events
+        brand.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            startDrag(e.clientX);
+            e.preventDefault();
+        });
+        window.addEventListener('mousemove', function(e) {
+            if (!dragging) return;
+            moveDrag(e.clientX);
         });
         window.addEventListener('mouseup', function() {
             if (!dragging) return;

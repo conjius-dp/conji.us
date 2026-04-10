@@ -534,19 +534,16 @@ footer {
 }
 
 .footer-brand {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
     cursor: pointer;
-    transition: transform 0.1s;
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-}
-
-.footer-brand:active {
-    transform: scale(0.93);
+    touch-action: none;
+    will-change: transform;
 }
 
 .footer-text {
