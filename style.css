@@ -613,6 +613,7 @@ footer {
     :root {
         --card-gap: 15px;
         --mobile-pad: 14vw;
+        --code-card-size: calc(100vw - 2 * var(--mobile-pad));
     }
 
     .sections-wrapper {
@@ -625,8 +626,9 @@ footer {
     }
 
     .projects .project-card {
-        height: auto !important;
-        aspect-ratio: 1;
+        height: var(--code-card-size) !important;
+        max-height: var(--code-card-size) !important;
+        min-height: var(--code-card-size) !important;
     }
 
     .music .project-grid {
@@ -634,10 +636,10 @@ footer {
     }
 
     .music .project-card {
-        /* 2 music cards + 1 gap = 1 big card height (square = card width) */
-        height: calc((100vw - 2 * var(--mobile-pad) - var(--card-gap)) / 2) !important;
-        max-height: calc((100vw - 2 * var(--mobile-pad) - var(--card-gap)) / 2) !important;
-        min-height: calc((100vw - 2 * var(--mobile-pad) - var(--card-gap)) / 2) !important;
+        /* 2 music cards + 1 gap = 1 code card height */
+        height: calc((var(--code-card-size) - var(--card-gap)) / 2) !important;
+        max-height: calc((var(--code-card-size) - var(--card-gap)) / 2) !important;
+        min-height: calc((var(--code-card-size) - var(--card-gap)) / 2) !important;
     }
 
     .project-card {
