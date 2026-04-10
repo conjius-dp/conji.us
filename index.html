@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=86">
+    <link rel="stylesheet" href="style.css?v=87">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -129,10 +129,25 @@
     var wrapper = document.getElementById('sections-wrapper');
     var animFrame = null;
     var scrollCoasting = false;
+    var coastStoppedFast = false;
 
-    // stop scroll coasting on any touch or click
-    document.addEventListener('touchstart', function() { scrollCoasting = false; }, true);
-    document.addEventListener('mousedown', function() { scrollCoasting = false; }, true);
+    // stop scroll coasting on any touch or click; remember if it was fast
+    document.addEventListener('touchstart', function() {
+        coastStoppedFast = scrollCoasting;
+        scrollCoasting = false;
+    }, true);
+    document.addEventListener('mousedown', function() {
+        coastStoppedFast = scrollCoasting;
+        scrollCoasting = false;
+    }, true);
+    // block link clicks if coast was stopped by this tap
+    document.addEventListener('click', function(e) {
+        if (coastStoppedFast && e.target.closest('a')) {
+            e.preventDefault();
+            e.stopPropagation();
+            coastStoppedFast = false;
+        }
+    }, true);
 
     var PEEK = 0.9; // percentage of track width to peek — centers grid gap on screen
 
@@ -211,7 +226,8 @@
                         if (!scrollCoasting) return;
                         window.scrollBy(0, scrollVel);
                         scrollVel *= scrollFriction;
-                        if (Math.abs(scrollVel) < 0.5) { scrollCoasting = false; return; }
+                        if (Math.abs(scrollVel) < 2) { scrollCoasting = false; }
+                        if (Math.abs(scrollVel) < 0.5) return;
                         requestAnimationFrame(scrollCoast);
                     }
                     requestAnimationFrame(scrollCoast);
