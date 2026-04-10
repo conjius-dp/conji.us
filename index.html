@@ -114,7 +114,7 @@
     // custom SVG thumbnails for repos that don't have a social image
     var CUSTOM_THUMBS = {
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
-        'wav-decoder': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><text x="200" y="108" text-anchor="middle" fill="#d48300" font-family="Inter,sans-serif" font-size="27" font-weight="600" letter-spacing="2"><tspan opacity="0.08">-1024</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.7">32767</tspan> <tspan opacity="0.35">21504</tspan> <tspan opacity="0.18">8192</tspan> <tspan opacity="0.08">-1024</tspan></text></svg></div>',
+        'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g class="wav-numbers"></g></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
         'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,74)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="18" x2="0" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round"/></g><line x1="-48" y1="48" x2="-58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><line x1="48" y1="48" x2="58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><text x="-72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">0</text><text x="72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">11</text></g></svg></div>',
         'denoiser': (function() {
@@ -1311,6 +1311,156 @@
 
         var check = setInterval(function() {
             if (document.querySelector('.midi-visu-svg')) {
+                clearInterval(check);
+                setup();
+            }
+        }, 100);
+    })();
+
+    // Wav-decoder scrolling numbers animation
+    (function() {
+        var SLOT_W = 62; // spacing between number centers
+        var NUM_SLOTS = 9; // visible slots (odd for center)
+        var CENTER = 4; // center index (0-based)
+        var CY = 108;
+        var VIEW_W = 400;
+        // opacity by distance from center
+        var OPACITIES = [0.04, 0.08, 0.14, 0.25, 0.7, 0.25, 0.14, 0.08, 0.04];
+
+        function randSample() {
+            // 16-bit PCM values
+            var vals = [-32768, -24576, -16384, -8192, -4096, -1024, 0, 1024, 4096, 8192, 16384, 21504, 24576, 32767];
+            return vals[Math.floor(Math.random() * vals.length)];
+        }
+
+        function setup() {
+            var svg = document.querySelector('.wav-decoder-svg');
+            if (!svg) return;
+            var card = svg.closest('.project-card');
+            if (!card) return;
+            var g = svg.querySelector('.wav-numbers');
+
+            // initial numbers
+            var numbers = [];
+            for (var i = 0; i < NUM_SLOTS; i++) {
+                numbers.push(randSample());
+            }
+
+            // create text elements
+            var textEls = [];
+            function rebuildTexts() {
+                g.innerHTML = '';
+                textEls = [];
+                for (var i = 0; i < numbers.length; i++) {
+                    var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    t.setAttribute('y', CY);
+                    t.setAttribute('text-anchor', 'middle');
+                    t.setAttribute('fill', '#d48300');
+                    t.setAttribute('font-family', 'Inter,sans-serif');
+                    t.setAttribute('font-size', '27');
+                    t.setAttribute('font-weight', '600');
+                    t.textContent = numbers[i];
+                    g.appendChild(t);
+                    textEls.push(t);
+                }
+                updatePositions(0);
+            }
+
+            var offsetX = 0; // spring offset for bounce
+            var velX = 0;
+            var targetOffset = 0;
+
+            function updatePositions(springOff) {
+                var startX = VIEW_W / 2 - CENTER * SLOT_W + springOff;
+                for (var i = 0; i < textEls.length; i++) {
+                    var x = startX + i * SLOT_W;
+                    textEls[i].setAttribute('x', x.toFixed(1));
+                    // opacity based on position relative to center
+                    var distFromCenter = Math.abs(x - VIEW_W / 2) / SLOT_W;
+                    var opIdx = Math.round(CENTER - distFromCenter + CENTER);
+                    var op = (opIdx >= 0 && opIdx < OPACITIES.length) ? OPACITIES[opIdx] : 0;
+                    // hide if off screen
+                    if (x < -30 || x > VIEW_W + 30) op = 0;
+                    textEls[i].setAttribute('opacity', op.toFixed(3));
+                }
+            }
+
+            rebuildTexts();
+
+            var active = false;
+            var animFrame = null;
+            var clickTimer = null;
+            var bouncing = false;
+
+            function doClick() {
+                // shift numbers left: remove first, add new on right
+                numbers.shift();
+                numbers.push(randSample());
+                // remove first text, create new one
+                g.removeChild(textEls[0]);
+                textEls.shift();
+                var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                t.setAttribute('y', CY);
+                t.setAttribute('text-anchor', 'middle');
+                t.setAttribute('fill', '#d48300');
+                t.setAttribute('font-family', 'Inter,sans-serif');
+                t.setAttribute('font-size', '27');
+                t.setAttribute('font-weight', '600');
+                t.textContent = numbers[numbers.length - 1];
+                g.appendChild(t);
+                textEls.push(t);
+
+                // trigger bounce
+                offsetX = SLOT_W * 0.3;
+                velX = 0;
+                bouncing = true;
+                if (!animFrame) animFrame = requestAnimationFrame(springTick);
+
+                // schedule next click
+                if (active) {
+                    clickTimer = setTimeout(doClick, 300 + Math.random() * 200);
+                }
+            }
+
+            function springTick() {
+                if (!bouncing) { animFrame = null; return; }
+                var stiffness = 0.15;
+                var damping = 0.65;
+                velX += (0 - offsetX) * stiffness;
+                velX *= damping;
+                offsetX += velX;
+                updatePositions(offsetX);
+                if (Math.abs(offsetX) < 0.1 && Math.abs(velX) < 0.05) {
+                    offsetX = 0;
+                    velX = 0;
+                    updatePositions(0);
+                    bouncing = false;
+                    animFrame = null;
+                    return;
+                }
+                animFrame = requestAnimationFrame(springTick);
+            }
+
+            function activate() {
+                if (active) return;
+                active = true;
+                doClick();
+            }
+
+            function deactivate() {
+                active = false;
+                if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+            }
+
+            card.addEventListener('mouseenter', activate);
+            card.addEventListener('mouseleave', deactivate);
+            card.addEventListener('touchstart', function() { activate(); }, { passive: true });
+            card.addEventListener('touchend', function() { deactivate(); });
+            card.addEventListener('touchcancel', function() { deactivate(); });
+        }
+
+        var check = setInterval(function() {
+            if (document.querySelector('.wav-decoder-svg')) {
                 clearInterval(check);
                 setup();
             }
