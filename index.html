@@ -500,16 +500,36 @@
             return { min: minX, max: maxX };
         }
 
-        function applyTransform(scale, accel) {
-            var sx = 1, sy = 1;
-            if (scale) { sx = scale; sy = scale; }
-            if (accel !== undefined) {
-                // stretch/squash based on acceleration
-                var stretch = 1 + Math.max(-0.12, Math.min(0.12, accel * 0.04));
-                sx *= stretch;
-                sy *= (1 / stretch);
+        var curStretch = 1;
+        var targetStretch = 1;
+        var stretchFrame = null;
+
+        function renderStretch() {
+            curStretch += (targetStretch - curStretch) * 0.15;
+            if (Math.abs(curStretch - 1) < 0.001 && Math.abs(targetStretch - 1) < 0.001) curStretch = 1;
+            brand.style.transform = 'translateX(' + fx + 'px) scale(' + curStretch + ',' + (1 / curStretch) + ')';
+        }
+
+        function setStretch(accel) {
+            targetStretch = 1 + Math.max(-0.12, Math.min(0.12, accel * 0.04));
+            if (!stretchFrame) startStretchLoop();
+        }
+
+        function startStretchLoop() {
+            if (stretchFrame) return;
+            function tick() {
+                renderStretch();
+                if (Math.abs(curStretch - targetStretch) < 0.001 && Math.abs(curStretch - 1) < 0.001) {
+                    stretchFrame = null;
+                    return;
+                }
+                stretchFrame = requestAnimationFrame(tick);
             }
-            brand.style.transform = 'translateX(' + fx + 'px) scale(' + sx + ',' + sy + ')';
+            stretchFrame = requestAnimationFrame(tick);
+        }
+
+        function applyTransform() {
+            brand.style.transform = 'translateX(' + fx + 'px) scale(' + curStretch + ',' + (1 / curStretch) + ')';
         }
 
         function startPhysics() {
@@ -541,11 +561,12 @@
                     vel = -Math.abs(vel) * bounce;
                 }
 
-                applyTransform(null, accel);
+                setStretch(accel);
 
                 if (Math.abs(vel) < 0.2 && centerDist < 0.5) {
                     vel = 0;
                     fx = 0;
+                    targetStretch = 1;
                     applyTransform();
                     physFrame = null;
                     return;
@@ -553,6 +574,7 @@
                 if (Math.abs(vel) < 0.05 && Math.abs(fx) < 0.5) {
                     vel = 0;
                     fx = 0;
+                    targetStretch = 1;
                     applyTransform();
                     physFrame = null;
                     return;
@@ -571,7 +593,7 @@
             vel = 0;
             prevVel = 0;
             if (physFrame) { cancelAnimationFrame(physFrame); physFrame = null; }
-            applyTransform(null, 0);
+            setStretch(0);
         }
 
         function moveDrag(x) {
@@ -590,7 +612,7 @@
             if (fx < bounds.min) fx = bounds.min + (fx - bounds.min) * 0.3;
             if (fx > bounds.max) fx = bounds.max + (fx - bounds.max) * 0.3;
 
-            applyTransform(null, accel);
+            setStretch(accel);
         }
 
         function release() {
