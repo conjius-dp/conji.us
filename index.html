@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=85">
+    <link rel="stylesheet" href="style.css?v=86">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -128,6 +128,11 @@
     var btns = document.querySelectorAll('.toggle-btn');
     var wrapper = document.getElementById('sections-wrapper');
     var animFrame = null;
+    var scrollCoasting = false;
+
+    // stop scroll coasting on any touch or click
+    document.addEventListener('touchstart', function() { scrollCoasting = false; }, true);
+    document.addEventListener('mousedown', function() { scrollCoasting = false; }, true);
 
     var PEEK = 0.9; // percentage of track width to peek — centers grid gap on screen
 
@@ -199,12 +204,14 @@
                     }
                 }
                 if (Math.abs(velYPxMs) > 0.1) {
-                    var scrollVel = -velYPxMs * 16;
-                    var scrollFriction = 0.95;
+                    var scrollVel = -velYPxMs * 10;
+                    var scrollFriction = 0.92;
+                    scrollCoasting = true;
                     function scrollCoast() {
+                        if (!scrollCoasting) return;
                         window.scrollBy(0, scrollVel);
                         scrollVel *= scrollFriction;
-                        if (Math.abs(scrollVel) < 0.5) return;
+                        if (Math.abs(scrollVel) < 0.5) { scrollCoasting = false; return; }
                         requestAnimationFrame(scrollCoast);
                     }
                     requestAnimationFrame(scrollCoast);
