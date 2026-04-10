@@ -530,6 +530,17 @@ footer {
     margin-top: auto;
 }
 
+footer p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.footer-text {
+    line-height: 1;
+}
+
 .footer-logo {
     width: 38px;
     height: 38px;
@@ -537,6 +548,8 @@ footer {
     cursor: pointer;
     transition: transform 0.1s;
     -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .footer-logo:active {

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=78">
+    <link rel="stylesheet" href="style.css?v=80">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -96,7 +96,7 @@
         </nav>
 
     <footer>
-        <p><img src="favicon.ico" alt="" class="footer-logo"> Danny Priymak 2026</p>
+        <p><img src="favicon.ico" alt="" class="footer-logo"> <span class="footer-text">Danny Priymak 2026</span></p>
     </footer>
 
     <script>
@@ -271,6 +271,11 @@
         el.addEventListener('mousedown', function(e) {
             if (Date.now() - lastTouchTime < 500) return;
             if (e.button !== 0) return;
+            // clear any text selection on click
+            var sel = window.getSelection();
+            if (sel && sel.rangeCount && !sel.isCollapsed) {
+                sel.removeAllRanges();
+            }
             if (startDrag(e.clientX, e.clientY, e.target)) {
                 e.preventDefault();
             }
@@ -480,6 +485,10 @@
 
             card.addEventListener('click', function(e) {
                 if (e.target.closest('a')) return;
+                // don't navigate if clicking on selectable text
+                if (e.target.tagName === 'H3' || e.target.tagName === 'P') return;
+                var sel = window.getSelection();
+                if (sel && !sel.isCollapsed) return;
                 window.open(repo.url, '_blank');
             });
 
