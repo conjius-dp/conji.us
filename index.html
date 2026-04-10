@@ -504,8 +504,8 @@
             var sx = 1, sy = 1;
             if (scale) { sx = scale; sy = scale; }
             if (accel !== undefined) {
-                // stretch/squash based on acceleration, clamped subtly
-                var stretch = 1 + Math.max(-0.08, Math.min(0.08, accel * 0.006));
+                // stretch/squash based on acceleration
+                var stretch = 1 + Math.max(-0.12, Math.min(0.12, accel * 0.04));
                 sx *= stretch;
                 sy *= (1 / stretch);
             }
