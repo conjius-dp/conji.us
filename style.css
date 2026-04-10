@@ -35,7 +35,7 @@ img, svg, a {
 
 body {
     font-family: "Inconsolata", monospace;
-    font-weight: 200;
+    font-weight: 400;
     background: var(--bg);
     color: var(--text);
     min-height: 100svh;
@@ -116,7 +116,7 @@ body {
 .handle {
     margin-top: 0.4rem;
     font-size: 1rem;
-    font-weight: 200;
+    font-weight: 400;
     color: var(--accent);
     letter-spacing: 0.05em;
 }
@@ -124,7 +124,7 @@ body {
 .tagline {
     margin-top: 0.5rem;
     font-size: 1.05rem;
-    font-weight: 300;
+    font-weight: 600;
     color: var(--text-muted);
 }
 
@@ -148,7 +148,7 @@ body {
     color: var(--accent);
     text-decoration: none;
     font-size: 0.9rem;
-    font-weight: 200;
+    font-weight: 400;
     transition: background 0.2s, color 0.2s;
 }
 
@@ -283,7 +283,7 @@ body {
 .music h2,
 .projects h2 {
     font-size: 1.5rem;
-    font-weight: 300;
+    font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -430,13 +430,13 @@ body {
 
 .project-info h3 {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 900;
 }
 
 .project-info p {
     font-size: 0.88rem;
     color: var(--text-muted);
-    font-weight: 300;
+    font-weight: 600;
     line-height: 1.4;
     flex: 1;
 }
@@ -480,7 +480,7 @@ body {
     border-radius: 999px;
     border: 2px solid var(--accent);
     font-size: 0.8rem;
-    font-weight: 200;
+    font-weight: 400;
     gap: 6px;
     white-space: nowrap;
 }
@@ -497,7 +497,7 @@ body {
     align-items: center;
     gap: 0.4rem;
     font-size: 0.8rem;
-    font-weight: 300;
+    font-weight: 600;
     color: var(--text-muted);
 }
 
@@ -548,7 +548,7 @@ footer {
 
 .footer-text {
     line-height: 1;
-    font-weight: 300;
+    font-weight: 600;
 }
 
 .footer-logo {
