@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=82">
+    <link rel="stylesheet" href="style.css?v=83">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -133,12 +133,13 @@
 
     var darkLayer = document.getElementById('toggle-dark-layer');
 
-    function setProgress(p) {
-        progress = Math.max(0, Math.min(1, p));
+    function setProgress(p, allowOvershoot) {
+        progress = allowOvershoot ? p : Math.max(0, Math.min(1, p));
         var offset = PEEK + progress * (-(50 + PEEK * 2));
         track.style.transform = 'translateX(' + offset + '%)';
-        toggle.style.setProperty('--pill-x', (progress * 100) + '%');
-        var pillLeft = progress * 50;
+        var clamped = Math.max(0, Math.min(1, progress));
+        toggle.style.setProperty('--pill-x', (clamped * 100) + '%');
+        var pillLeft = clamped * 50;
         var pillRight = pillLeft + 50;
         darkLayer.style.clipPath = 'inset(0 ' + (100 - pillRight) + '% 0 ' + pillLeft + '%)';
         btns[0].classList.toggle('active', progress < 0.5);
@@ -201,20 +202,23 @@
             }
             // convert px/ms to progress/frame
             var vel = sign * velPxMs * 16 / sensitivity;
-            // coast with friction, then snap
+            // coast with friction and overshoot, then snap
             if (Math.abs(vel) < 0.003) {
                 animateTo(progress >= 0.5 ? 1 : 0);
                 return;
             }
             if (animFrame) cancelAnimationFrame(animFrame);
-            var friction = 0.93;
-            var coastFrames = 0;
+            var friction = 0.92;
             function coastStep() {
-                setProgress(progress + vel);
+                // rubber-band force at edges
+                if (progress < 0) vel += -progress * 0.3;
+                else if (progress > 1) vel -= (progress - 1) * 0.3;
+                setProgress(progress + vel, true);
                 vel *= friction;
-                coastFrames++;
-                if (coastFrames > 5 && Math.abs(vel) < 0.003) {
-                    animateTo(progress >= 0.5 ? 1 : 0);
+                if (Math.abs(vel) < 0.001 && progress >= -0.01 && progress <= 1.01) {
+                    var target = progress >= 0.5 ? 1 : 0;
+                    setProgress(target);
+                    animateTo(target);
                     return;
                 }
                 animFrame = requestAnimationFrame(coastStep);
