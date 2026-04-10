@@ -153,30 +153,6 @@
 
     var darkLayer = document.getElementById('toggle-dark-layer');
 
-    // FPS counter — measures actual frame-to-frame delivery time
-    (function() {
-        var el = document.createElement('div');
-        el.id = 'fps';
-        el.style.cssText = 'position:fixed;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#0f0;font:bold 18px monospace;padding:4px 10px;z-index:99999;pointer-events:none;border-radius:4px;min-width:100px';
-        document.body.appendChild(el);
-        var frames = 0, last = performance.now();
-        var displayFps = 60, displayMax = 0;
-        function update() {
-            frames++;
-            var now = performance.now();
-            var elapsed = now - last;
-            if (elapsed >= 1000) {
-                displayFps = Math.round(frames * 1000 / elapsed);
-                frames = 0;
-                last = now;
-                el.textContent = displayFps + ' fps';
-                el.style.color = displayFps < 30 ? '#f44' : displayFps < 50 ? '#ff0' : '#0f0';
-            }
-            requestAnimationFrame(update);
-        }
-        requestAnimationFrame(update);
-    })();
-
     function setProgress(p) {
         progress = Math.max(0, Math.min(1, p));
         var offset = PEEK + progress * (-(50 + PEEK * 2));
