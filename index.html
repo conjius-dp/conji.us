@@ -130,7 +130,7 @@
                 var n = s + Math.sin(t*Math.PI*9.3)*amp*0.5 + Math.sin(t*Math.PI*14)*amp*0.6 + Math.sin(t*Math.PI*22)*amp*0.4 + Math.sin(t*Math.PI*31)*amp*0.35 + Math.sin(t*Math.PI*38)*amp*0.3 + Math.sin(t*Math.PI*47)*amp*0.24 + Math.sin(t*Math.PI*54)*amp*0.2 + Math.sin(t*Math.PI*66)*amp*0.16 + Math.sin(t*Math.PI*78)*amp*0.14 + Math.sin(t*Math.PI*93)*amp*0.1 + Math.sin(t*Math.PI*110)*amp*0.08 + Math.sin(t*Math.PI*134)*amp*0.12 + Math.sin(t*Math.PI*157)*amp*0.1 + Math.sin(t*Math.PI*189)*amp*0.09 + Math.sin(t*Math.PI*223)*amp*0.07 + Math.sin(t*Math.PI*271)*amp*0.06 + Math.sin(t*Math.PI*320)*amp*0.05;
                 noisy += (i ? ' L' : '') + x + ',' + (cy - n).toFixed(1);
             }
-            return '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(1,0.8) translate(-200,-100)"><path d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2" opacity="1"/><path d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5" opacity="1"/></g></svg></div>';
+            return '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(1,0.8) translate(-200,-100)"><path class="denoiser-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2" opacity="1"/><path class="denoiser-clean" d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5" opacity="1"/></g></svg></div>';
         })()
     };
 
@@ -840,7 +840,7 @@
                         phase = 3;
                         targetDeg = ZERO_DEG;
                         startSpring();
-                    }, 1000);
+                    }, 600);
                 } else if (phase === 3) {
                     // arrived at 0, hold
                     phase = 4;
@@ -849,7 +849,7 @@
                         phase = 1;
                         targetDeg = ELEVEN_DEG;
                         startSpring();
-                    }, 1000);
+                    }, 600);
                 }
             }
 
@@ -883,6 +883,77 @@
             if (document.querySelector('.knob-indicator')) {
                 clearInterval(knobCheck);
                 setupKnobAnim();
+            }
+        }, 100);
+    })();
+
+    // Denoiser waveform animation
+    (function() {
+        var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
+        var harmonics = [
+            [9.3, 0.5], [14, 0.6], [22, 0.4], [31, 0.35], [38, 0.3],
+            [47, 0.24], [54, 0.2], [66, 0.16], [78, 0.14], [93, 0.1],
+            [110, 0.08], [134, 0.12], [157, 0.1], [189, 0.09], [223, 0.07],
+            [271, 0.06], [320, 0.05]
+        ];
+
+        function buildPaths(phase) {
+            var noisy = 'M', clean = 'M';
+            for (var i = 0; i <= pts; i++) {
+                var t = i / pts;
+                var x = (x0 + t * w).toFixed(1);
+                var s = Math.sin(t * Math.PI * 4 + phase) * amp;
+                clean += (i ? ' L' : '') + x + ',' + (cy - s).toFixed(1);
+                var n = s;
+                for (var h = 0; h < harmonics.length; h++) {
+                    n += Math.sin(t * Math.PI * harmonics[h][0] + phase * harmonics[h][0] / 4) * amp * harmonics[h][1];
+                }
+                noisy += (i ? ' L' : '') + x + ',' + (cy - n).toFixed(1);
+            }
+            return { clean: clean, noisy: noisy };
+        }
+
+        function setupDenoiserAnim() {
+            var cleanPath = document.querySelector('.denoiser-clean');
+            var noisyPath = document.querySelector('.denoiser-noisy');
+            if (!cleanPath || !noisyPath) return;
+            var card = cleanPath.closest('.project-card');
+            if (!card) return;
+
+            var active = false;
+            var phase = 0;
+            var animFrame = null;
+
+            function tick() {
+                if (!active) { animFrame = null; return; }
+                phase += 0.04;
+                var paths = buildPaths(phase);
+                cleanPath.setAttribute('d', paths.clean);
+                noisyPath.setAttribute('d', paths.noisy);
+                animFrame = requestAnimationFrame(tick);
+            }
+
+            function activate() {
+                if (active) return;
+                active = true;
+                if (!animFrame) animFrame = requestAnimationFrame(tick);
+            }
+
+            function deactivate() {
+                active = false;
+            }
+
+            card.addEventListener('mouseenter', activate);
+            card.addEventListener('mouseleave', deactivate);
+            card.addEventListener('touchstart', function() { activate(); }, { passive: true });
+            card.addEventListener('touchend', function() { deactivate(); });
+            card.addEventListener('touchcancel', function() { deactivate(); });
+        }
+
+        var check = setInterval(function() {
+            if (document.querySelector('.denoiser-clean')) {
+                clearInterval(check);
+                setupDenoiserAnim();
             }
         }, 100);
     })();
