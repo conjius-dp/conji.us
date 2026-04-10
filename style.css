@@ -656,6 +656,10 @@ footer p {
     }
 
 
+    .card-links {
+        gap: 0.15rem;
+    }
+
     .card-links a {
         width: 54px;
         height: 54px;
