@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=87">
+    <link rel="stylesheet" href="style.css?v=88">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -196,7 +196,8 @@
     function makeDraggable(el, sign, getSensitivity) {
         var lastX = 0, lastY = 0, startProg = 0, moved = false;
         var activeId = -1, sensitivity = 600;
-        var moveHistory = []; // {x, t} entries from last few moves
+        var moveHistory = [];
+        var startTouchX = 0, startTouchY = 0, hLocked = false;
 
         function endDrag(e) {
             if (activeId === -1) return;
@@ -248,6 +249,9 @@
             isDragging = true;
             activeId = 1;
             moveHistory = [];
+            startTouchX = x;
+            startTouchY = y;
+            hLocked = false;
             return true;
         }
 
@@ -259,7 +263,9 @@
             moved = true;
             lastX = x;
             lastY = y;
-            var delta = sign * dx / sensitivity;
+            // lock horizontal movement until total x offset exceeds threshold
+            if (!hLocked && Math.abs(x - startTouchX) > 15) hLocked = true;
+            var delta = hLocked ? sign * dx / sensitivity : 0;
             // record move for velocity calculation on release
             var now = performance.now();
             moveHistory.push({ x: x, y: y, t: now });
