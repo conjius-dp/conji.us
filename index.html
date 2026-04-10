@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=99">
+    <link rel="stylesheet" href="style.css?v=100">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -114,7 +114,7 @@
     // custom SVG thumbnails for repos that don't have a social image
     var CUSTOM_THUMBS = {
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
-        'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g class="wav-numbers"></g></svg></div>',
+        'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="-200" y="-200" width="800" height="600" fill="#111"/><g class="wav-numbers"></g></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
         'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,74)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="18" x2="0" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round"/></g><line x1="-48" y1="48" x2="-58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><line x1="48" y1="48" x2="58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><text x="-72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">0</text><text x="72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">11</text></g></svg></div>',
         'denoiser': (function() {
@@ -1319,16 +1319,35 @@
 
     // Wav-decoder scrolling numbers animation
     (function() {
-        var SLOT_W = 62; // spacing between number centers
-        var NUM_SLOTS = 9; // visible slots (odd for center)
-        var CENTER = 4; // center index (0-based)
-        var CY = 108;
+        var NUM_VISIBLE = 7;
+        var BUFFER = 2;
+        var TOTAL = NUM_VISIBLE + BUFFER * 2; // 11
+        var CENTER = Math.floor(TOTAL / 2); // 5
+        var GAP_MAP = [24, 20, 16, 12, 10, 8]; // gap by distance from center
+        var CY = 100;
         var VIEW_W = 400;
-        // opacity by distance from center
-        var OPACITIES = [0.04, 0.08, 0.14, 0.25, 0.7, 0.25, 0.14, 0.08, 0.04];
+        var OP_MAP = [0.7, 0.35, 0.18, 0.08, 0.04, 0.02];
+        var SZ_MAP = [47, 36, 29, 22, 18, 16]; // font size by distance from center
+
+        function lerpMap(map, d, fallback) {
+            var ad = Math.abs(d);
+            var lo = Math.floor(ad);
+            var hi = Math.ceil(ad);
+            if (lo >= map.length) return fallback;
+            if (hi >= map.length) return map[map.length - 1];
+            var frac = ad - lo;
+            return map[lo] * (1 - frac) + map[hi] * frac;
+        }
+
+        function opForDist(d) {
+            return lerpMap(OP_MAP, d, 0);
+        }
+
+        function szForDist(d) {
+            return lerpMap(SZ_MAP, d, SZ_MAP[SZ_MAP.length - 1]);
+        }
 
         function randSample() {
-            // 16-bit PCM values
             var vals = [-32768, -24576, -16384, -8192, -4096, -1024, 0, 1024, 4096, 8192, 16384, 21504, 24576, 32767];
             return vals[Math.floor(Math.random() * vals.length)];
         }
@@ -1340,47 +1359,107 @@
             if (!card) return;
             var g = svg.querySelector('.wav-numbers');
 
-            // initial numbers
-            var numbers = [];
-            for (var i = 0; i < NUM_SLOTS; i++) {
-                numbers.push(randSample());
+            // Match viewBox aspect ratio to container so numbers fill edge-to-edge
+            var thumb = svg.parentElement;
+            var rect = thumb.getBoundingClientRect();
+            if (rect.width && rect.height) {
+                var aspect = rect.width / rect.height;
+                var H = 200;
+                var W = H * aspect;
+                VIEW_W = W;
+                svg.setAttribute('viewBox', '0 0 ' + W.toFixed(0) + ' ' + H);
             }
 
-            // create text elements
+            var numbers = [];
+            for (var i = 0; i < TOTAL; i++) numbers.push(randSample());
+
             var textEls = [];
+            var baseWidths = []; // widths measured at BASE_FONT
+            var BASE_FONT = 27;
+
+            function makeTextEl(num) {
+                var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                t.setAttribute('y', CY);
+                t.setAttribute('text-anchor', 'middle');
+                t.setAttribute('fill', '#d48300');
+                t.setAttribute('font-family', 'Inter,sans-serif');
+                t.setAttribute('font-size', String(BASE_FONT));
+                t.setAttribute('font-weight', '600');
+                t.setAttribute('letter-spacing', '2');
+                t.textContent = num;
+                return t;
+            }
+
+            function getBaseWidth(el) {
+                el.setAttribute('font-size', String(BASE_FONT));
+                try { return el.getComputedTextLength(); }
+                catch(e) { return 50; }
+            }
+
+            function gapForDist(d) {
+                return lerpMap(GAP_MAP, d, GAP_MAP[GAP_MAP.length - 1]);
+            }
+
             function rebuildTexts() {
                 g.innerHTML = '';
                 textEls = [];
+                baseWidths = [];
                 for (var i = 0; i < numbers.length; i++) {
-                    var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    t.setAttribute('y', CY);
-                    t.setAttribute('text-anchor', 'middle');
-                    t.setAttribute('fill', '#d48300');
-                    t.setAttribute('font-family', 'Inter,sans-serif');
-                    t.setAttribute('font-size', '27');
-                    t.setAttribute('font-weight', '600');
-                    t.textContent = numbers[i];
+                    var t = makeTextEl(numbers[i]);
                     g.appendChild(t);
                     textEls.push(t);
                 }
-                updatePositions(0);
+                for (var i = 0; i < textEls.length; i++) {
+                    baseWidths.push(getBaseWidth(textEls[i]));
+                }
+                applyLayout(0);
             }
 
-            var offsetX = 0; // spring offset for bounce
-            var velX = 0;
-            var targetOffset = 0;
+            // slideProgress: 0 = no shift, 1 = fully shifted one slot left
+            var slideProgress = 0;
 
-            function updatePositions(springOff) {
-                var startX = VIEW_W / 2 - CENTER * SLOT_W + springOff;
-                for (var i = 0; i < textEls.length; i++) {
-                    var x = startX + i * SLOT_W;
+            var sizeHWM = 0; // high-water mark: only increases, never drops back
+
+            function applyLayout(springProgress) {
+                var n = textEls.length;
+                // Size progress only moves forward — no snap-back during spring bounce
+                var clamped = Math.min(Math.max(springProgress, 0), 1);
+                if (clamped > sizeHWM) sizeHWM = clamped;
+                var sp = sizeHWM;
+
+                // Compute sizes using clamped sizeProgress (no jitter from spring)
+                var dists = new Array(n);
+                var sizes = new Array(n);
+                var scaledWidths = new Array(n);
+                for (var i = 0; i < n; i++) {
+                    dists[i] = (i - CENTER) - sp;
+                    sizes[i] = szForDist(dists[i]);
+                    scaledWidths[i] = baseWidths[i] * (sizes[i] / BASE_FONT);
+                }
+
+                // Place elements left to right, then shift to center
+                var positions = new Array(n);
+                positions[0] = scaledWidths[0] / 2;
+                for (var i = 1; i < n; i++) {
+                    var gapDist = (Math.abs(dists[i - 1]) + Math.abs(dists[i])) / 2;
+                    var gap = gapForDist(gapDist);
+                    positions[i] = positions[i - 1] + scaledWidths[i - 1] / 2 + gap + scaledWidths[i] / 2;
+                }
+
+                // Visual center interpolated by clamped sizeProgress for stable layout
+                var visualCenter = positions[CENTER] * (1 - sp) + (CENTER + 1 < n ? positions[CENTER + 1] : positions[CENTER]) * sp;
+                // But use springProgress for the actual sliding offset (bouncy feel)
+                var stableShift = VIEW_W / 2 - visualCenter;
+                // Spring adds extra bounce displacement beyond the smooth slide
+                var bounceOffset = (springProgress - sp) * (CENTER + 1 < n ? (positions[CENTER + 1] - positions[CENTER]) : 0);
+
+                for (var i = 0; i < n; i++) {
+                    var x = positions[i] + stableShift - bounceOffset;
                     textEls[i].setAttribute('x', x.toFixed(1));
-                    // opacity based on position relative to center
-                    var distFromCenter = Math.abs(x - VIEW_W / 2) / SLOT_W;
-                    var opIdx = Math.round(CENTER - distFromCenter + CENTER);
-                    var op = (opIdx >= 0 && opIdx < OPACITIES.length) ? OPACITIES[opIdx] : 0;
-                    // hide if off screen
-                    if (x < -30 || x > VIEW_W + 30) op = 0;
+                    textEls[i].setAttribute('y', (CY + sizes[i] * 0.36).toFixed(1));
+                    textEls[i].setAttribute('font-size', sizes[i].toFixed(1));
+                    var op = opForDist(dists[i]);
+                    if (x < -60 || x > VIEW_W + 60) op = 0;
                     textEls[i].setAttribute('opacity', op.toFixed(3));
                 }
             }
@@ -1390,51 +1469,50 @@
             var active = false;
             var animFrame = null;
             var clickTimer = null;
-            var bouncing = false;
+            var sliding = false;
+            var slideVel = 0;
 
             function doClick() {
-                // shift numbers left: remove first, add new on right
-                numbers.shift();
+                // Add new number and element at the end (TOTAL+1 elements during slide)
                 numbers.push(randSample());
-                // remove first text, create new one
-                g.removeChild(textEls[0]);
-                textEls.shift();
-                var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                t.setAttribute('y', CY);
-                t.setAttribute('text-anchor', 'middle');
-                t.setAttribute('fill', '#d48300');
-                t.setAttribute('font-family', 'Inter,sans-serif');
-                t.setAttribute('font-size', '27');
-                t.setAttribute('font-weight', '600');
-                t.textContent = numbers[numbers.length - 1];
+                var t = makeTextEl(numbers[numbers.length - 1]);
                 g.appendChild(t);
                 textEls.push(t);
+                baseWidths.push(getBaseWidth(t));
 
-                // trigger bounce
-                offsetX = SLOT_W * 0.3;
-                velX = 0;
-                bouncing = true;
+                slideProgress = 0;
+                sizeHWM = 0;
+                slideVel = 0;
+                sliding = true;
                 if (!animFrame) animFrame = requestAnimationFrame(springTick);
 
-                // schedule next click
                 if (active) {
-                    clickTimer = setTimeout(doClick, 300 + Math.random() * 200);
+                    clickTimer = setTimeout(doClick, 600 + Math.random() * 400);
                 }
             }
 
+            function finishSlide() {
+                applyLayout(1);
+                g.removeChild(textEls[0]);
+                textEls.shift();
+                baseWidths.shift();
+                numbers.shift();
+                slideProgress = 0;
+                slideVel = 0;
+            }
+
             function springTick() {
-                if (!bouncing) { animFrame = null; return; }
-                var stiffness = 0.15;
-                var damping = 0.65;
-                velX += (0 - offsetX) * stiffness;
-                velX *= damping;
-                offsetX += velX;
-                updatePositions(offsetX);
-                if (Math.abs(offsetX) < 0.1 && Math.abs(velX) < 0.05) {
-                    offsetX = 0;
-                    velX = 0;
-                    updatePositions(0);
-                    bouncing = false;
+                if (!sliding) { animFrame = null; return; }
+                var stiffness = 0.08;
+                var damping = 0.75;
+                var target = 1; // slide one full slot
+                slideVel += (target - slideProgress) * stiffness;
+                slideVel *= damping;
+                slideProgress += slideVel;
+                applyLayout(slideProgress);
+                if (Math.abs(slideProgress - target) < 0.002 && Math.abs(slideVel) < 0.001) {
+                    finishSlide();
+                    sliding = false;
                     animFrame = null;
                     return;
                 }
