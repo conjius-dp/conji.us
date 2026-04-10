@@ -222,6 +222,7 @@
         var activeId = -1, sensitivity = 600;
         var moveHistory = [];
         var startTouchX = 0, startTouchY = 0, hLocked = false, vLocked = false;
+        var touchTarget = null;
 
         function endDrag(e) {
             if (activeId === -1) return;
@@ -231,7 +232,24 @@
                 animateTo(progress >= 0.5 ? 0 : 1);
                 return;
             }
-            if (!moved) { animateTo(progress >= 0.5 ? 1 : 0); return; }
+            if (!moved) {
+                // handle tap — open links since preventDefault blocked native clicks
+                if (touchTarget && window.innerWidth <= 600) {
+                    var link = touchTarget.closest('a');
+                    var card = touchTarget.closest('.project-card');
+                    if (link) {
+                        window.open(link.href, link.target || '_blank');
+                    } else if (card && card.tagName === 'A') {
+                        window.open(card.href, card.target || '_blank');
+                    } else if (card) {
+                        // code cards: find the repo link
+                        var repoLink = card.querySelector('.card-links a');
+                        if (repoLink) window.open(repoLink.href, '_blank');
+                    }
+                }
+                animateTo(progress >= 0.5 ? 1 : 0);
+                return;
+            }
             // vertical scroll momentum
             if (sign === -1 && moveHistory.length >= 2) {
                 var velYPxMs = 0;
@@ -313,10 +331,8 @@
         var lastTouchTime = 0;
         el.addEventListener('touchstart', function(e) {
             lastTouchTime = Date.now();
+            touchTarget = e.target;
             var t = e.touches[0];
-            // don't intercept taps on small link icons (card-links), but DO intercept card <a> tags
-            var link = e.target.closest('a');
-            if (link && link.closest('.card-links')) return;
             if (startDrag(t.clientX, t.clientY, e.target)) {
                 e.preventDefault();
             }
