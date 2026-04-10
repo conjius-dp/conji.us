@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=81">
+    <link rel="stylesheet" href="style.css?v=82">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -155,22 +155,17 @@
         fade.style.webkitMaskImage = mask;
     })();
 
-    var springVel = 0;
-    function animateTo(target, initialVel) {
+    function animateTo(target) {
         if (animFrame) cancelAnimationFrame(animFrame);
-        springVel = initialVel || 0;
-        var stiffness = 0.06;
-        var damping = 0.72;
-        function step() {
-            var force = (target - progress) * stiffness;
-            springVel = (springVel + force) * damping;
-            var next = progress + springVel;
-            setProgress(next);
-            if (Math.abs(next - target) < 0.0005 && Math.abs(springVel) < 0.0005) {
-                setProgress(target);
-                return;
-            }
-            animFrame = requestAnimationFrame(step);
+        var start = progress;
+        var startTime = performance.now();
+        var dist = Math.abs(target - start);
+        var duration = Math.max(150, dist * 300);
+        function step(now) {
+            var t = Math.min(1, (now - startTime) / duration);
+            var eased = 1 - Math.pow(1 - t, 3);
+            setProgress(start + (target - start) * eased);
+            if (t < 1) animFrame = requestAnimationFrame(step);
         }
         animFrame = requestAnimationFrame(step);
     }
@@ -206,19 +201,25 @@
             }
             // convert px/ms to progress/frame
             var vel = sign * velPxMs * 16 / sensitivity;
-            // debug: show velocity on screen
-            var dbg = document.getElementById('dbg');
-            if (!dbg) { dbg = document.createElement('div'); dbg.id = 'dbg'; dbg.style.cssText = 'position:fixed;top:0;left:0;background:red;color:#fff;font-size:14px;padding:4px 8px;z-index:9999;pointer-events:none'; document.body.appendChild(dbg); }
-            dbg.textContent = 'hist=' + moveHistory.length + ' vpx=' + velPxMs.toFixed(3) + ' vel=' + vel.toFixed(4) + ' s=' + sensitivity.toFixed(0);
-            // pick target: if flicking hard enough, go in flick direction
-            var target;
-            if (Math.abs(vel) > 0.008) {
-                target = vel > 0 ? 1 : 0;
-            } else {
-                target = progress >= 0.5 ? 1 : 0;
+            // coast with friction, then snap
+            if (Math.abs(vel) < 0.003) {
+                animateTo(progress >= 0.5 ? 1 : 0);
+                return;
             }
-            // spring toward target, starting with swipe velocity
-            animateTo(target, vel);
+            if (animFrame) cancelAnimationFrame(animFrame);
+            var friction = 0.93;
+            var coastFrames = 0;
+            function coastStep() {
+                setProgress(progress + vel);
+                vel *= friction;
+                coastFrames++;
+                if (coastFrames > 5 && Math.abs(vel) < 0.003) {
+                    animateTo(progress >= 0.5 ? 1 : 0);
+                    return;
+                }
+                animFrame = requestAnimationFrame(coastStep);
+            }
+            animFrame = requestAnimationFrame(coastStep);
         }
 
         function startDrag(x, y, target) {
