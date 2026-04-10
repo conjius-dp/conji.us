@@ -904,8 +904,7 @@
                 var x = (x0 + t * w).toFixed(1);
                 var s = Math.sin(t * Math.PI * 4 + phase) * amp;
                 clean += (i ? ' L' : '') + x + ',' + (cy - s).toFixed(1);
-                var nBase = Math.sin(t * Math.PI * 4) * amp;
-                var n = nBase;
+                var n = s;
                 for (var h = 0; h < harmonics.length; h++) {
                     n += Math.sin(t * Math.PI * harmonics[h][0] + phase * harmonics[h][0] / 2) * amp * harmonics[h][1];
                 }
