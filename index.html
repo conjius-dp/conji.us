@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=84">
+    <link rel="stylesheet" href="style.css?v=85">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -133,13 +133,12 @@
 
     var darkLayer = document.getElementById('toggle-dark-layer');
 
-    function setProgress(p, allowOvershoot) {
-        progress = allowOvershoot ? p : Math.max(0, Math.min(1, p));
+    function setProgress(p) {
+        progress = Math.max(0, Math.min(1, p));
         var offset = PEEK + progress * (-(50 + PEEK * 2));
         track.style.transform = 'translateX(' + offset + '%)';
-        var clamped = Math.max(0, Math.min(1, progress));
-        toggle.style.setProperty('--pill-x', (clamped * 100) + '%');
-        var pillLeft = clamped * 50;
+        toggle.style.setProperty('--pill-x', (progress * 100) + '%');
+        var pillLeft = progress * 50;
         var pillRight = pillLeft + 50;
         darkLayer.style.clipPath = 'inset(0 ' + (100 - pillRight) + '% 0 ' + pillLeft + '%)';
         btns[0].classList.toggle('active', progress < 0.5);
@@ -188,58 +187,31 @@
                 return;
             }
             if (!moved) { animateTo(progress >= 0.5 ? 1 : 0); return; }
-            // compute velocity from move history — find fastest segment
-            var velPxMs = 0;
-            var velYPxMs = 0;
-            if (moveHistory.length >= 2) {
+            // vertical scroll momentum
+            if (sign === -1 && moveHistory.length >= 2) {
+                var velYPxMs = 0;
                 for (var i = moveHistory.length - 1; i >= 1; i--) {
                     for (var j = i - 1; j >= 0; j--) {
                         var dt = moveHistory[i].t - moveHistory[j].t;
                         if (dt < 10 || dt > 150) continue;
-                        var v = (moveHistory[i].x - moveHistory[j].x) / dt;
-                        if (Math.abs(v) > Math.abs(velPxMs)) velPxMs = v;
                         var vy = (moveHistory[i].y - moveHistory[j].y) / dt;
                         if (Math.abs(vy) > Math.abs(velYPxMs)) velYPxMs = vy;
                     }
                 }
-            }
-            // vertical scroll momentum
-            if (sign === -1 && Math.abs(velYPxMs) > 0.1) {
-                var scrollVel = -velYPxMs * 16; // px/frame, inverted for scroll direction
-                var scrollFriction = 0.95;
-                var scrollFrame = null;
-                function scrollCoast() {
-                    window.scrollBy(0, scrollVel);
-                    scrollVel *= scrollFriction;
-                    if (Math.abs(scrollVel) < 0.5) return;
-                    scrollFrame = requestAnimationFrame(scrollCoast);
+                if (Math.abs(velYPxMs) > 0.1) {
+                    var scrollVel = -velYPxMs * 16;
+                    var scrollFriction = 0.95;
+                    function scrollCoast() {
+                        window.scrollBy(0, scrollVel);
+                        scrollVel *= scrollFriction;
+                        if (Math.abs(scrollVel) < 0.5) return;
+                        requestAnimationFrame(scrollCoast);
+                    }
+                    requestAnimationFrame(scrollCoast);
                 }
-                scrollFrame = requestAnimationFrame(scrollCoast);
             }
-            // convert px/ms to progress/frame
-            var vel = sign * velPxMs * 16 / sensitivity;
-            // coast with friction and overshoot, then snap
-            if (Math.abs(vel) < 0.003) {
-                animateTo(progress >= 0.5 ? 1 : 0);
-                return;
-            }
-            if (animFrame) cancelAnimationFrame(animFrame);
-            var friction = 0.92;
-            function coastStep() {
-                // rubber-band force at edges
-                if (progress < 0) vel += -progress * 0.3;
-                else if (progress > 1) vel -= (progress - 1) * 0.3;
-                setProgress(progress + vel, true);
-                vel *= friction;
-                if (Math.abs(vel) < 0.001 && progress >= -0.01 && progress <= 1.01) {
-                    var target = progress >= 0.5 ? 1 : 0;
-                    setProgress(target);
-                    animateTo(target);
-                    return;
-                }
-                animFrame = requestAnimationFrame(coastStep);
-            }
-            animFrame = requestAnimationFrame(coastStep);
+            // snap to nearest section
+            animateTo(progress >= 0.5 ? 1 : 0);
         }
 
         function startDrag(x, y, target) {
