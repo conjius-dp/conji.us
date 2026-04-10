@@ -803,7 +803,7 @@
 
             function springStep() {
                 var stiffness = 0.02;
-                var damping = 0.88;
+                var damping = 0.75;
                 var accel = (targetDeg - currentDeg) * stiffness;
                 velDeg += accel;
                 velDeg *= damping;
