@@ -511,7 +511,7 @@
 
                 // higher friction near center, lower when far
                 var centerDist = Math.abs(fx);
-                var centerZone = 60;
+                var centerZone = 30;
                 var t = Math.max(0, 1 - centerDist / centerZone);
                 var localFriction = friction - t * 0.02;
                 vel *= localFriction;
