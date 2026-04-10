@@ -511,13 +511,13 @@
 
                 // higher friction near center, lower when far
                 var centerDist = Math.abs(fx);
-                var centerZone = 30;
-                var t = Math.max(0, 1 - centerDist / centerZone);
+                var magnetRadius = window.innerWidth * 0.125;
+                var t = Math.max(0, 1 - centerDist / magnetRadius);
                 var localFriction = friction - t * 0.06;
                 vel *= localFriction;
 
-                // gentle spring pull toward center
-                vel -= fx * 0.003;
+                // magnetic pull toward center (gradient: strong at center, zero at edge)
+                vel -= fx * 0.012 * t;
 
                 fx += vel;
 
