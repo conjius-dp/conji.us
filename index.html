@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=101">
+    <link rel="stylesheet" href="style.css?v=113">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -24,10 +24,35 @@
     </header>
 
     <!-- Section Toggle -->
-    <div class="section-toggle" id="section-toggle">
-        <button class="toggle-btn active" data-target="projects">Code</button>
-        <button class="toggle-btn" data-target="music" style="padding-left:calc(1.25rem + 7px)">Music</button>
-        <div class="toggle-dark-layer" id="toggle-dark-layer"><span>Code</span><span style="padding-left:7px">Music</span></div>
+    <div class="toggle-row">
+        <div class="section-toggle" id="section-toggle">
+            <button class="toggle-btn active" data-target="projects">Code</button>
+            <button class="toggle-btn" data-target="music" style="padding-left:calc(1.25rem + 7px)">Music</button>
+            <div class="toggle-dark-layer" id="toggle-dark-layer"><span>Code</span><span style="padding-left:7px">Music</span></div>
+        </div>
+        <div class="toggle-gap" id="toggle-gap"></div>
+        <div class="speaker-pill" id="speaker-pill">
+            <button class="sp-icon" id="sp-icon" aria-label="Toggle player">
+                <svg class="sp-vol-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <line class="sp-x1" x1="23" y1="9" x2="17" y2="15"/>
+                    <line class="sp-x2" x1="17" y1="9" x2="23" y2="15"/>
+                    <path class="sp-wave1" d="M14.5 9.5a3.5 3.5 0 0 1 0 5"/>
+                    <path class="sp-wave2" d="M17 7a7 7 0 0 1 0 10"/>
+                    <path class="sp-wave3" d="M19.5 4.5a10.5 10.5 0 0 1 0 15"/>
+                </svg>
+            </button>
+            <div class="sp-controls">
+                <div class="sp-slider" id="sp-slider">
+                    <div class="sp-start-dot"></div>
+                    <div class="sp-track-bg"></div>
+                    <div class="sp-track-fill" id="sp-track-fill"></div>
+                    <div class="sp-handle" id="sp-handle"></div>
+                    <div class="sp-end-dot"></div>
+                </div>
+                <span class="sp-title" id="sp-title">♫ This Guy Again?</span>
+            </div>
+        </div>
     </div>
 
     <div class="sections-fade" id="sections-fade">
@@ -166,6 +191,160 @@
     var PEEK = 0.9; // percentage of track width to peek — centers grid gap on screen
 
     var darkLayer = document.getElementById('toggle-dark-layer');
+    var speakerPill = document.getElementById('speaker-pill');
+
+    // Position speaker pill right of toggle with card-gap spacing
+    function positionSpeakerPill() {
+        var toggleRect = toggle.getBoundingClientRect();
+        var rowRect = toggle.parentElement.getBoundingClientRect();
+        var cardGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-gap')) || 30;
+        var gap = window.innerWidth > 600 ? cardGap / 4 : cardGap / 2;
+        var left = toggleRect.right - rowRect.left + gap;
+        speakerPill.style.left = left + 'px';
+    }
+    positionSpeakerPill();
+    window.addEventListener('resize', positionSpeakerPill);
+
+    // Speaker pill open/close + volume slider
+    (function() {
+        var pill = document.getElementById('speaker-pill');
+        var icon = document.getElementById('sp-icon');
+        var slider = document.getElementById('sp-slider');
+        var fill = document.getElementById('sp-track-fill');
+        var handle = document.getElementById('sp-handle');
+        var volSvg = pill.querySelector('.sp-vol-icon');
+        var x1 = volSvg.querySelector('.sp-x1');
+        var x2 = volSvg.querySelector('.sp-x2');
+        var wave1 = volSvg.querySelector('.sp-wave1');
+        var wave2 = volSvg.querySelector('.sp-wave2');
+        var wave3 = volSvg.querySelector('.sp-wave3');
+        var volume = 0;
+        var hasUnmuted = false;
+        var prevVolume = 0.5;
+
+        function setVolume(v) {
+            volume = Math.max(0, Math.min(1, v));
+            if (volume > 0) prevVolume = volume;
+            var pct = (volume * 100).toFixed(1) + '%';
+            fill.style.width = pct;
+            handle.style.left = pct;
+            var isMute = volume === 0;
+            x1.style.opacity = isMute ? '1' : '0';
+            x2.style.opacity = isMute ? '1' : '0';
+            wave1.style.opacity = volume > 0 ? '1' : '0';
+            wave2.style.opacity = volume > 0.33 ? '1' : '0';
+            wave3.style.opacity = volume > 0.66 ? '1' : '0';
+        }
+
+        // stop all pointer events from bubbling to the toggle drag system
+        pill.addEventListener('pointerdown', function(e) { e.stopPropagation(); });
+        pill.addEventListener('pointermove', function(e) { e.stopPropagation(); });
+        pill.addEventListener('pointerup', function(e) { e.stopPropagation(); });
+
+        var toggleGap = document.getElementById('toggle-gap');
+        var isMobile = function() { return window.innerWidth <= 600; };
+
+        var savedLeft = '';
+
+        function mobileOpen() {
+            var gapH = 60;
+            var downY = gapH / 2 + 8; // center pill in gap area
+            savedLeft = pill.style.left;
+
+            // Phase 1: grow gap + move circle down
+            pill.classList.add('mobile-phase1');
+            toggleGap.classList.add('expanding');
+            pill.style.transform = 'translateY(' + downY + 'px)';
+
+            // Phase 2: slide to center (after phase1 completes)
+            setTimeout(function() {
+                pill.classList.remove('mobile-phase1');
+                pill.classList.add('mobile-phase2');
+                pill.style.left = '50%';
+                pill.style.transform = 'translate(-50%, ' + downY + 'px)';
+                // Phase 3: expand after reaching center
+                setTimeout(function() {
+                    pill.classList.add('open');
+                    if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
+                    else { setVolume(prevVolume); }
+                }, 370);
+            }, 320);
+        }
+
+        function mobileClose() {
+            setVolume(0);
+            pill.classList.remove('open');
+            // Phase: collapse + slide back to original position
+            pill.classList.remove('mobile-phase2');
+            pill.classList.add('mobile-phase1');
+            pill.style.left = savedLeft;
+            pill.style.transform = 'translateY(0px)';
+            setTimeout(function() {
+                toggleGap.classList.remove('expanding');
+                pill.classList.remove('mobile-phase1');
+                pill.style.transform = '';
+            }, 360);
+        }
+
+        icon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!pill.classList.contains('open')) {
+                if (isMobile()) {
+                    mobileOpen();
+                } else {
+                    pill.classList.add('open');
+                    if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
+                }
+            } else if (volume === 0) {
+                setVolume(prevVolume);
+                hasUnmuted = true;
+            } else {
+                if (isMobile()) {
+                    mobileClose();
+                } else {
+                    setVolume(0);
+                    pill.classList.remove('open');
+                }
+            }
+        });
+
+        pill.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (e.target === pill && !pill.classList.contains('open')) {
+                if (isMobile()) { mobileOpen(); }
+                else { pill.classList.add('open'); if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); } }
+            }
+        });
+
+        // slider drag
+        var dragging = false;
+        function sliderPos(e) {
+            var rect = slider.getBoundingClientRect();
+            var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            setVolume(x / rect.width);
+        }
+        function onDown(e) {
+            e.stopPropagation();
+            dragging = true;
+            sliderPos(e);
+        }
+        function onMove(e) {
+            if (!dragging) return;
+            sliderPos(e);
+        }
+        function onUp() { dragging = false; }
+
+        slider.addEventListener('mousedown', onDown);
+        handle.addEventListener('mousedown', onDown);
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        slider.addEventListener('touchstart', function(e) { onDown(e); }, { passive: true });
+        handle.addEventListener('touchstart', function(e) { e.stopPropagation(); onDown(e); }, { passive: true });
+        document.addEventListener('touchmove', function(e) { if (dragging) sliderPos(e); }, { passive: true });
+        document.addEventListener('touchend', onUp);
+
+        setVolume(volume);
+    })();
 
     function setProgress(p) {
         progress = Math.max(0, Math.min(1, p));
@@ -179,6 +358,11 @@
         btns[1].classList.toggle('active', progress >= 0.5);
     }
 
+    // Speaker pill is always visible
+    speakerPill.style.setProperty('--speaker-x', '0px');
+    speakerPill.style.setProperty('--speaker-op', '1');
+    speakerPill.classList.add('visible');
+
     var isDragging = false;
 
     // static fade mask — never moves
@@ -189,7 +373,7 @@
         fade.style.webkitMaskImage = mask;
     })();
 
-    function animateTo(target) {
+    function animateTo(target, onDone) {
         if (animFrame) cancelAnimationFrame(animFrame);
         var start = progress;
         var startTime = performance.now();
@@ -200,6 +384,7 @@
             var eased = 1 - Math.pow(1 - t, 3);
             setProgress(start + (target - start) * eased);
             if (t < 1) animFrame = requestAnimationFrame(step);
+            else if (onDone) onDone();
         }
         animFrame = requestAnimationFrame(step);
     }
@@ -219,7 +404,8 @@
             activeId = -1;
             isDragging = false;
             if (!moved && sign === 1) {
-                animateTo(progress >= 0.5 ? 0 : 1);
+                var target = progress >= 0.5 ? 0 : 1;
+                animateTo(target);
                 return;
             }
             if (!moved) {
