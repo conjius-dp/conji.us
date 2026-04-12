@@ -7,10 +7,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=113">
+    <link rel="stylesheet" href="style.css?v=115">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
+
+    <!-- Hidden SoundCloud player — change the url param to a /sets/ playlist URL for playlist mode -->
+    <iframe id="sc-widget" width="0" height="0" scrolling="no" frameborder="no" allow="autoplay"
+        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/conjius/sets/conji-us-bg-music&auto_play=false&show_artwork=false&visual=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false"
+        style="position:absolute;left:-9999px"></iframe>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
 
     <!-- Decorative background -->
     <div class="bg-art" aria-hidden="true">
@@ -50,7 +56,9 @@
                     <div class="sp-handle" id="sp-handle"></div>
                     <div class="sp-end-dot"></div>
                 </div>
-                <span class="sp-title" id="sp-title">♫ This Guy Again?</span>
+                <div class="sp-title-wrap" id="sp-title-wrap">
+                    <span class="sp-title" id="sp-title">♫ This Guy Again?</span>
+                </div>
             </div>
         </div>
     </div>
@@ -344,6 +352,267 @@
         document.addEventListener('touchend', onUp);
 
         setVolume(volume);
+
+        // ── Title swipe to skip tracks ──
+        var titleWrap = document.getElementById('sp-title-wrap');
+        var titleEl = document.getElementById('sp-title');
+        var swipeStartX = 0;
+        var swiping = false;
+        var SWIPE_THRESHOLD = 50;
+
+        function animateTitle(direction, newText, callback) {
+            // Slide out current title
+            titleEl.classList.add(direction > 0 ? 'slide-out-left' : 'slide-out-right');
+            setTimeout(function() {
+                // Update text and position for slide in
+                titleEl.textContent = newText;
+                titleEl.classList.remove('slide-out-left', 'slide-out-right');
+                titleEl.classList.add(direction > 0 ? 'slide-in-left' : 'slide-in-right');
+                // Force reflow then slide in
+                titleEl.offsetWidth;
+                titleEl.classList.remove('slide-in-left', 'slide-in-right');
+                if (callback) callback();
+            }, 300);
+        }
+
+        var titleSetBySwipe = false;
+        var skipping = false;
+        function skipTrack(direction) {
+            if (!scWidget || !scReady || skipping) return;
+            skipping = true;
+            titleSetBySwipe = true;
+            scWidget.getSounds(function(sounds) {
+                scWidget.getCurrentSoundIndex(function(idx) {
+                    var nextIdx = idx + direction;
+                    if (nextIdx < 0) nextIdx = sounds.length - 1;
+                    if (nextIdx >= sounds.length) nextIdx = 0;
+                    var nextTitle = '\u266B ' + sounds[nextIdx].title;
+                    animateTitle(direction, nextTitle, function() {
+                        if (direction > 0) {
+                            scWidget.next();
+                        } else {
+                            scWidget.prev();
+                        }
+                        setTimeout(function() { skipping = false; }, 500);
+                    });
+                });
+            });
+        }
+
+        titleWrap.addEventListener('pointerdown', function(e) {
+            e.stopPropagation();
+            swipeStartX = e.clientX;
+            swiping = true;
+            titleWrap.setPointerCapture(e.pointerId);
+        });
+        titleWrap.addEventListener('pointermove', function(e) {
+            if (!swiping) return;
+            e.stopPropagation();
+            var dx = e.clientX - swipeStartX;
+            titleEl.style.transform = 'translateX(' + dx + 'px)';
+            titleEl.style.opacity = Math.max(0, 1 - Math.abs(dx) / 100);
+            titleEl.style.transition = 'none';
+        });
+        titleWrap.addEventListener('pointerup', function(e) {
+            if (!swiping) return;
+            swiping = false;
+            e.stopPropagation();
+            var dx = e.clientX - swipeStartX;
+            titleEl.style.transform = '';
+            titleEl.style.opacity = '';
+            titleEl.style.transition = '';
+            if (Math.abs(dx) > SWIPE_THRESHOLD) {
+                skipTrack(dx < 0 ? 1 : -1); // swipe left = next, swipe right = prev
+            }
+        });
+        titleWrap.addEventListener('pointercancel', function() {
+            swiping = false;
+            titleEl.style.transform = '';
+            titleEl.style.opacity = '';
+            titleEl.style.transition = '';
+        });
+
+        // ── SoundCloud integration ──
+        // Set your playlist or track URL here:
+        var SC_URL = 'https://soundcloud.com/conjius/sets/conji-us-bg-music';
+        // Per-track intervals: { trackIndex: { start: ms, end: ms } }
+        // Tracks not listed play in full. Index is 0-based playlist order.
+        var trackIntervals = {
+            0: { start: 45000,  end: 93000  },  // A Weekend In June — 0:45–1:33
+            1: { start: 68000,  end: 121000 },  // This Guy Again? — 1:08–2:01
+            2: { start: 36000,  end: 82000, gain: 0.7 },  // Validation — 0:36–1:22, quieter
+            3: { start: 167000, end: 253000 },  // The Alterglow — 2:47–4:13
+        };
+
+        var titleEl = document.getElementById('sp-title');
+        var scReady = false;
+        var scWidget = null;
+        var scWantsPlay = false; // true when user has unmuted but SC not ready yet
+
+        function initSoundCloud() {
+            if (typeof SC === 'undefined' || !SC.Widget) return;
+            var iframe = document.getElementById('sc-widget');
+            if (!iframe) return;
+            scWidget = SC.Widget(iframe);
+
+            scWidget.bind(SC.Widget.Events.READY, function() {
+                scReady = true;
+                scSetTargetVol(volume * 100);
+                scWidget.getCurrentSound(function(sound) {
+                    if (sound && sound.title) {
+                        titleEl.textContent = '\u266B ' + sound.title;
+                    }
+                });
+                if (scWantsPlay && volume > 0) {
+                    scWidget.play();
+                }
+            });
+
+            // Crossfade + enforce end time
+            var FADE_MS = 2000;
+            var isFading = false;
+            var fadeInTimer = null;
+
+            scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, function(data) {
+                scWidget.getCurrentSoundIndex(function(idx) {
+                    var interval = trackIntervals[idx];
+                    if (!interval || !interval.end) return;
+                    var pos = data.currentPosition;
+                    var fadeStart = interval.end - FADE_MS;
+
+                    // Smooth fade out via multiplier
+                    if (pos >= fadeStart && pos < interval.end) {
+                        isFading = true;
+                        scFadeMul = Math.max(0, (interval.end - pos) / FADE_MS);
+                        scSetTargetVol(volume * 100);
+                    }
+
+                    // Advance when interval ends
+                    if (pos >= interval.end) {
+                        isFading = false;
+                        scWidget.getSounds(function(sounds) {
+                            if (idx < sounds.length - 1) {
+                                scWidget.next();
+                            } else {
+                                scWidget.skip(0);
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Fade in on new track start
+            var firstPlay = true;
+            scWidget.bind(SC.Widget.Events.PLAY, function() {
+                if (titleSetBySwipe) {
+                    titleSetBySwipe = false;
+                } else if (firstPlay) {
+                    firstPlay = false;
+                    scWidget.getCurrentSound(function(sound) {
+                        if (sound && sound.title) {
+                            titleEl.textContent = '\u266B ' + sound.title;
+                        }
+                    });
+                } else {
+                    scWidget.getCurrentSound(function(sound) {
+                        if (sound && sound.title) {
+                            animateTitle(1, '\u266B ' + sound.title);
+                        }
+                    });
+                }
+                scWidget.getCurrentSoundIndex(function(idx) {
+                    var interval = trackIntervals[idx];
+                    scGain = (interval && interval.gain) ? interval.gain : 1;
+                    if (interval && interval.start) {
+                        scWidget.getPosition(function(pos) {
+                            if (pos < interval.start - 500) {
+                                scWidget.seekTo(interval.start);
+                            }
+                        });
+                    }
+                    // Smooth fade in via multiplier
+                    scFadeMul = 0;
+                    scCurrentVol = 0;
+                    if (fadeInTimer) clearInterval(fadeInTimer);
+                    var fadeStart = Date.now();
+                    fadeInTimer = setInterval(function() {
+                        var elapsed = Date.now() - fadeStart;
+                        scFadeMul = Math.min(1, elapsed / FADE_MS);
+                        scSetTargetVol(volume * 100);
+                        if (scFadeMul >= 1) {
+                            clearInterval(fadeInTimer);
+                            fadeInTimer = null;
+                        }
+                    }, 30);
+                });
+            });
+
+            // Auto-advance on track finish
+            scWidget.bind(SC.Widget.Events.FINISH, function() {
+                scWidget.getSounds(function(sounds) {
+                    scWidget.getCurrentSoundIndex(function(idx) {
+                        if (idx < sounds.length - 1) {
+                            scWidget.next();
+                        } else {
+                            scWidget.skip(0);
+                        }
+                    });
+                });
+            });
+        }
+
+        // SC API loads async
+        var scPoll = setInterval(function() {
+            if (typeof SC !== 'undefined' && SC.Widget) {
+                clearInterval(scPoll);
+                initSoundCloud();
+            }
+        }, 200);
+        setTimeout(function() { clearInterval(scPoll); }, 10000);
+
+        // Smooth SC volume — ramp to target to avoid zipper noise
+        var scTargetVol = 0;
+        var scCurrentVol = 0;
+        var scVolRaf = null;
+        var scFadeMul = 1; // crossfade multiplier (0–1)
+        var scGain = 1;    // per-track gain (0–1)
+
+        function scApplyVolume() {
+            if (!scWidget || !scReady) return;
+            var target = scTargetVol * scFadeMul * scGain;
+            // Lerp towards target
+            var diff = target - scCurrentVol;
+            if (Math.abs(diff) < 0.5) {
+                scCurrentVol = target;
+                scWidget.setVolume(target);
+                scVolRaf = null;
+                return;
+            }
+            scCurrentVol += diff * 0.15;
+            scWidget.setVolume(scCurrentVol);
+            scVolRaf = requestAnimationFrame(scApplyVolume);
+        }
+
+        function scSetTargetVol(v) {
+            scTargetVol = v;
+            if (!scVolRaf) scVolRaf = requestAnimationFrame(scApplyVolume);
+        }
+
+        // Wire volume changes to SC widget
+        var origSetVolume = setVolume;
+        setVolume = function(v) {
+            origSetVolume(v);
+            scWantsPlay = v > 0;
+            if (scWidget && scReady) {
+                scFadeMul = 1;
+                scSetTargetVol(v * 100);
+                if (v > 0) {
+                    scWidget.play();
+                } else {
+                    scWidget.pause();
+                }
+            }
+        };
     })();
 
     function setProgress(p) {

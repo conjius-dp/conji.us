@@ -325,11 +325,44 @@ body {
 .sp-handle:active { cursor: grabbing; }
 
 /* Track title */
+.sp-title-wrap {
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;
+}
+
+.sp-title-wrap:active { cursor: grabbing; }
+
 .sp-title {
     font-family: "Inconsolata", monospace;
     font-size: clamp(0.85rem, 2vw, 1.15rem);
     font-weight: 600;
     color: #000;
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+}
+
+.sp-title.slide-out-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.sp-title.slide-out-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.sp-title.slide-in-left {
+    transform: translateX(100%);
+    opacity: 0;
+    transition: none;
+}
+
+.sp-title.slide-in-right {
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: none;
 }
 
 /* Dot markers at 0% and 100% */
