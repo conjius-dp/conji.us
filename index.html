@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=115">
+    <link rel="stylesheet" href="style.css?v=117">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -58,6 +58,7 @@
                 </div>
                 <div class="sp-title-wrap" id="sp-title-wrap">
                     <span class="sp-title" id="sp-title">♫ This Guy Again?</span>
+                    <span class="sp-title sp-title-next" id="sp-title-next"></span>
                 </div>
             </div>
         </div>
@@ -294,14 +295,23 @@
             }, 360);
         }
 
+        function pillTransitionOn() {
+            pill.style.transition = 'background 0.3s, max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+        function pillTransitionOff() {
+            pill.style.transition = '';
+        }
+
         icon.addEventListener('click', function(e) {
             e.stopPropagation();
             if (!pill.classList.contains('open')) {
                 if (isMobile()) {
                     mobileOpen();
                 } else {
+                    pillTransitionOn();
                     pill.classList.add('open');
                     if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
+                    setTimeout(pillTransitionOff, 400);
                 }
             } else if (volume === 0) {
                 setVolume(prevVolume);
@@ -310,8 +320,10 @@
                 if (isMobile()) {
                     mobileClose();
                 } else {
+                    pillTransitionOn();
                     setVolume(0);
                     pill.classList.remove('open');
+                    setTimeout(pillTransitionOff, 400);
                 }
             }
         });
@@ -320,7 +332,7 @@
             e.stopPropagation();
             if (e.target === pill && !pill.classList.contains('open')) {
                 if (isMobile()) { mobileOpen(); }
-                else { pill.classList.add('open'); if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); } }
+                else { pillTransitionOn(); pill.classList.add('open'); if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); } setTimeout(pillTransitionOff, 400); }
             }
         });
 
@@ -361,13 +373,38 @@
         var SWIPE_THRESHOLD = 50;
 
         function animateTitle(direction, newText, callback) {
+            var oldWidth = pill.offsetWidth;
             // Slide out current title
             titleEl.classList.add(direction > 0 ? 'slide-out-left' : 'slide-out-right');
             setTimeout(function() {
+                // Lock pill width during text swap
+                pill.style.maxWidth = oldWidth + 'px';
+                pill.style.transition = 'none';
+                pill.offsetWidth;
                 // Update text and position for slide in
                 titleEl.textContent = newText;
                 titleEl.classList.remove('slide-out-left', 'slide-out-right');
                 titleEl.classList.add(direction > 0 ? 'slide-in-left' : 'slide-in-right');
+                // Measure new width and animate
+                pill.style.maxWidth = 'none';
+                pill.offsetWidth;
+                var newWidth = pill.scrollWidth;
+                if (Math.abs(newWidth - oldWidth) > 2) {
+                    pill.style.transition = 'none';
+                    pill.style.maxWidth = oldWidth + 'px';
+                    pill.offsetWidth;
+                    pill.style.transition = 'max-width 0.25s ease';
+                    pill.style.maxWidth = newWidth + 'px';
+                    setTimeout(function() {
+                        pill.style.transition = '';
+                        pill.style.maxWidth = '';
+                    }, 300);
+                } else {
+                    pill.style.transition = 'none';
+                    pill.style.maxWidth = '';
+                    pill.offsetWidth;
+                    pill.style.transition = '';
+                }
                 // Force reflow then slide in
                 titleEl.offsetWidth;
                 titleEl.classList.remove('slide-in-left', 'slide-in-right');
@@ -377,7 +414,7 @@
 
         var titleSetBySwipe = false;
         var skipping = false;
-        function skipTrack(direction) {
+        function skipTrack(direction, fromSwipe) {
             if (!scWidget || !scReady || skipping) return;
             skipping = true;
             titleSetBySwipe = true;
@@ -387,50 +424,155 @@
                     if (nextIdx < 0) nextIdx = sounds.length - 1;
                     if (nextIdx >= sounds.length) nextIdx = 0;
                     var nextTitle = '\u266B ' + sounds[nextIdx].title;
-                    animateTitle(direction, nextTitle, function() {
-                        if (direction > 0) {
-                            scWidget.next();
-                        } else {
-                            scWidget.prev();
-                        }
+                    if (fromSwipe) {
+                        // Title animation already handled by swipe drag — just change track
+                        if (direction > 0) { scWidget.next(); } else { scWidget.prev(); }
                         setTimeout(function() { skipping = false; }, 500);
-                    });
+                    } else {
+                        animateTitle(direction, nextTitle, function() {
+                            if (direction > 0) { scWidget.next(); } else { scWidget.prev(); }
+                            setTimeout(function() { skipping = false; }, 500);
+                        });
+                    }
                 });
             });
         }
+
+        var nextTitleEl = document.getElementById('sp-title-next');
+        var nextTitleLoaded = null; // cached {direction, title}
+        var wrapWidth = 0;
 
         titleWrap.addEventListener('pointerdown', function(e) {
             e.stopPropagation();
             swipeStartX = e.clientX;
             swiping = true;
+            nextTitleLoaded = null;
+            wrapWidth = titleWrap.offsetWidth;
             titleWrap.setPointerCapture(e.pointerId);
         });
+
+        function loadNextTitle(direction) {
+            if (!scWidget || !scReady) return;
+            if (nextTitleLoaded && nextTitleLoaded.direction === direction) return;
+            scWidget.getSounds(function(sounds) {
+                scWidget.getCurrentSoundIndex(function(idx) {
+                    var nextIdx = idx + direction;
+                    if (nextIdx < 0) nextIdx = sounds.length - 1;
+                    if (nextIdx >= sounds.length) nextIdx = 0;
+                    nextTitleLoaded = { direction: direction, title: '\u266B ' + sounds[nextIdx].title };
+                    nextTitleEl.textContent = nextTitleLoaded.title;
+                });
+            });
+        }
+
+        var lastSwipeDx = 0;
         titleWrap.addEventListener('pointermove', function(e) {
             if (!swiping) return;
             e.stopPropagation();
             var dx = e.clientX - swipeStartX;
+            lastSwipeDx = dx;
+            var progress = Math.min(1, Math.abs(dx) / 100);
+
+            // Move current title with finger
             titleEl.style.transform = 'translateX(' + dx + 'px)';
-            titleEl.style.opacity = Math.max(0, 1 - Math.abs(dx) / 100);
+            titleEl.style.opacity = Math.max(0, 1 - progress);
             titleEl.style.transition = 'none';
-        });
-        titleWrap.addEventListener('pointerup', function(e) {
-            if (!swiping) return;
-            swiping = false;
-            e.stopPropagation();
-            var dx = e.clientX - swipeStartX;
-            titleEl.style.transform = '';
-            titleEl.style.opacity = '';
-            titleEl.style.transition = '';
-            if (Math.abs(dx) > SWIPE_THRESHOLD) {
-                skipTrack(dx < 0 ? 1 : -1); // swipe left = next, swipe right = prev
+
+            // Preload and show incoming title from opposite side
+            if (Math.abs(dx) > 10) {
+                var dir = dx < 0 ? 1 : -1;
+                loadNextTitle(dir);
+                // Next title follows current title with 100px gap between them
+                var gap = 50;
+                var nextOffset = dx + (dir > 0 ? (wrapWidth + gap) : -(wrapWidth + gap));
+                nextTitleEl.style.transform = 'translateX(' + nextOffset + 'px)';
+                nextTitleEl.style.opacity = Math.min(1, progress * 1.5);
+                nextTitleEl.style.transition = 'none';
+            } else {
+                nextTitleEl.style.opacity = '0';
+                nextTitleEl.style.transition = 'none';
             }
         });
-        titleWrap.addEventListener('pointercancel', function() {
+
+        function finishSwipe(e) {
+            if (!swiping) return;
             swiping = false;
-            titleEl.style.transform = '';
-            titleEl.style.opacity = '';
-            titleEl.style.transition = '';
-        });
+            if (e) e.stopPropagation();
+            var dx = e ? (e.clientX - swipeStartX) : lastSwipeDx;
+
+            if (Math.abs(dx) > SWIPE_THRESHOLD && nextTitleLoaded) {
+                // Lock pill width to current size before swap
+                var oldWidth = pill.offsetWidth;
+                pill.style.maxWidth = oldWidth + 'px';
+                pill.style.transition = 'none';
+                pill.offsetWidth; // reflow
+
+                // Snap next title into place
+                nextTitleEl.style.transition = 'transform 0.15s ease-out, opacity 0.15s ease-out';
+                nextTitleEl.style.transform = 'translateX(0)';
+                nextTitleEl.style.opacity = '1';
+                // Hide current title
+                titleEl.style.opacity = '0';
+                titleEl.style.transition = 'none';
+                // After snap, swap titles and animate pill width
+                var newTitle = nextTitleLoaded.title;
+                var dir = nextTitleLoaded.direction;
+                setTimeout(function() {
+                    // Disable transition so title swap is instant
+                    titleEl.style.transition = 'none';
+                    titleEl.textContent = newTitle;
+                    titleEl.style.transform = '';
+                    titleEl.style.opacity = '1';
+                    nextTitleEl.style.transform = '';
+                    nextTitleEl.style.opacity = '0';
+                    nextTitleEl.style.transition = '';
+                    // Measure new width and animate pill to it
+                    pill.style.maxWidth = 'none';
+                    pill.offsetWidth;
+                    var newWidth = pill.scrollWidth;
+                    if (Math.abs(newWidth - oldWidth) > 2) {
+                        pill.style.transition = 'none';
+                        pill.style.maxWidth = oldWidth + 'px';
+                        pill.offsetWidth;
+                        pill.style.transition = 'max-width 0.25s ease';
+                        pill.style.maxWidth = newWidth + 'px';
+                        setTimeout(function() {
+                            pill.style.transition = 'none';
+                            pill.style.maxWidth = '';
+                            pill.offsetWidth;
+                            pill.style.transition = '';
+                        }, 300);
+                    } else {
+                        pill.style.transition = 'none';
+                        pill.style.maxWidth = '';
+                        pill.offsetWidth;
+                        pill.style.transition = '';
+                    }
+                    // Re-enable default title transition after reflow
+                    titleEl.offsetWidth;
+                    titleEl.style.transition = '';
+                }, 150);
+                // Start playing
+                skipTrack(dir, true);
+            } else {
+                // Snap back — didn't cross threshold
+                titleEl.style.transition = 'transform 0.15s ease-out, opacity 0.15s ease-out';
+                titleEl.style.transform = 'translateX(0)';
+                titleEl.style.opacity = '1';
+                nextTitleEl.style.transition = 'opacity 0.15s ease-out';
+                nextTitleEl.style.opacity = '0';
+                setTimeout(function() {
+                    titleEl.style.transition = '';
+                    nextTitleEl.style.transition = '';
+                    nextTitleEl.style.transform = '';
+                }, 150);
+            }
+            nextTitleLoaded = null;
+        }
+
+        titleWrap.addEventListener('pointerup', function(e) { finishSwipe(e); });
+        titleWrap.addEventListener('pointercancel', function() { finishSwipe(null); });
+        titleWrap.addEventListener('lostpointercapture', function() { finishSwipe(null); });
 
         // ── SoundCloud integration ──
         // Set your playlist or track URL here:
@@ -503,9 +645,13 @@
 
             // Fade in on new track start
             var firstPlay = true;
+            var swipeAbsorbUntil = 0;
             scWidget.bind(SC.Widget.Events.PLAY, function() {
                 if (titleSetBySwipe) {
+                    swipeAbsorbUntil = Date.now() + 1000;
                     titleSetBySwipe = false;
+                } else if (Date.now() < swipeAbsorbUntil) {
+                    // Absorb duplicate PLAY events from seekTo after swipe
                 } else if (firstPlay) {
                     firstPlay = false;
                     scWidget.getCurrentSound(function(sound) {
@@ -600,15 +746,19 @@
 
         // Wire volume changes to SC widget
         var origSetVolume = setVolume;
+        var wasPlaying = false;
         setVolume = function(v) {
+            var wasMuted = volume === 0;
             origSetVolume(v);
             scWantsPlay = v > 0;
             if (scWidget && scReady) {
                 scFadeMul = 1;
                 scSetTargetVol(v * 100);
-                if (v > 0) {
+                if (v > 0 && !wasPlaying) {
+                    wasPlaying = true;
                     scWidget.play();
-                } else {
+                } else if (v === 0) {
+                    wasPlaying = false;
                     scWidget.pause();
                 }
             }
