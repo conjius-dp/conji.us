@@ -698,6 +698,8 @@
                 animateTitle(1, tracks[currentTrack].title);
             }
 
+            document.title = 'Conjius - ' + tracks[currentTrack].title;
+
             var interval = trackIntervals[currentTrack];
             scGain = (interval && interval.gain) ? interval.gain : 1;
             // Always enforce interval start position
@@ -785,6 +787,7 @@
             } else if (v === 0 && muteFromButton) {
                 audioIsPlaying = false;
                 audio.pause();
+                document.title = 'Conjius';
             }
             muteFromButton = false;
         };
