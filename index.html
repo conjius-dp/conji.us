@@ -282,6 +282,7 @@
         }
 
         function mobileClose() {
+            muteFromButton = true;
             setVolume(0);
             pill.classList.remove('open');
             // Phase: collapse + slide back to original position
@@ -322,6 +323,7 @@
                     mobileClose();
                 } else {
                     pillTransitionOn();
+                    muteFromButton = true;
                     setVolume(0);
                     pill.classList.remove('open');
                     setTimeout(pillTransitionOff, 400);
@@ -591,16 +593,19 @@
         var eqFreqs = [60, 2000, 10000];
         var eqBins = []; // filled after audioCtx is created
 
+        var gainNode = null;
         function initAnalyser() {
             if (audioCtx) return;
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioCtx.createAnalyser();
             analyser.fftSize = 1024;
             analyser.smoothingTimeConstant = 0.45;
+            gainNode = audioCtx.createGain();
             fftData = new Uint8Array(analyser.frequencyBinCount);
             eqSource = audioCtx.createMediaElementSource(audio);
             eqSource.connect(analyser);
-            analyser.connect(audioCtx.destination);
+            analyser.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
             // Map frequencies to FFT bin indices
             var binSize = audioCtx.sampleRate / analyser.fftSize;
             for (var i = 0; i < eqFreqs.length; i++) {
@@ -625,13 +630,12 @@
 
         titleEl.textContent = tracks[0].title;
 
-        var isTrackTransition = false;
+        var isTrackChange = false;
         function playTrack(idx) {
-            isTrackTransition = true;
+            isTrackChange = true;
             currentTrack = idx;
             audio.src = tracks[idx].src;
             audio.play();
-            isTrackTransition = false;
         }
 
         // Crossfade + enforce end time
@@ -670,7 +674,7 @@
             if (!eqRaf) eqRaf = requestAnimationFrame(eqTick);
         });
         audio.addEventListener('pause', function() {
-            if (isTrackTransition) return; // don't kill loops during track change
+            if (isTrackChange) return; // don't kill loops during track change
             if (fadeOutRaf) { cancelAnimationFrame(fadeOutRaf); fadeOutRaf = null; }
             if (eqRaf) { cancelAnimationFrame(eqRaf); eqRaf = null; }
             for (var i = 0; i < eqBars.length; i++) eqBars[i].style.height = '2px';
@@ -695,25 +699,29 @@
 
             var interval = trackIntervals[currentTrack];
             scGain = (interval && interval.gain) ? interval.gain : 1;
+            // Always enforce interval start position
             if (interval && interval.start) {
                 if (audio.currentTime * 1000 < interval.start - 500) {
                     audio.currentTime = interval.start / 1000;
                 }
             }
-            // Smooth fade in via multiplier
-            scFadeMul = 0;
-            scCurrentVol = 0;
-            if (fadeInTimer) clearInterval(fadeInTimer);
-            var fadeStart = Date.now();
-            fadeInTimer = setInterval(function() {
-                var elapsed = Date.now() - fadeStart;
-                scFadeMul = Math.min(1, elapsed / FADE_MS);
-                scSetTargetVol(volume * 100);
-                if (scFadeMul >= 1) {
-                    clearInterval(fadeInTimer);
-                    fadeInTimer = null;
-                }
-            }, 30);
+            // Smooth fade in — only on track changes
+            if (isTrackChange) {
+                scFadeMul = 0;
+                scCurrentVol = 0;
+                if (fadeInTimer) clearInterval(fadeInTimer);
+                var fadeStart = Date.now();
+                fadeInTimer = setInterval(function() {
+                    var elapsed = Date.now() - fadeStart;
+                    scFadeMul = Math.min(1, elapsed / FADE_MS);
+                    scSetTargetVol(volume * 100);
+                    if (scFadeMul >= 1) {
+                        clearInterval(fadeInTimer);
+                        fadeInTimer = null;
+                    }
+                }, 30);
+                isTrackChange = false;
+            }
 
             audioIsPlaying = true;
         });
@@ -739,12 +747,15 @@
             var diff = target - scCurrentVol;
             if (Math.abs(diff) < 0.5) {
                 scCurrentVol = target;
-                audio.volume = target / 100;
+                if (gainNode) gainNode.gain.value = target / 100;
+                else audio.volume = target / 100;
                 scVolRaf = null;
                 return;
             }
             scCurrentVol += diff * 0.15;
-            audio.volume = Math.max(0, Math.min(1, scCurrentVol / 100));
+            var vol = Math.max(0, Math.min(1, scCurrentVol / 100));
+            if (gainNode) gainNode.gain.value = vol;
+            else audio.volume = vol;
             scVolRaf = requestAnimationFrame(scApplyVolume);
         }
 
@@ -755,18 +766,26 @@
 
         // Wire volume changes to audio element
         var origSetVolume = setVolume;
+        var muteFromButton = false;
         setVolume = function(v) {
             origSetVolume(v);
-            audioWantsPlay = v > 0;
+            audioWantsPlay = volume > 0;
             scFadeMul = 1;
-            scSetTargetVol(v * 100);
-            if (v > 0 && !audioIsPlaying) {
+            scSetTargetVol(volume * 100);
+            // Hard-mute when volume is 0 — bypass lerp
+            if (volume === 0) {
+                scCurrentVol = 0;
+                if (gainNode) gainNode.gain.value = 0;
+                else audio.volume = 0;
+            }
+            if (volume > 0 && !audioIsPlaying) {
                 audioIsPlaying = true;
                 audio.play();
-            } else if (v === 0) {
+            } else if (v === 0 && muteFromButton) {
                 audioIsPlaying = false;
                 audio.pause();
             }
+            muteFromButton = false;
         };
     })();
 
