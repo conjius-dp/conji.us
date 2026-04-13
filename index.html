@@ -602,6 +602,7 @@
             analyser.smoothingTimeConstant = 0.45;
             gainNode = audioCtx.createGain();
             fftData = new Uint8Array(analyser.frequencyBinCount);
+            audio.volume = 1; // full signal into AudioContext — gainNode handles volume from here
             eqSource = audioCtx.createMediaElementSource(audio);
             eqSource.connect(analyser);
             analyser.connect(gainNode);
