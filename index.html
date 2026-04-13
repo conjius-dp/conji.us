@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=117">
+    <link rel="stylesheet" href="style.css?v=119">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -55,6 +55,11 @@
                 <div class="sp-title-wrap" id="sp-title-wrap">
                     <span class="sp-title" id="sp-title">♫ This Guy Again?</span>
                     <span class="sp-title sp-title-next" id="sp-title-next"></span>
+                    <span class="sp-eq" id="sp-eq">
+                        <span class="sp-eq-bar"></span>
+                        <span class="sp-eq-bar"></span>
+                        <span class="sp-eq-bar"></span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -570,13 +575,49 @@
         var trackIntervals = {
             0: { start: 45000,  end: 93000  },  // A Weekend In June — 0:45–1:33
             1: { start: 68000,  end: 121000 },  // This Guy Again? — 1:08–2:01
-            2: { start: 36000,  end: 82000, gain: 0.7 },  // Validation — 0:36–1:22, quieter
+            2: { start: 36000,  end: 82000, gain: 0.5 },  // Validation — 0:36–1:22, quieter
             3: { start: 167000, end: 253000 },  // The Alterglow — 2:47–4:13
         };
 
         var currentTrack = 0;
         var audio = new Audio(tracks[0].src);
         audio.preload = 'auto';
+
+        // ── FFT analyser for EQ bars ──
+        var audioCtx = null, analyser = null, fftData = null, eqSource = null;
+        var eqBars = document.querySelectorAll('.sp-eq-bar');
+        var eqRaf = null;
+        // 5 log-spaced frequencies from 60Hz–18kHz
+        var eqFreqs = [60, 2000, 10000];
+        var eqBins = []; // filled after audioCtx is created
+
+        function initAnalyser() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 1024;
+            analyser.smoothingTimeConstant = 0.45;
+            fftData = new Uint8Array(analyser.frequencyBinCount);
+            eqSource = audioCtx.createMediaElementSource(audio);
+            eqSource.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            // Map frequencies to FFT bin indices
+            var binSize = audioCtx.sampleRate / analyser.fftSize;
+            for (var i = 0; i < eqFreqs.length; i++) {
+                eqBins[i] = Math.min(analyser.frequencyBinCount - 1, Math.max(0, Math.round(eqFreqs[i] / binSize)));
+            }
+        }
+
+        function eqTick() {
+            if (!analyser) { eqRaf = null; return; }
+            analyser.getByteFrequencyData(fftData);
+            var eqSensitivity = [1, 1.5, 3];
+            for (var i = 0; i < eqBars.length; i++) {
+                var val = Math.min(1, (fftData[eqBins[i]] / 255) * eqSensitivity[i]);
+                eqBars[i].style.height = Math.max(2, val * 14) + 'px';
+            }
+            eqRaf = requestAnimationFrame(eqTick);
+        }
 
         var titleEl = document.getElementById('sp-title');
         var audioWantsPlay = false;
@@ -592,28 +633,44 @@
 
         // Crossfade + enforce end time
         var FADE_MS = 2000;
-        var isFading = false;
         var fadeInTimer = null;
+        var fadeOutRaf = null;
 
-        audio.addEventListener('timeupdate', function() {
+        // High-frequency fade-out loop via rAF (timeupdate is too coarse)
+        function fadeOutTick() {
             var interval = trackIntervals[currentTrack];
-            if (!interval || !interval.end) return;
+            if (!interval || !interval.end) { fadeOutRaf = null; return; }
             var pos = audio.currentTime * 1000;
             var fadeStart = interval.end - FADE_MS;
 
-            // Smooth fade out via multiplier
-            if (pos >= fadeStart && pos < interval.end) {
-                isFading = true;
+            if (pos >= interval.end) {
+                // Advance to next track
+                fadeOutRaf = null;
+                var nextIdx = (currentTrack + 1) % tracks.length;
+                playTrack(nextIdx);
+                return;
+            }
+
+            if (pos >= fadeStart) {
                 scFadeMul = Math.max(0, (interval.end - pos) / FADE_MS);
                 scSetTargetVol(volume * 100);
             }
 
-            // Advance when interval ends
-            if (pos >= interval.end) {
-                isFading = false;
-                var nextIdx = (currentTrack + 1) % tracks.length;
-                playTrack(nextIdx);
-            }
+            fadeOutRaf = requestAnimationFrame(fadeOutTick);
+        }
+
+        // Start loops when audio plays, stop when paused
+        audio.addEventListener('playing', function() {
+            if (!fadeOutRaf) fadeOutRaf = requestAnimationFrame(fadeOutTick);
+            initAnalyser();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            if (!eqRaf) eqRaf = requestAnimationFrame(eqTick);
+        });
+        audio.addEventListener('pause', function() {
+            if (fadeOutRaf) { cancelAnimationFrame(fadeOutRaf); fadeOutRaf = null; }
+            if (eqRaf) { cancelAnimationFrame(eqRaf); eqRaf = null; }
+            for (var i = 0; i < eqBars.length; i++) eqBars[i].style.height = '2px';
+            audioIsPlaying = false;
         });
 
         // Fade in on new track start
@@ -657,7 +714,7 @@
             audioIsPlaying = true;
         });
 
-        audio.addEventListener('pause', function() { audioIsPlaying = false; });
+        // audioIsPlaying tracked in the pause listener above
 
         // Auto-advance on track finish
         audio.addEventListener('ended', function() {

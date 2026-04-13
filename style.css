@@ -352,6 +352,24 @@ body {
     opacity: 0;
 }
 
+.sp-eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+    margin-left: 6px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.sp-eq-bar {
+    width: 4px;
+    min-height: 2px;
+    background: #000;
+    border-radius: 999px;
+    transition: height 0.03s linear;
+}
+
 .sp-title.slide-out-left {
     transform: translateX(-100%);
     opacity: 0;
