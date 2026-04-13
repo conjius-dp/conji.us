@@ -330,6 +330,8 @@ body {
     overflow: hidden;
     cursor: grab;
     touch-action: pan-y;
+    display: flex;
+    align-items: center;
 }
 
 .sp-title-wrap:active { cursor: grabbing; }
@@ -347,6 +349,9 @@ body {
     position: absolute;
     left: 0;
     top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;

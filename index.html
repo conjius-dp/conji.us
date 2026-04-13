@@ -53,7 +53,7 @@
                     <div class="sp-end-dot"></div>
                 </div>
                 <div class="sp-title-wrap" id="sp-title-wrap">
-                    <span class="sp-title" id="sp-title">♫ This Guy Again?</span>
+                    <span class="sp-title" id="sp-title">This Guy Again?</span>
                     <span class="sp-title sp-title-next" id="sp-title-next"></span>
                     <span class="sp-eq" id="sp-eq">
                         <span class="sp-eq-bar"></span>
@@ -422,7 +422,7 @@
             var nextIdx = currentTrack + direction;
             if (nextIdx < 0) nextIdx = tracks.length - 1;
             if (nextIdx >= tracks.length) nextIdx = 0;
-            var nextTitle = '\u266B ' + tracks[nextIdx].title;
+            var nextTitle = tracks[nextIdx].title;
             if (fromSwipe) {
                 playTrack(nextIdx);
                 setTimeout(function() { skipping = false; }, 500);
@@ -452,7 +452,7 @@
             var nextIdx = currentTrack + direction;
             if (nextIdx < 0) nextIdx = tracks.length - 1;
             if (nextIdx >= tracks.length) nextIdx = 0;
-            nextTitleLoaded = { direction: direction, title: '\u266B ' + tracks[nextIdx].title };
+            nextTitleLoaded = { direction: direction, title: tracks[nextIdx].title };
             nextTitleEl.textContent = nextTitleLoaded.title;
         }
 
@@ -498,25 +498,25 @@
                 pill.style.transition = 'none';
                 pill.offsetWidth; // reflow
 
-                // Snap next title into place
-                nextTitleEl.style.transition = 'transform 0.15s ease-out, opacity 0.15s ease-out';
-                nextTitleEl.style.transform = 'translateX(0)';
-                nextTitleEl.style.opacity = '1';
-                // Hide current title
-                titleEl.style.opacity = '0';
-                titleEl.style.transition = 'none';
-                // After snap, swap titles and animate pill width
+                // Instant swap: put new text on main title at the position nextTitle reached
                 var newTitle = nextTitleLoaded.title;
                 var dir = nextTitleLoaded.direction;
+                titleEl.style.transition = 'none';
+                titleEl.textContent = newTitle;
+                titleEl.style.transform = nextTitleEl.style.transform || '';
+                titleEl.style.opacity = nextTitleEl.style.opacity || '1';
+                // Hide next title
+                nextTitleEl.style.transition = 'none';
+                nextTitleEl.style.opacity = '0';
+                nextTitleEl.style.transform = '';
+                // Snap main title to final position
+                titleEl.offsetWidth;
+                titleEl.style.transition = 'transform 0.15s ease-out, opacity 0.15s ease-out';
+                titleEl.style.transform = 'translateX(0)';
+                titleEl.style.opacity = '1';
+
                 setTimeout(function() {
-                    // Disable transition so title swap is instant
-                    titleEl.style.transition = 'none';
-                    titleEl.textContent = newTitle;
-                    titleEl.style.transform = '';
-                    titleEl.style.opacity = '1';
-                    nextTitleEl.style.transform = '';
-                    nextTitleEl.style.opacity = '0';
-                    nextTitleEl.style.transition = '';
+                    titleEl.style.transition = '';
                     // Measure new width and animate pill to it
                     pill.style.maxWidth = 'none';
                     pill.offsetWidth;
@@ -623,12 +623,15 @@
         var audioWantsPlay = false;
         var audioIsPlaying = false;
 
-        titleEl.textContent = '\u266B ' + tracks[0].title;
+        titleEl.textContent = tracks[0].title;
 
+        var isTrackTransition = false;
         function playTrack(idx) {
+            isTrackTransition = true;
             currentTrack = idx;
             audio.src = tracks[idx].src;
             audio.play();
+            isTrackTransition = false;
         }
 
         // Crossfade + enforce end time
@@ -667,6 +670,7 @@
             if (!eqRaf) eqRaf = requestAnimationFrame(eqTick);
         });
         audio.addEventListener('pause', function() {
+            if (isTrackTransition) return; // don't kill loops during track change
             if (fadeOutRaf) { cancelAnimationFrame(fadeOutRaf); fadeOutRaf = null; }
             if (eqRaf) { cancelAnimationFrame(eqRaf); eqRaf = null; }
             for (var i = 0; i < eqBars.length; i++) eqBars[i].style.height = '2px';
@@ -684,9 +688,9 @@
                 // Absorb duplicate play events after swipe
             } else if (firstPlay) {
                 firstPlay = false;
-                titleEl.textContent = '\u266B ' + tracks[currentTrack].title;
+                titleEl.textContent = tracks[currentTrack].title;
             } else {
-                animateTitle(1, '\u266B ' + tracks[currentTrack].title);
+                animateTitle(1, tracks[currentTrack].title);
             }
 
             var interval = trackIntervals[currentTrack];
