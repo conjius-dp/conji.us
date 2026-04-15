@@ -1291,8 +1291,10 @@
         setProgress(1);
         setTimeout(function() {
             if (window._pillOpenPaused) window._pillOpenPaused();
-            var musicSection = document.querySelector('.music');
-            if (musicSection) musicSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function() {
+                var pill = document.getElementById('speaker-pill');
+                if (pill) pill.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 950);
         }, 100);
     } else {
         setProgress(0);
