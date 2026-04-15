@@ -1070,7 +1070,7 @@
     // toggle button clicks disabled — handled by drag system tap detection
 
     // unified drag — works for mouse and touch via pointer events
-    function makeDraggable(el, sign, getSensitivity) {
+    function makeDraggable(el, sign, getSensitivity, skipAxisLock) {
         var lastX = 0, lastY = 0, startProg = 0, moved = false;
         var activeId = -1, sensitivity = 600;
         var moveHistory = [];
@@ -1167,9 +1167,13 @@
             moved = true;
             lastX = x;
             lastY = y;
-            // lock axes until total offset exceeds 40px threshold
-            if (!hLocked && Math.abs(x - startTouchX) > 40) hLocked = true;
-            if (!vLocked && Math.abs(y - startTouchY) > 40) vLocked = true;
+            if (skipAxisLock) {
+                hLocked = true;
+            } else {
+                // lock axes until total offset exceeds 40px threshold
+                if (!hLocked && Math.abs(x - startTouchX) > 40) hLocked = true;
+                if (!vLocked && Math.abs(y - startTouchY) > 40) vLocked = true;
+            }
             // slight acceleration on mobile (1.3x)
             var accel = window.innerWidth <= 600 ? 1.3 : 1;
             var delta = hLocked ? sign * dx * accel / sensitivity : 0;
@@ -1239,10 +1243,10 @@
     makeDraggable(wrapper, -1, function() {
         return track.offsetWidth * (50 + PEEK * 2) / 100;
     });
-    // toggle: sensitivity = half toggle width
+    // toggle: sensitivity = half toggle width, no axis lock threshold
     makeDraggable(toggle, 1, function() {
         return (toggle.offsetWidth || 280) / 2;
-    });
+    }, true);
 
     // horizontal scroll wheel
     var wheelTimer = null;
