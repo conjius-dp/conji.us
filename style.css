@@ -321,7 +321,11 @@ body {
     overflow: hidden;
     border-radius: 18px;
     position: relative;
+    cursor: grab;
+    touch-action: pan-y;
 }
+
+.sp-art:active { cursor: grabbing; }
 
 .sp-art img {
     width: 100%;

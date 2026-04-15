@@ -608,25 +608,35 @@
         }
 
         var nextTitleEl = document.getElementById('sp-title-next');
-        var nextTitleLoaded = null; // cached {direction, title}
+        var nextLoaded = null; // cached {direction, title, art}
         var wrapWidth = 0;
+        var artWidth = 0;
 
-        titleWrap.addEventListener('pointerdown', function(e) {
+        function startSwipe(e) {
             e.stopPropagation();
             swipeStartX = e.clientX;
             swiping = true;
-            nextTitleLoaded = null;
+            nextLoaded = null;
             wrapWidth = titleWrap.offsetWidth;
+            artWidth = artContainer.offsetWidth;
             titleWrap.setPointerCapture(e.pointerId);
+        }
+
+        titleWrap.addEventListener('pointerdown', startSwipe);
+        artContainer.addEventListener('pointerdown', function(e) {
+            startSwipe(e);
+            // Redirect capture to titleWrap so all move/up events go there
+            try { titleWrap.setPointerCapture(e.pointerId); } catch(ex) {}
         });
 
-        function loadNextTitle(direction) {
-            if (nextTitleLoaded && nextTitleLoaded.direction === direction) return;
+        function loadNext(direction) {
+            if (nextLoaded && nextLoaded.direction === direction) return;
             var nextIdx = currentTrack + direction;
             if (nextIdx < 0) nextIdx = tracks.length - 1;
             if (nextIdx >= tracks.length) nextIdx = 0;
-            nextTitleLoaded = { direction: direction, title: tracks[nextIdx].title };
-            nextTitleEl.textContent = nextTitleLoaded.title;
+            nextLoaded = { direction: direction, title: tracks[nextIdx].title, art: tracks[nextIdx].art };
+            nextTitleEl.textContent = nextLoaded.title;
+            artNext.src = nextLoaded.art;
         }
 
         var lastSwipeDx = 0;
@@ -635,26 +645,38 @@
             e.stopPropagation();
             var dx = e.clientX - swipeStartX;
             lastSwipeDx = dx;
-            var progress = Math.min(1, Math.abs(dx) / 100);
+            // progress: 0 at start, 1 when dragged a full container width
+            var progress = Math.min(1, Math.abs(dx) / wrapWidth);
 
             // Move current title with finger
             titleEl.style.transform = 'translateX(' + dx + 'px)';
-            titleEl.style.opacity = Math.max(0, 1 - progress);
             titleEl.style.transition = 'none';
 
-            // Preload and show incoming title from opposite side
+            // Move current art proportionally (art uses its own width as scale)
+            var artDx = (dx / wrapWidth) * artWidth;
+            artImg.style.transform = 'translateX(' + artDx + 'px)';
+            artImg.style.transition = 'none';
+
             if (Math.abs(dx) > 10) {
                 var dir = dx < 0 ? 1 : -1;
-                loadNextTitle(dir);
-                // Next title follows current title with 100px gap between them
-                var gap = 50;
-                var nextOffset = dx + (dir > 0 ? (wrapWidth + gap) : -(wrapWidth + gap));
-                nextTitleEl.style.transform = 'translateX(' + nextOffset + 'px)';
-                nextTitleEl.style.opacity = Math.min(1, progress * 1.5);
+                loadNext(dir);
+
+                // Next title: starts one wrapWidth away, moves with drag
+                var nextTitleOffset = dx + (dir > 0 ? wrapWidth : -wrapWidth);
+                nextTitleEl.style.transform = 'translateX(' + nextTitleOffset + 'px)';
+                nextTitleEl.style.opacity = '1';
                 nextTitleEl.style.transition = 'none';
+
+                // Next art: starts one artWidth away, moves with drag
+                var nextArtOffset = artDx + (dir > 0 ? artWidth : -artWidth);
+                artNext.style.transform = 'translateX(' + nextArtOffset + 'px)';
+                artNext.style.opacity = '1';
+                artNext.style.transition = 'none';
             } else {
                 nextTitleEl.style.opacity = '0';
                 nextTitleEl.style.transition = 'none';
+                artNext.style.opacity = '0';
+                artNext.style.transition = 'none';
             }
         });
 
@@ -663,45 +685,62 @@
             swiping = false;
             if (e) e.stopPropagation();
             var dx = e ? (e.clientX - swipeStartX) : lastSwipeDx;
+            var SNAP_MS = '0.15s';
 
-            if (Math.abs(dx) > SWIPE_THRESHOLD && nextTitleLoaded) {
-                // Instant swap: put new text on main title at the position nextTitle reached
-                var newTitle = nextTitleLoaded.title;
-                var dir = nextTitleLoaded.direction;
+            if (Math.abs(dx) > SWIPE_THRESHOLD && nextLoaded) {
+                var newTitle = nextLoaded.title;
+                var newArt = nextLoaded.art;
+                var dir = nextLoaded.direction;
+
+                // Swap title text to main element at next's current position
                 titleEl.style.transition = 'none';
                 titleEl.textContent = newTitle;
                 titleEl.style.transform = nextTitleEl.style.transform || '';
-                titleEl.style.opacity = nextTitleEl.style.opacity || '1';
-                // Hide next title
                 nextTitleEl.style.transition = 'none';
                 nextTitleEl.style.opacity = '0';
                 nextTitleEl.style.transform = '';
-                // Snap main title to final position
+
+                // Swap art src to main element at next's current position
+                artImg.style.transition = 'none';
+                artImg.src = newArt;
+                artImg.style.transform = artNext.style.transform || '';
+                artNext.style.transition = 'none';
+                artNext.style.opacity = '0';
+                artNext.style.transform = '';
+
+                // Snap both to final position
                 titleEl.offsetWidth;
-                titleEl.style.transition = 'transform 0.15s ease-out, opacity 0.15s ease-out';
+                titleEl.style.transition = 'transform ' + SNAP_MS + ' ease-out';
                 titleEl.style.transform = 'translateX(0)';
-                titleEl.style.opacity = '1';
+                artImg.style.transition = 'transform ' + SNAP_MS + ' ease-out';
+                artImg.style.transform = 'translateX(0)';
 
                 setTimeout(function() {
                     titleEl.style.transition = '';
+                    artImg.style.transition = '';
                     measurePillWidth();
                 }, 150);
-                // Start playing
                 skipTrack(dir, true);
             } else {
-                // Snap back — didn't cross threshold
-                titleEl.style.transition = 'transform 0.15s ease-out, opacity 0.15s ease-out';
+                // Snap back
+                titleEl.style.transition = 'transform ' + SNAP_MS + ' ease-out';
                 titleEl.style.transform = 'translateX(0)';
-                titleEl.style.opacity = '1';
-                nextTitleEl.style.transition = 'opacity 0.15s ease-out';
+                artImg.style.transition = 'transform ' + SNAP_MS + ' ease-out';
+                artImg.style.transform = 'translateX(0)';
+                nextTitleEl.style.transition = 'opacity ' + SNAP_MS + ' ease-out';
                 nextTitleEl.style.opacity = '0';
+                artNext.style.transition = 'opacity ' + SNAP_MS + ' ease-out';
+                artNext.style.opacity = '0';
                 setTimeout(function() {
                     titleEl.style.transition = '';
                     nextTitleEl.style.transition = '';
                     nextTitleEl.style.transform = '';
+                    artImg.style.transition = '';
+                    artNext.style.transition = '';
+                    artNext.style.transform = '';
                 }, 150);
             }
-            nextTitleLoaded = null;
+            nextLoaded = null;
         }
 
         titleWrap.addEventListener('pointerup', function(e) { finishSwipe(e); });
