@@ -2818,6 +2818,23 @@
         }
         tick();
     })();
+    // ── Music card hover: random rotation on background ──
+    (function() {
+        var cards = document.querySelectorAll('.music .project-card');
+        for (var i = 0; i < cards.length; i++) {
+            (function(card) {
+                var thumb = card.querySelector('.card-thumb');
+                if (!thumb) return;
+                card.addEventListener('mouseenter', function() {
+                    var deg = (5 + Math.random() * 10) * (Math.random() < 0.5 ? -1 : 1);
+                    thumb.style.setProperty('--thumb-rot', deg + 'deg');
+                });
+                card.addEventListener('mouseleave', function() {
+                    thumb.style.setProperty('--thumb-rot', '0deg');
+                });
+            })(cards[i]);
+        }
+    })();
     </script>
 
 </body>

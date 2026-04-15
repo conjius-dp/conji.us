@@ -794,15 +794,15 @@ body {
     position: absolute;
     inset: 0;
     background: url('img/conjius-what-if-you-tried.jpg') center / cover no-repeat;
-    filter: grayscale(1) sepia(1) saturate(5) hue-rotate(-5deg) brightness(0.75) contrast(1.8);
+    filter: grayscale(1) sepia(1) saturate(2) hue-rotate(-5deg) brightness(0.75) contrast(3.5);
     opacity: 0.15;
     pointer-events: none;
-    transform: scale(1);
-    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1);
+    transform: scale(1) rotate(0deg);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
 .music .project-card:hover .card-thumb::before {
-    transform: scale(1.12);
+    transform: scale(1.18) rotate(var(--thumb-rot, 0deg));
 }
 
 .music .project-grid .project-card:nth-child(1) .card-thumb::before {
