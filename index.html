@@ -886,7 +886,6 @@
         var skipArtUpdate = false;
         function playTrack(idx) {
             isTrackChange = true;
-            pendingSeek = true;
             currentTrack = idx;
             // Apply per-track gain before playback starts to avoid late dip
             var interval = trackIntervals[idx];
@@ -991,8 +990,8 @@
             if ((isFirstPlay || isTrackChange) && interval && interval.start) {
                 audio.currentTime = interval.start / 1000;
             }
-            // Smooth fade in — only on track changes
-            if (isTrackChange) {
+            // Smooth fade in on first play and track changes
+            if (isFirstPlay || isTrackChange) {
                 scFadeMul = 0;
                 scCurrentVol = 0;
                 if (fadeInTimer) clearInterval(fadeInTimer);
