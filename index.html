@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=139">
+    <link rel="stylesheet" href="style.css?v=140">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -682,7 +682,7 @@
         var trackIntervals = {
             0: { start: 45000,  end: 93000  },  // A Weekend In June — 0:45–1:33
             1: { start: 68000,  end: 121000 },  // This Guy Again? — 1:08–2:01
-            2: { start: 36000,  end: 82000, gain: 0.4 },  // Validation — 0:36–1:22, quieter
+            2: { start: 36000,  end: 82000 },  // Validation — 0:36–1:22
             3: { start: 167000, end: 253000 },  // The Alterglow — 2:47–4:13
         };
 
@@ -889,7 +889,6 @@
         var origSetVolume = setVolume;
         setVolume = function(v) {
             origSetVolume(v);
-            scFadeMul = 1;
             scSetTargetVol(volume * 100);
             // Hard-mute when volume is 0 — bypass lerp
             if (volume === 0) {
