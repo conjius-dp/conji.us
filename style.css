@@ -89,13 +89,15 @@ body {
 }
 
 .avatar {
-    width: 144px;
-    height: 144px;
-    border-radius: 50%;
-    border: 2px solid var(--accent);
+    width: 288px;
+    height: 288px;
+    border-radius: 0;
+    border: none;
     margin-bottom: 1.5rem;
-    object-fit: cover;
+    object-fit: contain;
     -webkit-touch-callout: none;
+    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.7))
+            drop-shadow(0 0 30px rgba(0, 0, 0, 0.5));
 }
 
 .name {
@@ -957,7 +959,6 @@ body {
 
 /* ── Black outer glow ── */
 
-.avatar,
 .section-toggle,
 .name-pill,
 .project-card,
@@ -1035,8 +1036,8 @@ footer {
     }
 
     .avatar {
-        width: 108px;
-        height: 108px;
+        width: 216px;
+        height: 216px;
     }
 
     .name {
