@@ -542,10 +542,8 @@
         function animateTitle(direction, newText, nextArtSrc, callback) {
             var slideDir = direction > 0 ? 'left' : 'right';
 
-            // Lock the wrap width so overflow:hidden container doesn't shrink during animation
-            var wrapW = titleWrap.offsetWidth;
-            titleWrap.style.width = wrapW + 'px';
-            titleWrap.style.setProperty('--wrap-w', wrapW + 'px');
+            // Wrap is full-width of row, so --wrap-w gives natural gap between titles
+            titleWrap.style.setProperty('--wrap-w', titleWrap.offsetWidth + 'px');
 
             // Set up next title
             nextTitleEl.textContent = newText;
@@ -568,7 +566,6 @@
                 // Swap title text and reset
                 titleEl.textContent = newText;
                 titleWrap.classList.remove('sliding-' + slideDir);
-                titleWrap.style.width = '';
                 titleEl.style.transition = 'none';
                 titleEl.style.transform = '';
                 titleEl.offsetWidth;
