@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=162">
+    <link rel="stylesheet" href="style.css?v=163">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -174,12 +174,28 @@
     // Mobile detection: touch device with share API support
     window._isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && !!navigator.share;
 
-    // Share handler — document-level delegation on touchend (most reliable on iOS)
-    document.addEventListener('touchend', function(e) {
+    // Share handler — track touch start/end to distinguish tap vs swipe
+    var _shareTouchStart = null;
+    document.addEventListener('touchstart', function(e) {
         var btn = e.target.closest('.share-btn');
-        if (!btn) return;
+        if (btn) {
+            _shareTouchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        } else {
+            _shareTouchStart = null;
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', function(e) {
+        if (!_shareTouchStart) return;
+        var btn = e.target.closest('.share-btn');
+        if (!btn) { _shareTouchStart = null; return; }
+        var end = e.changedTouches[0];
+        var dx = Math.abs(end.clientX - _shareTouchStart.x);
+        var dy = Math.abs(end.clientY - _shareTouchStart.y);
+        _shareTouchStart = null;
+        // If finger moved more than 10px, it's a swipe — let scroll happen
+        if (dx > 10 || dy > 10) return;
         e.preventDefault();
-        e.stopPropagation();
         var url = btn.getAttribute('data-url');
         var name = btn.getAttribute('data-name');
         var format = btn.getAttribute('data-format');

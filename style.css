@@ -985,7 +985,7 @@ body {
     gap: 6px;
     transition: background 0.2s, color 0.2s;
     -webkit-appearance: none;
-    touch-action: manipulation;
+    touch-action: pan-x;
     position: relative;
     z-index: 10;
 }
@@ -1341,6 +1341,10 @@ footer {
         padding: 10px 10px 0 10px;
     }
 
+
+    .card-footer {
+        overflow: hidden;
+    }
 
     .card-links {
         gap: 0.25rem;
