@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=163">
+    <link rel="stylesheet" href="style.css?v=164">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -1264,6 +1264,8 @@
         // touch events (mobile — reliable on iOS)
         var lastTouchTime = 0;
         el.addEventListener('touchstart', function(e) {
+            // Let share buttons and their scrollable container handle their own touches
+            if (e.target.closest('.share-btn') || e.target.closest('.card-links')) return;
             lastTouchTime = Date.now();
             touchTarget = e.target;
             var t = e.touches[0];
