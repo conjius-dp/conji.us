@@ -682,7 +682,7 @@
         var trackIntervals = {
             0: { start: 45000,  end: 93000  },  // A Weekend In June — 0:45–1:33
             1: { start: 68000,  end: 121000 },  // This Guy Again? — 1:08–2:01
-            2: { start: 36000,  end: 82000 },  // Validation — 0:36–1:22
+            2: { start: 36000,  end: 82000, gain: 0.4 },  // Validation — 0:36–1:22, quieter
             3: { start: 167000, end: 253000 },  // The Alterglow — 2:47–4:13
         };
 
@@ -741,6 +741,9 @@
         function playTrack(idx) {
             isTrackChange = true;
             currentTrack = idx;
+            // Apply per-track gain before playback starts to avoid late dip
+            var interval = trackIntervals[idx];
+            scGain = (interval && interval.gain) ? interval.gain : 1;
             audio.src = tracks[idx].src;
             artImg.src = tracks[idx].art;
             audio.play();
@@ -818,7 +821,8 @@
             document.title = 'Conjius - ' + tracks[currentTrack].title;
 
             var interval = trackIntervals[currentTrack];
-            scGain = (interval && interval.gain) ? interval.gain : 1;
+            // scGain is set in playTrack() before play starts
+            if (!isTrackChange) scGain = (interval && interval.gain) ? interval.gain : 1;
             // Always enforce interval start position
             if (interval && interval.start) {
                 if (audio.currentTime * 1000 < interval.start - 500) {
@@ -860,7 +864,8 @@
         var scCurrentVol = 0;
         var scVolRaf = null;
         var scFadeMul = 1; // crossfade multiplier (0–1)
-        var scGain = 1;    // per-track gain (0–1)
+        var initInterval = trackIntervals[0];
+        var scGain = (initInterval && initInterval.gain) ? initInterval.gain : 1;
 
         function scApplyVolume() {
             var target = scTargetVol * scFadeMul * scGain;
