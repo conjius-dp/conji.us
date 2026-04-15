@@ -331,7 +331,7 @@
             pill.style.setProperty('--pill-w', pillFixedWidth + 'px');
         }
 
-        function pillOpen() {
+        function pillOpen(skipPlay) {
             if (pillAnimating || pill.classList.contains('open')) return;
             pillAnimating = true;
             savedLeft = pill.style.left;
@@ -378,13 +378,19 @@
                     pill.style.transform = 'translate(-50%, -' + upY + 'px)';
                     pill.classList.add('open');
                     measurePillWidth();
-                    // Open = unmute + play
-                    if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
-                    else { setVolume(prevVolume); }
-                    audioIsPlaying = true;
-                    var startInterval = trackIntervals[currentTrack];
-                    if (startInterval && startInterval.start) audio.currentTime = startInterval.start / 1000;
-                    audio.play();
+                    if (!skipPlay) {
+                        // Open = unmute + play
+                        if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
+                        else { setVolume(prevVolume); }
+                        audioIsPlaying = true;
+                        var startInterval = trackIntervals[currentTrack];
+                        if (startInterval && startInterval.start) audio.currentTime = startInterval.start / 1000;
+                        audio.play();
+                    } else {
+                        if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
+                        else { setVolume(prevVolume); }
+                        updatePlayPauseIcon();
+                    }
                     setTimeout(function() {
                         pill.classList.remove('phase-expand');
                         pill.style.height = '';
@@ -393,6 +399,9 @@
                 }, 280);
             }, 280);
         }
+
+        // Expose for hash route
+        window._pillOpenPaused = function() { pillOpen(true); };
 
         function pillClose() {
             if (pillAnimating || !pill.classList.contains('open')) return;
@@ -1281,6 +1290,7 @@
     if (hashRoute === 'music') {
         setProgress(1);
         setTimeout(function() {
+            if (window._pillOpenPaused) window._pillOpenPaused();
             var musicSection = document.querySelector('.music');
             if (musicSection) musicSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
