@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=153">
+    <link rel="stylesheet" href="style.css?v=154">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -1712,15 +1712,19 @@
             // Share buttons (mobile) — trigger native share sheet
             card.querySelectorAll('.share-btn').forEach(function(btn) {
                 btn.addEventListener('click', function(e) {
+                    e.preventDefault();
                     e.stopPropagation();
+                    e.stopImmediatePropagation();
                     var releasesUrl = btn.getAttribute('data-releases');
                     var name = btn.getAttribute('data-name');
                     var format = btn.getAttribute('data-format');
-                    var text = 'Check out the macOS ' + format + ' build for ' + name;
+                    var msg = 'Check out the macOS ' + format + ' build for ' + name + '\n' + releasesUrl;
                     if (navigator.share) {
-                        navigator.share({ url: releasesUrl, text: text }).then(function() {}).catch(function() {});
+                        navigator.share({ text: msg }).catch(function(err) {
+                            window.alert('Share failed: ' + err.message);
+                        });
                     } else {
-                        window.open(releasesUrl, '_blank');
+                        window.alert('Share not supported on this browser');
                     }
                 });
             });
