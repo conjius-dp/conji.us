@@ -50,8 +50,8 @@
             </button>
             <div class="sp-controls">
                 <div class="sp-art" id="sp-art">
-                    <img id="sp-art-img" src="art/a-weekend-in-june.jpg" alt="">
-                    <img id="sp-art-next" src="" alt="" class="sp-art-next">
+                    <img id="sp-art-img" src="art/a-weekend-in-june.jpg" alt="" draggable="false">
+                    <img id="sp-art-next" src="" alt="" class="sp-art-next" draggable="false">
                 </div>
                 <div class="sp-right">
                     <button class="sp-btn sp-close" id="sp-close" title="Close">
@@ -559,6 +559,18 @@
             // Wrap is full-width of row, so --wrap-w gives natural gap between titles
             titleWrap.style.setProperty('--wrap-w', titleWrap.offsetWidth + 'px');
             updateArtGap();
+
+            // Clear any inline styles left from drag/swipe
+            titleEl.style.transform = '';
+            titleEl.style.transition = '';
+            nextTitleEl.style.opacity = '';
+            nextTitleEl.style.transform = '';
+            nextTitleEl.style.transition = '';
+            artImg.style.transform = '';
+            artImg.style.transition = '';
+            artNext.style.opacity = '';
+            artNext.style.transform = '';
+            artNext.style.transition = '';
 
             // Set up next title
             nextTitleEl.textContent = newText;
