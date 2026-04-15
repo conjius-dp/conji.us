@@ -993,14 +993,7 @@ body {
     color: var(--bg);
 }
 
-/* Mobile: show share buttons, hide download dropdown */
-/* Desktop: show download dropdown, hide share buttons */
-.mobile-only { display: flex; }
-.desktop-only { display: none; }
-
 @media (hover: hover) and (pointer: fine) {
-    .mobile-only { display: none !important; }
-    .desktop-only { display: flex !important; }
     .card-links > a:hover,
     .card-footer-left > a:hover {
         background: var(--accent);

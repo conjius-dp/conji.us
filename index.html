@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=155">
+    <link rel="stylesheet" href="style.css?v=156">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -171,24 +171,23 @@
     </footer>
 
     <script>
-    // Global share handler for mobile share buttons (inline onclick)
-    window._sharePlugin = function(btn) {
-        event.stopPropagation();
-        var releasesUrl = btn.getAttribute('data-releases');
-        var name = btn.getAttribute('data-name');
-        var format = btn.getAttribute('data-format');
-        var msg = 'Check out the macOS ' + format + ' build for ' + name + '\n' + releasesUrl;
+    // On mobile: intercept download links → open native share sheet
+    // On desktop: let the link work normally (download)
+    window._pluginAction = function(e, el) {
         if (navigator.share) {
-            navigator.share({ text: msg }).catch(function() {});
-        } else {
-            // Fallback: copy to clipboard
-            navigator.clipboard.writeText(msg).then(function() {
-                btn.textContent = 'Copied!';
-                setTimeout(function() { btn.textContent = format + ' ↗'; }, 1500);
-            }).catch(function() {
-                window.open(releasesUrl, '_blank');
-            });
+            e.preventDefault();
+            e.stopPropagation();
+            var releasesUrl = el.getAttribute('data-releases');
+            var name = el.getAttribute('data-name');
+            var format = el.getAttribute('data-format');
+            navigator.share({
+                text: 'Check out the macOS ' + format + ' build for ' + name,
+                url: releasesUrl
+            }).catch(function() {});
+            return false;
         }
+        // Desktop: let the href download proceed
+        return true;
     };
 
     var GH_USER = 'conjius-dp';
@@ -1701,16 +1700,12 @@
                 var vst3Url = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest/download/' + repoUpper + '-macOS-VST3.zip';
                 var auUrl = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest/download/' + repo.name + '-macOS-AU.zip';
                 var releasesUrl = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest';
-                var SHARE_ICON_SM = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>';
-                // Mobile: share buttons. Desktop: download dropdown.
-                // Both rendered; CSS hides the wrong one per device.
-                links += '<button type="button" class="share-btn mobile-only" onclick="window._sharePlugin(this)" data-releases="' + releasesUrl + '" data-name="' + repo.name + '" data-format="VST3">VST3 ' + SHARE_ICON_SM + '</button>' +
-                    '<button type="button" class="share-btn mobile-only" onclick="window._sharePlugin(this)" data-releases="' + releasesUrl + '" data-name="' + repo.name + '" data-format="AU">AU ' + SHARE_ICON_SM + '</button>';
-                links += '<div class="dl-wrap desktop-only">' +
+                // Single set of buttons — click handler decides share vs download
+                links += '<div class="dl-wrap">' +
                     '<span class="dl-icon" title="Download">' + DL_ICON + '</span>' +
                     '<div class="dl-options">' +
-                        '<a href="' + vst3Url + '" title="Download VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
-                        '<a href="' + auUrl + '" title="Download AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>' +
+                        '<a href="' + vst3Url + '" onclick="return window._pluginAction(event,this)" data-releases="' + releasesUrl + '" data-name="' + repo.name + '" data-format="VST3" title="VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
+                        '<a href="' + auUrl + '" onclick="return window._pluginAction(event,this)" data-releases="' + releasesUrl + '" data-name="' + repo.name + '" data-format="AU" title="AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>' +
                     '</div>' +
                 '</div>';
             }
@@ -1727,7 +1722,7 @@
                     '</div>' +
                 '</div>';
 
-            // (share buttons use inline onclick → window._sharePlugin)
+            // (download links use inline onclick → window._pluginAction)
 
             // Download button touch toggle
             var dlWrap = card.querySelector('.dl-wrap');
@@ -1747,7 +1742,6 @@
 
             card.addEventListener('click', function(e) {
                 if (e.target.closest('a')) return;
-                if (e.target.closest('button')) return;
                 if (e.target.closest('.dl-wrap')) return;
                 // on desktop, don't navigate if clicking on selectable text
                 var isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
