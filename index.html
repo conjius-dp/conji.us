@@ -47,6 +47,7 @@
             <div class="sp-controls">
                 <div class="sp-art" id="sp-art">
                     <img id="sp-art-img" src="art/a-weekend-in-june.jpg" alt="">
+                    <img id="sp-art-next" src="" alt="" class="sp-art-next">
                 </div>
                 <div class="sp-right">
                     <button class="sp-btn sp-close" id="sp-close" title="Close">
@@ -297,7 +298,7 @@
                 pill.style.setProperty('--pill-w', pillFixedWidth + 'px');
                 return;
             }
-            var titleWrapEl = document.getElementById('sp-title-wrap');
+            var titleWrap = document.getElementById('sp-title-wrap');
             var rightEl = pill.querySelector('.sp-right');
             var origText = titleEl.textContent;
             // Temporarily widen and hide art to measure right section
@@ -309,7 +310,7 @@
             for (var i = 0; i < tracks.length; i++) {
                 titleEl.textContent = tracks[i].title;
                 pill.offsetWidth;
-                var tw = titleWrapEl.scrollWidth;
+                var tw = titleWrap.scrollWidth;
                 if (tw > maxTitleW) maxTitleW = tw;
             }
             titleEl.textContent = origText;
@@ -534,21 +535,58 @@
         var swiping = false;
         var SWIPE_THRESHOLD = 50;
 
-        function animateTitle(direction, newText, callback) {
-            // Slide out current title
-            titleEl.classList.add(direction > 0 ? 'slide-out-left' : 'slide-out-right');
+        var artContainer = document.getElementById('sp-art');
+        var artNext = document.getElementById('sp-art-next');
+
+        var SLIDE_MS = 600;
+        function animateTitle(direction, newText, nextArtSrc, callback) {
+            var slideDir = direction > 0 ? 'left' : 'right';
+
+            // Lock the wrap width so overflow:hidden container doesn't shrink during animation
+            var wrapW = titleWrap.offsetWidth;
+            titleWrap.style.width = wrapW + 'px';
+            titleWrap.style.setProperty('--wrap-w', wrapW + 'px');
+
+            // Set up next title
+            nextTitleEl.textContent = newText;
+            nextTitleEl.classList.add('visible');
+            titleWrap.classList.add('pre-' + slideDir);
+
+            // Set up next art
+            artNext.src = nextArtSrc;
+            artNext.classList.add('visible');
+            artContainer.classList.add('pre-' + slideDir);
+
+            // Force reflow, then start both slides
+            titleWrap.offsetWidth;
+            titleWrap.classList.remove('pre-' + slideDir);
+            titleWrap.classList.add('sliding-' + slideDir);
+            artContainer.classList.remove('pre-' + slideDir);
+            artContainer.classList.add('sliding-' + slideDir);
+
             setTimeout(function() {
-                // Update text and position for slide in
+                // Swap title text and reset
                 titleEl.textContent = newText;
-                titleEl.classList.remove('slide-out-left', 'slide-out-right');
-                titleEl.classList.add(direction > 0 ? 'slide-in-left' : 'slide-in-right');
-                // Animate pill width to fit new title
-                measurePillWidth();
-                // Force reflow then slide in
+                titleWrap.classList.remove('sliding-' + slideDir);
+                titleWrap.style.width = '';
+                titleEl.style.transition = 'none';
+                titleEl.style.transform = '';
                 titleEl.offsetWidth;
-                titleEl.classList.remove('slide-in-left', 'slide-in-right');
+                titleEl.style.transition = '';
+                nextTitleEl.classList.remove('visible');
+                measurePillWidth();
+
+                // Swap art src and reset
+                artImg.src = nextArtSrc;
+                artContainer.classList.remove('sliding-' + slideDir);
+                artImg.style.transition = 'none';
+                artImg.style.transform = '';
+                artImg.offsetWidth;
+                artImg.style.transition = '';
+                artNext.classList.remove('visible');
+
                 if (callback) callback();
-            }, 300);
+            }, SLIDE_MS);
         }
 
         var titleSetBySwipe = false;
@@ -565,7 +603,7 @@
                 playTrack(nextIdx);
                 setTimeout(function() { skipping = false; }, 500);
             } else {
-                animateTitle(direction, nextTitle, function() {
+                animateTitle(direction, nextTitle, tracks[nextIdx].art, function() {
                     playTrack(nextIdx);
                     setTimeout(function() { skipping = false; }, 500);
                 });
@@ -816,7 +854,7 @@
                 titleEl.textContent = tracks[currentTrack].title;
                 measurePillWidth();
             } else if (isTrackChange) {
-                animateTitle(1, tracks[currentTrack].title);
+                animateTitle(1, tracks[currentTrack].title, tracks[currentTrack].art);
             }
 
             document.title = 'Conjius - ' + tracks[currentTrack].title;

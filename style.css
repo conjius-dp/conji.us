@@ -320,6 +320,7 @@ body {
     height: var(--art-size, 100px);
     overflow: hidden;
     border-radius: 18px;
+    position: relative;
 }
 
 .sp-art img {
@@ -327,7 +328,33 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
+    filter: grayscale(1) sepia(1) saturate(5) hue-rotate(-5deg) brightness(0.75);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.sp-art-next {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sp-art-next.visible {
+    opacity: 1;
+}
+
+/* Slide left: current goes -100%, next starts at +100% then goes to 0 */
+.sp-art.sliding-left img { transform: translateX(-100%); }
+.sp-art.sliding-left .sp-art-next { transform: translateX(0); }
+
+/* Slide right: current goes +100%, next starts at -100% then goes to 0 */
+.sp-art.sliding-right img { transform: translateX(100%); }
+.sp-art.sliding-right .sp-art-next { transform: translateX(0); }
+
+/* Pre-position next image before animation starts */
+.sp-art.pre-left .sp-art-next { transform: translateX(100%); transition: none; }
+.sp-art.pre-right .sp-art-next { transform: translateX(-100%); transition: none; }
 
 /* Right section — title, transport, volume */
 .sp-right {
@@ -479,7 +506,7 @@ body {
     font-weight: 600;
     color: #000;
     display: inline-block;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sp-title-next {
@@ -492,7 +519,22 @@ body {
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.sp-title-next.visible { opacity: 1; }
+
+/* Slide left: current exits left, next enters from right — use container width for natural gap */
+.sp-title-wrap.sliding-left .sp-title { transform: translateX(calc(-1 * var(--wrap-w))); }
+.sp-title-wrap.sliding-left .sp-title-next { transform: translateX(0); }
+
+/* Slide right: current exits right, next enters from left */
+.sp-title-wrap.sliding-right .sp-title { transform: translateX(var(--wrap-w)); }
+.sp-title-wrap.sliding-right .sp-title-next { transform: translateX(0); }
+
+/* Pre-position next title off-screen before animation */
+.sp-title-wrap.pre-left .sp-title-next { transform: translateX(var(--wrap-w)); transition: none; }
+.sp-title-wrap.pre-right .sp-title-next { transform: translateX(calc(-1 * var(--wrap-w))); transition: none; }
 
 
 .sp-btn {
@@ -543,28 +585,6 @@ body {
     background: #000;
     border-radius: 999px;
     transition: height 0.03s linear;
-}
-
-.sp-title.slide-out-left {
-    transform: translateX(-100%);
-    opacity: 0;
-}
-
-.sp-title.slide-out-right {
-    transform: translateX(100%);
-    opacity: 0;
-}
-
-.sp-title.slide-in-left {
-    transform: translateX(100%);
-    opacity: 0;
-    transition: none;
-}
-
-.sp-title.slide-in-right {
-    transform: translateX(-100%);
-    opacity: 0;
-    transition: none;
 }
 
 /* Dot markers at 0% and 100% */
