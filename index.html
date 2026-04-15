@@ -242,6 +242,7 @@
 
     // Position speaker pill right of toggle with card-gap spacing
     function positionSpeakerPill() {
+        if (speakerPill.classList.contains('open') || speakerPill.classList.contains('phase-move') || speakerPill.classList.contains('phase-center') || speakerPill.classList.contains('phase-expand')) return;
         var toggleRect = toggle.getBoundingClientRect();
         var rowRect = toggle.parentElement.getBoundingClientRect();
         var cardGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-gap')) || 30;
