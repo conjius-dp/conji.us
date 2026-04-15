@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=156">
+    <link rel="stylesheet" href="style.css?v=157">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -171,23 +171,20 @@
     </footer>
 
     <script>
-    // On mobile: intercept download links → open native share sheet
-    // On desktop: let the link work normally (download)
-    window._pluginAction = function(e, el) {
-        if (navigator.share) {
-            e.preventDefault();
-            e.stopPropagation();
-            var releasesUrl = el.getAttribute('data-releases');
-            var name = el.getAttribute('data-name');
-            var format = el.getAttribute('data-format');
-            navigator.share({
-                text: 'Check out the macOS ' + format + ' build for ' + name,
-                url: releasesUrl
-            }).catch(function() {});
-            return false;
-        }
-        // Desktop: let the href download proceed
-        return true;
+    // Mobile detection: touch device with share API support
+    window._isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && !!navigator.share;
+
+    // Share handler for mobile buttons (called from onclick on <button> elements)
+    window._sharePlugin = function(btn) {
+        var url = btn.getAttribute('data-url');
+        var name = btn.getAttribute('data-name');
+        var format = btn.getAttribute('data-format');
+        navigator.share({
+            text: 'Check out the macOS ' + format + ' build for ' + name,
+            url: url
+        }).catch(function(err) {
+            // User cancelled or share failed — do nothing
+        });
     };
 
     var GH_USER = 'conjius-dp';
@@ -1700,14 +1697,21 @@
                 var vst3Url = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest/download/' + repoUpper + '-macOS-VST3.zip';
                 var auUrl = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest/download/' + repo.name + '-macOS-AU.zip';
                 var releasesUrl = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest';
-                // Single set of buttons — click handler decides share vs download
-                links += '<div class="dl-wrap">' +
-                    '<span class="dl-icon" title="Download">' + DL_ICON + '</span>' +
-                    '<div class="dl-options">' +
-                        '<a href="' + vst3Url + '" onclick="return window._pluginAction(event,this)" data-releases="' + releasesUrl + '" data-name="' + repo.name + '" data-format="VST3" title="VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
-                        '<a href="' + auUrl + '" onclick="return window._pluginAction(event,this)" data-releases="' + releasesUrl + '" data-name="' + repo.name + '" data-format="AU" title="AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>' +
-                    '</div>' +
-                '</div>';
+                var SHARE_ICON_SM = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-4px"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>';
+                if (window._isMobile) {
+                    // Mobile: standalone share buttons — no <a href>, no dropdown
+                    links += '<button type="button" class="share-btn" onclick="window._sharePlugin(this)" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="VST3">' + APPLE_ICON + 'VST3 ' + SHARE_ICON_SM + '</button>' +
+                        '<button type="button" class="share-btn" onclick="window._sharePlugin(this)" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="AU">' + APPLE_ICON + 'AU ' + SHARE_ICON_SM + '</button>';
+                } else {
+                    // Desktop: expandable download dropdown
+                    links += '<div class="dl-wrap">' +
+                        '<span class="dl-icon" title="Download">' + DL_ICON + '</span>' +
+                        '<div class="dl-options">' +
+                            '<a href="' + vst3Url + '" title="VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
+                            '<a href="' + auUrl + '" title="AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>' +
+                        '</div>' +
+                    '</div>';
+                }
             }
 
             var leftSide = (lang ? '<span class="lang"><span class="lang-dot" style="background:' + langColor + '"></span>' + lang + '</span>' : '<span></span>') + ghLink;
@@ -1722,26 +1726,21 @@
                     '</div>' +
                 '</div>';
 
-            // (download links use inline onclick → window._pluginAction)
-
-            // Download button touch toggle
+            // Desktop: download button hover/touch toggle (mobile uses share buttons instead)
             var dlWrap = card.querySelector('.dl-wrap');
             if (dlWrap) {
                 dlWrap.addEventListener('click', function(e) {
-                    // On touch devices, toggle the open state
-                    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-                        if (e.target.closest('.dl-options a')) return; // let link clicks through
-                        e.stopPropagation();
-                        var isOpen = dlWrap.classList.contains('dl-open');
-                        // Close all other open dl-wraps
-                        document.querySelectorAll('.dl-wrap.dl-open').forEach(function(el) { el.classList.remove('dl-open'); });
-                        if (!isOpen) dlWrap.classList.add('dl-open');
-                    }
+                    if (e.target.closest('.dl-options a')) return;
+                    e.stopPropagation();
+                    var isOpen = dlWrap.classList.contains('dl-open');
+                    document.querySelectorAll('.dl-wrap.dl-open').forEach(function(el) { el.classList.remove('dl-open'); });
+                    if (!isOpen) dlWrap.classList.add('dl-open');
                 });
             }
 
             card.addEventListener('click', function(e) {
                 if (e.target.closest('a')) return;
+                if (e.target.closest('button')) return;
                 if (e.target.closest('.dl-wrap')) return;
                 // on desktop, don't navigate if clicking on selectable text
                 var isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
