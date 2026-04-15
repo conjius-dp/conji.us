@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=159">
+    <link rel="stylesheet" href="style.css?v=160">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -175,26 +175,22 @@
     window._isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && !!navigator.share;
     if (window._isMobile) document.title = '[MOBILE] ' + document.title;
 
-    // Share handler for mobile buttons (called from onclick on <button> elements)
-    window._sharePlugin = function(btn) {
+    // Share handler — document-level delegation on touchend (most reliable on iOS)
+    document.addEventListener('touchend', function(e) {
+        var btn = e.target.closest('.share-btn');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
         var url = btn.getAttribute('data-url');
         var name = btn.getAttribute('data-name');
         var format = btn.getAttribute('data-format');
-        try {
-            alert('share: ' + url);
-            navigator.share({
-                title: name + ' ' + format,
-                text: 'Check out the macOS ' + format + ' build for ' + name,
-                url: url
-            }).then(function() {
-                alert('shared ok');
-            }).catch(function(err) {
-                alert('share error: ' + err.message);
-            });
-        } catch (ex) {
-            alert('exception: ' + ex.message);
-        }
-    };
+        alert('sharing: ' + name + ' ' + format);
+        navigator.share({
+            title: name + ' ' + format,
+            text: 'Check out the macOS ' + format + ' build for ' + name,
+            url: url
+        }).catch(function() {});
+    }, { passive: false });
 
     var GH_USER = 'conjius-dp';
     var GH_ICON = '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>';
@@ -1709,8 +1705,8 @@
                 var SHARE_ICON_SM = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-4px"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>';
                 if (window._isMobile) {
                     // Mobile: standalone share buttons — no <a href>, no dropdown
-                    links += '<button type="button" class="share-btn" onclick="alert(\'tap works\')" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="VST3">' + APPLE_ICON + 'VST3 ' + SHARE_ICON_SM + '</button>' +
-                        '<button type="button" class="share-btn" onclick="alert(\'tap works\')" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="AU">' + APPLE_ICON + 'AU ' + SHARE_ICON_SM + '</button>';
+                    links += '<button type="button" class="share-btn" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="VST3">' + APPLE_ICON + 'VST3 ' + SHARE_ICON_SM + '</button>' +
+                        '<button type="button" class="share-btn" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="AU">' + APPLE_ICON + 'AU ' + SHARE_ICON_SM + '</button>';
                 } else {
                     // Desktop: expandable download dropdown
                     links += '<div class="dl-wrap">' +

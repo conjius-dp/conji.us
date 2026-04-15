@@ -985,7 +985,14 @@ body {
     gap: 6px;
     transition: background 0.2s, color 0.2s;
     -webkit-appearance: none;
-    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    position: relative;
+    z-index: 10;
+}
+
+.share-btn svg,
+.share-btn * {
+    pointer-events: none;
 }
 
 .share-btn:active {
