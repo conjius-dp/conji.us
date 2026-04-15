@@ -252,6 +252,8 @@
     positionSpeakerPill();
     window.addEventListener('resize', positionSpeakerPill);
 
+    var pendingSeek = true; // shared seek flag for mobile first-play fix
+
     // Speaker pill open/close + volume slider
     (function() {
         var pill = document.getElementById('speaker-pill');
@@ -905,7 +907,6 @@
 
         // Mobile: browsers ignore seeks before audio is truly playing.
         // Use timeupdate to catch and correct position once playback is active.
-        var pendingSeek = true;
         audio.addEventListener('timeupdate', function() {
             if (!pendingSeek) return;
             var interval = trackIntervals[currentTrack];
