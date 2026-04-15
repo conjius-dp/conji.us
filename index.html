@@ -925,6 +925,7 @@
         var firstPlay = true;
         var swipeAbsorbUntil = 0;
         audio.addEventListener('play', function() {
+            var isFirstPlay = firstPlay;
             if (titleSetBySwipe) {
                 swipeAbsorbUntil = Date.now() + 1000;
                 titleSetBySwipe = false;
@@ -943,11 +944,9 @@
             var interval = trackIntervals[currentTrack];
             // scGain is set in playTrack() before play starts
             if (!isTrackChange) scGain = (interval && interval.gain) ? interval.gain : 1;
-            // Always enforce interval start position
-            if (interval && interval.start) {
-                if (audio.currentTime * 1000 < interval.start - 500) {
-                    audio.currentTime = interval.start / 1000;
-                }
+            // Enforce interval start on first play or track change
+            if ((isFirstPlay || isTrackChange) && interval && interval.start) {
+                audio.currentTime = interval.start / 1000;
             }
             // Smooth fade in — only on track changes
             if (isTrackChange) {
