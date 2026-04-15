@@ -760,6 +760,8 @@ body {
     width: 72px !important;
     height: 72px !important;
     object-fit: contain;
+    position: relative;
+    z-index: 1;
 }
 
 .music .project-grid {
@@ -783,6 +785,32 @@ body {
     border-bottom: none;
     border-right: 1px solid var(--border);
     align-self: stretch;
+    position: relative;
+    overflow: hidden;
+}
+
+.music .card-thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('img/conjius-what-if-you-tried.jpg') center / cover no-repeat;
+    filter: grayscale(1) sepia(1) saturate(5) hue-rotate(-5deg) brightness(0.75) contrast(1.8);
+    opacity: 0.15;
+    pointer-events: none;
+    transform: scale(1);
+    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.music .project-card:hover .card-thumb::before {
+    transform: scale(1.12);
+}
+
+.music .project-grid .project-card:nth-child(1) .card-thumb::before {
+    background-image: url('img/conjius-live-thumb.jpg');
+}
+
+.music .project-grid .project-card:nth-child(6) .card-thumb::before {
+    background-image: url('img/conjius-home-thumb.jpg');
 }
 
 .music .project-info {

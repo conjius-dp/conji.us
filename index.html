@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=141">
+    <link rel="stylesheet" href="style.css?v=143">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -25,7 +25,7 @@
 
     <!-- Hero -->
     <header class="hero">
-        <img src="conjius-avatar-transparent-bg.png" alt="Conjius" class="avatar">
+        <img src="img/conjius-avatar-transparent-bg.png" alt="Conjius" class="avatar">
     </header>
 
     <!-- Section Toggle -->
@@ -131,12 +131,12 @@
 
             <a href="https://music.youtube.com/channel/UC4XwLQrc3CT0jPac-w4WPxw" target="_blank" rel="noopener" class="project-card">
                 <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/youtubemusic/d48300" alt="YouTube Music" class="brand-icon"></div>
-                <div class="project-info"><h3>YouTube Music</h3><p>Full discography</p></div>
+                <div class="project-info"><h3>YouTube Music</h3><p>Stream all releases</p></div>
             </a>
 
             <a href="https://conjius.bandcamp.com" target="_blank" rel="noopener" class="project-card">
                 <div class="card-thumb card-thumb--icon"><img src="https://cdn.simpleicons.org/bandcamp/d48300" alt="Bandcamp" class="brand-icon"></div>
-                <div class="project-info"><h3>Bandcamp</h3><p>Buy and download music</p></div>
+                <div class="project-info"><h3>Bandcamp</h3><p>Buy &amp; download</p></div>
             </a>
 
             <a href="https://www.soundcloud.com/conjius" target="_blank" rel="noopener" class="project-card">
@@ -184,7 +184,7 @@
 
     // custom SVG thumbnails for repos that don't have a social image
     var CUSTOM_THUMBS = {
-        'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
+        'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="img/logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="-200" y="-200" width="800" height="600" fill="#111"/><g class="wav-numbers"></g></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
         'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="76" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="78" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,78) scale(1,0.83) translate(0,-78)">\u221e</text><text x="62" y="76" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><rect class="knob-pill" x="-40" y="62" width="80" height="22" rx="11" ry="11" fill="#d48300"/><text class="knob-pill-text" x="0" y="77" text-anchor="middle" dominant-baseline="auto" fill="#111" font-family="Inconsolata,monospace" font-size="14" font-weight="700">0.0 dB</text></g></svg></div>',
@@ -382,6 +382,8 @@
                     if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
                     else { setVolume(prevVolume); }
                     audioIsPlaying = true;
+                    var startInterval = trackIntervals[currentTrack];
+                    if (startInterval && startInterval.start) audio.currentTime = startInterval.start / 1000;
                     audio.play();
                     setTimeout(function() {
                         pill.classList.remove('phase-expand');
