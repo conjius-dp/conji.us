@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=148">
+    <link rel="stylesheet" href="style.css?v=149">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -1680,13 +1680,26 @@
                 var repoUpper = repo.name.charAt(0).toUpperCase() + repo.name.slice(1);
                 var vst3Url = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest/download/' + repoUpper + '-macOS-VST3.zip';
                 var auUrl = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest/download/' + repo.name + '-macOS-AU.zip';
-                links += '<div class="dl-wrap">' +
-                    '<span class="dl-icon" title="Download">' + DL_ICON + '</span>' +
-                    '<div class="dl-options">' +
-                        '<a href="' + vst3Url + '" title="Download VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
-                        '<a href="' + auUrl + '" title="Download AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>' +
-                    '</div>' +
-                '</div>';
+                var isMobile = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+                if (isMobile && navigator.share) {
+                    var SHARE_ICON = '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>';
+                    var SHARE_ICON_SM = '<svg class="dl-pill-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>';
+                    links += '<div class="dl-wrap">' +
+                        '<span class="dl-icon" title="Share">' + SHARE_ICON + '</span>' +
+                        '<div class="dl-options">' +
+                            '<a href="#" class="share-btn" data-url="' + vst3Url + '" data-text="Check out the macOS VST3 build for ' + repo.name + '" title="Share VST3">' + APPLE_ICON + 'VST3 ' + SHARE_ICON_SM + '</a>' +
+                            '<a href="#" class="share-btn" data-url="' + auUrl + '" data-text="Check out the macOS AU build for ' + repo.name + '" title="Share AU">' + APPLE_ICON + 'AU ' + SHARE_ICON_SM + '</a>' +
+                        '</div>' +
+                    '</div>';
+                } else {
+                    links += '<div class="dl-wrap">' +
+                        '<span class="dl-icon" title="Download">' + DL_ICON + '</span>' +
+                        '<div class="dl-options">' +
+                            '<a href="' + vst3Url + '" title="Download VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
+                            '<a href="' + auUrl + '" title="Download AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>' +
+                        '</div>' +
+                    '</div>';
+                }
             }
 
             var leftSide = (lang ? '<span class="lang"><span class="lang-dot" style="background:' + langColor + '"></span>' + lang + '</span>' : '<span></span>') + ghLink;
@@ -1700,6 +1713,18 @@
                         '<div class="card-links">' + links + '</div>' +
                     '</div>' +
                 '</div>';
+
+            // Share buttons (mobile) — trigger native share sheet
+            card.querySelectorAll('.share-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigator.share({
+                        text: btn.dataset.text,
+                        url: btn.dataset.url
+                    }).catch(function() {});
+                });
+            });
 
             // Download button touch toggle
             var dlWrap = card.querySelector('.dl-wrap');
