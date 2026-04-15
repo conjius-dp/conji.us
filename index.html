@@ -496,6 +496,8 @@
 
         // slider drag
         var dragging = false;
+        var dragStartY = 0;
+        var scrollLocked = false;
         function sliderPos(e) {
             var rect = slider.getBoundingClientRect();
             var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -504,6 +506,8 @@
         function onDown(e) {
             e.stopPropagation();
             dragging = true;
+            scrollLocked = true;
+            dragStartY = e.touches ? e.touches[0].clientY : e.clientY;
             slider.classList.add('dragging');
             sliderPos(e);
         }
@@ -511,7 +515,7 @@
             if (!dragging) return;
             sliderPos(e);
         }
-        function onUp() { dragging = false; slider.classList.remove('dragging'); }
+        function onUp() { dragging = false; scrollLocked = false; slider.classList.remove('dragging'); }
 
         slider.addEventListener('mousedown', onDown);
         handle.addEventListener('mousedown', onDown);
@@ -519,7 +523,16 @@
         document.addEventListener('mouseup', onUp);
         slider.addEventListener('touchstart', function(e) { onDown(e); }, { passive: true });
         handle.addEventListener('touchstart', function(e) { e.stopPropagation(); onDown(e); }, { passive: true });
-        document.addEventListener('touchmove', function(e) { if (dragging) sliderPos(e); }, { passive: true });
+        document.addEventListener('touchmove', function(e) {
+            if (!dragging) return;
+            sliderPos(e);
+            // Block scroll unless vertical movement exceeds 100px
+            if (scrollLocked) {
+                var dy = Math.abs((e.touches ? e.touches[0].clientY : e.clientY) - dragStartY);
+                if (dy > 100) { scrollLocked = false; return; }
+                e.preventDefault();
+            }
+        }, { passive: false });
         document.addEventListener('touchend', onUp);
 
         setVolume(volume);
