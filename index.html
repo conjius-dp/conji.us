@@ -383,6 +383,7 @@
                         if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
                         else { setVolume(prevVolume); }
                         audioIsPlaying = true;
+                        pendingSeek = true;
                         var startInterval = trackIntervals[currentTrack];
                         if (startInterval && startInterval.start) audio.currentTime = startInterval.start / 1000;
                         audio.play();
@@ -883,7 +884,7 @@
         var skipArtUpdate = false;
         function playTrack(idx) {
             isTrackChange = true;
-            needsSeekOnPlaying = true;
+            pendingSeek = true;
             currentTrack = idx;
             // Apply per-track gain before playback starts to avoid late dip
             var interval = trackIntervals[idx];
@@ -902,16 +903,20 @@
             }
         });
 
-        // Mobile: seek again once playback actually starts (mobile ignores seeks before play)
-        var needsSeekOnPlaying = true;
-        audio.addEventListener('playing', function() {
-            if (needsSeekOnPlaying) {
-                needsSeekOnPlaying = false;
-                var interval = trackIntervals[currentTrack];
-                if (interval && interval.start && audio.currentTime < interval.start / 1000 - 0.5) {
-                    audio.currentTime = interval.start / 1000;
+        // Mobile: browsers ignore seeks before audio is truly playing.
+        // Use timeupdate to catch and correct position once playback is active.
+        var pendingSeek = true;
+        audio.addEventListener('timeupdate', function() {
+            if (!pendingSeek) return;
+            var interval = trackIntervals[currentTrack];
+            if (interval && interval.start) {
+                var target = interval.start / 1000;
+                if (audio.currentTime < target - 0.5) {
+                    audio.currentTime = target;
+                    return; // wait for next timeupdate to confirm
                 }
             }
+            pendingSeek = false;
         });
 
         // Crossfade + enforce end time
