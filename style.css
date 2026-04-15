@@ -386,6 +386,7 @@ body {
     position: absolute;
     top: 4px;
     right: 6px;
+    z-index: 2;
 }
 
 .sp-row {
