@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=147">
+    <link rel="stylesheet" href="style.css?v=148">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -186,7 +186,7 @@
     var CUSTOM_THUMBS = {
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="img/logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="-200" y="-200" width="800" height="600" fill="#111"/><g class="wav-numbers"></g></svg></div>',
-        'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
+        'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="opacity:0;transition:opacity 0.3s ease"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
         'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,88) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g id="boostor-ind" class="knob-indicator" style="transform-origin:0 0;transform:rotate(180deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="72" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="74" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,74) scale(1,0.83) translate(0,-74)">\u221e</text><text x="62" y="72" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><g transform="translate(0,90) scale(0.833) translate(0,-76)"><rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/><text id="boostor-sign" x="-46" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">+</text><text id="boostor-val" x="-28" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0.0</text><text x="48" y="76" text-anchor="end" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">dB</text></g></g></svg></div>',
         'tiptoe': (function() {
             var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
@@ -2074,6 +2074,9 @@
                     vx: 0, vy: 0
                 });
             }
+
+            // Fade in after layout is done
+            svg.style.opacity = '1';
 
             var active = false;
             var returning = false;
