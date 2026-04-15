@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=119">
+    <link rel="stylesheet" href="style.css?v=139">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -27,39 +27,71 @@
 
     <!-- Section Toggle -->
     <div class="toggle-row">
+        <div class="toggle-gap" id="toggle-gap"></div>
         <div class="section-toggle" id="section-toggle">
             <button class="toggle-btn active" data-target="projects">Code</button>
             <button class="toggle-btn" data-target="music" style="padding-left:calc(1.25rem + 7px)">Music</button>
             <div class="toggle-dark-layer" id="toggle-dark-layer"><span>Code</span><span style="padding-left:7px">Music</span></div>
         </div>
-        <div class="toggle-gap" id="toggle-gap"></div>
         <div class="speaker-pill" id="speaker-pill">
             <button class="sp-icon" id="sp-icon" aria-label="Toggle player">
-                <svg class="sp-vol-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                    <line class="sp-x1" x1="23" y1="9" x2="17" y2="15"/>
-                    <line class="sp-x2" x1="17" y1="9" x2="23" y2="15"/>
-                    <path class="sp-wave1" d="M14.5 9.5a3.5 3.5 0 0 1 0 5"/>
-                    <path class="sp-wave2" d="M17 7a7 7 0 0 1 0 10"/>
-                    <path class="sp-wave3" d="M19.5 4.5a10.5 10.5 0 0 1 0 15"/>
+                <svg class="sp-note-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                    <ellipse cx="6.45" cy="18.85" rx="3" ry="2.3"/>
+                    <ellipse cx="16.45" cy="16.85" rx="3" ry="2.3"/>
+                    <rect x="8.95" y="4.85" width="1.6" height="14.5"/>
+                    <rect x="18.95" y="2.85" width="1.6" height="14.5"/>
+                    <rect x="8.95" y="2.85" width="11.6" height="2" rx="0.8"/>
+                    <rect x="8.95" y="6.85" width="11.6" height="2" rx="0.8"/>
                 </svg>
             </button>
             <div class="sp-controls">
-                <div class="sp-slider" id="sp-slider">
-                    <div class="sp-start-dot"></div>
-                    <div class="sp-track-bg"></div>
-                    <div class="sp-track-fill" id="sp-track-fill"></div>
-                    <div class="sp-handle" id="sp-handle"></div>
-                    <div class="sp-end-dot"></div>
+                <div class="sp-art" id="sp-art">
+                    <img id="sp-art-img" src="art/a-weekend-in-june.jpg" alt="">
                 </div>
-                <div class="sp-title-wrap" id="sp-title-wrap">
-                    <span class="sp-title" id="sp-title">This Guy Again?</span>
-                    <span class="sp-title sp-title-next" id="sp-title-next"></span>
+                <div class="sp-right">
+                    <button class="sp-btn sp-close" id="sp-close" title="Close">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+                    </button>
                     <span class="sp-eq" id="sp-eq">
                         <span class="sp-eq-bar"></span>
                         <span class="sp-eq-bar"></span>
                         <span class="sp-eq-bar"></span>
                     </span>
+                    <div class="sp-row sp-row-title">
+                        <div class="sp-title-wrap" id="sp-title-wrap">
+                            <span class="sp-title" id="sp-title">This Guy Again?</span>
+                            <span class="sp-title sp-title-next" id="sp-title-next"></span>
+                        </div>
+                    </div>
+                    <div class="sp-row sp-row-transport">
+                        <button class="sp-btn sp-prev" id="sp-prev" title="Previous">
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm12 0l-8.5 6L18 18V6z"/></svg>
+                        </button>
+                        <button class="sp-btn sp-playpause" id="sp-playpause" title="Play/Pause">
+                            <svg class="sp-play-icon" width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            <svg class="sp-pause-icon" width="34" height="34" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>
+                        </button>
+                        <button class="sp-btn sp-next" id="sp-next" title="Next">
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                        </button>
+                    </div>
+                    <div class="sp-row sp-row-volume">
+                        <svg class="sp-vol-icon" id="sp-vol-icon-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                            <line class="sp-x1" x1="23" y1="9" x2="17" y2="15"/>
+                            <line class="sp-x2" x1="17" y1="9" x2="23" y2="15"/>
+                            <path class="sp-wave1" d="M14.5 9.5a3.5 3.5 0 0 1 0 5"/>
+                            <path class="sp-wave2" d="M17 7a7 7 0 0 1 0 10"/>
+                            <path class="sp-wave3" d="M19.5 4.5a10.5 10.5 0 0 1 0 15"/>
+                        </svg>
+                        <div class="sp-slider" id="sp-slider">
+                            <div class="sp-start-dot"></div>
+                            <div class="sp-track-bg"></div>
+                            <div class="sp-track-fill" id="sp-track-fill"></div>
+                            <div class="sp-handle" id="sp-handle"></div>
+                            <div class="sp-end-dot"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -151,7 +183,7 @@
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="-200" y="-200" width="800" height="600" fill="#111"/><g class="wav-numbers"></g></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
-        'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,74)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d48300" stroke-width="5"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="18" x2="0" y2="37" stroke="#d48300" stroke-width="6" stroke-linecap="round"/></g><line x1="-48" y1="48" x2="-58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><line x1="48" y1="48" x2="58" y2="58" stroke="#d48300" stroke-width="5" stroke-linecap="round"/><text x="-72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">0</text><text x="72" y="91" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="36" font-weight="600">11</text></g></svg></div>',
+        'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="76" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="78" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,78) scale(1,0.83) translate(0,-78)">\u221e</text><text x="62" y="76" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><rect class="knob-pill" x="-40" y="62" width="80" height="22" rx="11" ry="11" fill="#d48300"/><text class="knob-pill-text" x="0" y="77" text-anchor="middle" dominant-baseline="auto" fill="#111" font-family="Inconsolata,monospace" font-size="14" font-weight="700">0.0 dB</text></g></svg></div>',
         'denoiser': (function() {
             var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
             var noisy = 'M', clean = 'M';
@@ -252,91 +284,209 @@
         pill.addEventListener('pointerup', function(e) { e.stopPropagation(); });
 
         var toggleGap = document.getElementById('toggle-gap');
-        var isMobile = function() { return window.innerWidth <= 600; };
+        var toggleRow = pill.closest('.toggle-row');
 
         var savedLeft = '';
+        var pillAnimating = false;
 
-        function mobileOpen() {
-            var gapH = 60;
-            var downY = gapH / 2 + 8; // center pill in gap area
+        // Measure pill width once based on longest title, cache it
+        var pillFixedWidth = 0;
+        function measurePillWidth() {
+            if (!pill.classList.contains('open')) return;
+            if (pillFixedWidth > 0) {
+                pill.style.setProperty('--pill-w', pillFixedWidth + 'px');
+                return;
+            }
+            var titleWrapEl = document.getElementById('sp-title-wrap');
+            var rightEl = pill.querySelector('.sp-right');
+            var origText = titleEl.textContent;
+            // Temporarily widen and hide art to measure right section
+            pill.style.setProperty('--pill-w', '9999px');
+            pill.style.setProperty('--art-size', '0px');
+            pill.offsetWidth;
+            // Find widest title
+            var maxTitleW = 0;
+            for (var i = 0; i < tracks.length; i++) {
+                titleEl.textContent = tracks[i].title;
+                pill.offsetWidth;
+                var tw = titleWrapEl.scrollWidth;
+                if (tw > maxTitleW) maxTitleW = tw;
+            }
+            titleEl.textContent = origText;
+            pill.offsetWidth;
+            // Measure right section height
+            var rightH = rightEl.offsetHeight;
+            var artSize = rightH;
+            pill.style.setProperty('--art-size', artSize + 'px');
+            // right section: max title + padding(20*2) + close btn(28) + border(4)
+            var rightW = Math.max(160, maxTitleW + 20 + 20 + 28 + 4);
+            pillFixedWidth = rightW + artSize;
+            // Desktop: widen box by 1.2x for breathing room
+            if (window.innerWidth > 600) pillFixedWidth = Math.round(pillFixedWidth * 1.2);
+            pill.style.setProperty('--pill-w', pillFixedWidth + 'px');
+        }
+
+        function pillOpen() {
+            if (pillAnimating || pill.classList.contains('open')) return;
+            pillAnimating = true;
             savedLeft = pill.style.left;
 
-            // Phase 1: grow gap + move circle down
-            pill.classList.add('mobile-phase1');
-            toggleGap.classList.add('expanding');
-            pill.style.transform = 'translateY(' + downY + 'px)';
+            // spacing = gap between pill bottom and toggle top (matches toggle-row margins)
+            var spacing = 24;
+            var toggleEl = document.getElementById('section-toggle');
+            var toggleH = toggleEl.offsetHeight;
+            // Measure open pill height
+            pill.classList.add('open');
+            measurePillWidth();
+            var openH = pill.offsetHeight;
+            pill.classList.remove('open');
+            pill.offsetWidth;
+            // Gap = pill height + spacing below pill
+            // Pill sits flush at gap top so tagline↔pill = toggle-row top margin (24px)
+            var gapH = openH + spacing;
+            toggleGap.style.setProperty('--gap-h', gapH + 'px');
 
-            // Phase 2: slide to center (after phase1 completes)
+            // upY positions pill top at gap top (bottom:0 is at toggle-row bottom)
+            // toggle-row bottom to gap top = gapH + toggleH, minus openH for pill top
+            var upY = toggleH + spacing;
+            // For the circle phase, center it vertically in the gap
+            var closedH = pill.offsetHeight;
+            var upYCircle = toggleH + gapH / 2 - closedH / 2;
+
+            // Phase 1: grow gap + move circle to top of gap
+            pill.classList.add('phase-move');
+            toggleGap.classList.add('expanding');
+            pill.style.transform = 'translateY(-' + upYCircle + 'px)';
+
+            // Phase 2: slide to center horizontally
             setTimeout(function() {
-                pill.classList.remove('mobile-phase1');
-                pill.classList.add('mobile-phase2');
+                pill.classList.remove('phase-move');
+                pill.classList.add('phase-center');
                 pill.style.left = '50%';
-                pill.style.transform = 'translate(-50%, ' + downY + 'px)';
-                // Phase 3: expand after reaching center
+                pill.style.transform = 'translate(-50%, -' + upYCircle + 'px)';
+
+                // Phase 3: expand pill (width, height, and Y adjust)
                 setTimeout(function() {
+                    pill.classList.remove('phase-center');
+                    pill.classList.add('phase-expand');
+                    pill.style.height = openH + 'px';
+                    pill.style.transform = 'translate(-50%, -' + upY + 'px)';
                     pill.classList.add('open');
+                    measurePillWidth();
+                    // Open = unmute + play
                     if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
                     else { setVolume(prevVolume); }
-                }, 370);
-            }, 320);
+                    audioIsPlaying = true;
+                    audio.play();
+                    setTimeout(function() {
+                        pill.classList.remove('phase-expand');
+                        pill.style.height = '';
+                        pillAnimating = false;
+                    }, 350);
+                }, 280);
+            }, 280);
         }
 
-        function mobileClose() {
-            muteFromButton = true;
+        function pillClose() {
+            if (pillAnimating || !pill.classList.contains('open')) return;
+            pillAnimating = true;
+            // Close = pause + mute
+            audio.pause();
+            audioIsPlaying = false;
             setVolume(0);
-            pill.classList.remove('open');
-            // Phase: collapse + slide back to original position
-            pill.classList.remove('mobile-phase2');
-            pill.classList.add('mobile-phase1');
-            pill.style.left = savedLeft;
-            pill.style.transform = 'translateY(0px)';
-            setTimeout(function() {
-                toggleGap.classList.remove('expanding');
-                pill.classList.remove('mobile-phase1');
-                pill.style.transform = '';
-            }, 360);
-        }
+            document.title = 'Conjius';
+            updatePlayPauseIcon();
 
-        function pillTransitionOn() {
-            pill.style.transition = 'background 0.3s, max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
-        }
-        function pillTransitionOff() {
-            pill.style.transition = '';
+            var spacing = 24;
+            var toggleEl = document.getElementById('section-toggle');
+            var toggleH = toggleEl.offsetHeight;
+            var openH = pill.offsetHeight;
+            var gapH = openH + spacing;
+            var closedH = window.innerWidth <= 600 ? 43 : 44;
+            var upYCircle = toggleH + gapH / 2 - closedH / 2;
+
+            // Phase 1: collapse to circle (width, height, Y to gap center)
+            pill.style.height = openH + 'px';
+            pill.offsetWidth;
+            pill.classList.add('phase-expand');
+            pill.classList.remove('open');
+            pill.style.height = '';
+            pill.style.transform = 'translate(-50%, -' + upYCircle + 'px)';
+
+            // Phase 2: slide back to original horizontal position
+            setTimeout(function() {
+                pill.classList.remove('phase-expand');
+                pill.classList.add('phase-center');
+                pill.style.left = savedLeft;
+                pill.style.transform = 'translateY(-' + upYCircle + 'px)';
+
+                // Phase 3: move back down + collapse gap
+                setTimeout(function() {
+                    pill.classList.remove('phase-center');
+                    pill.classList.add('phase-move');
+                    pill.style.transform = '';
+                    toggleGap.classList.remove('expanding');
+
+                    setTimeout(function() {
+                        pill.classList.remove('phase-move');
+                        pillAnimating = false;
+                    }, 280);
+                }, 280);
+            }, 350);
         }
 
         icon.addEventListener('click', function(e) {
             e.stopPropagation();
             if (!pill.classList.contains('open')) {
-                if (isMobile()) {
-                    mobileOpen();
-                } else {
-                    pillTransitionOn();
-                    pill.classList.add('open');
-                    if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); }
-                    setTimeout(pillTransitionOff, 400);
-                }
-            } else if (volume === 0) {
-                setVolume(prevVolume);
-                hasUnmuted = true;
-            } else {
-                if (isMobile()) {
-                    mobileClose();
-                } else {
-                    pillTransitionOn();
-                    muteFromButton = true;
-                    setVolume(0);
-                    pill.classList.remove('open');
-                    setTimeout(pillTransitionOff, 400);
-                }
+                pillOpen();
             }
         });
 
         pill.addEventListener('click', function(e) {
             e.stopPropagation();
             if (e.target === pill && !pill.classList.contains('open')) {
-                if (isMobile()) { mobileOpen(); }
-                else { pillTransitionOn(); pill.classList.add('open'); if (!hasUnmuted) { hasUnmuted = true; setVolume(0.5); } setTimeout(pillTransitionOff, 400); }
+                pillOpen();
             }
+        });
+
+        // ── Transport buttons ──
+        var playPauseBtn = document.getElementById('sp-playpause');
+        var prevBtn = document.getElementById('sp-prev');
+        var nextBtn = document.getElementById('sp-next');
+        var closeBtn = document.getElementById('sp-close');
+
+        function updatePlayPauseIcon() {
+            if (audioIsPlaying) {
+                playPauseBtn.classList.add('playing');
+            } else {
+                playPauseBtn.classList.remove('playing');
+            }
+        }
+
+        playPauseBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (audioIsPlaying) {
+                audio.pause();
+            } else {
+                audioIsPlaying = true;
+                audio.play();
+            }
+            updatePlayPauseIcon();
+        });
+
+        prevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            skipTrack(-1);
+        });
+
+        nextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            skipTrack(1);
+        });
+
+        closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            pillClose();
         });
 
         // slider drag
@@ -368,6 +518,14 @@
 
         setVolume(volume);
 
+        // ── Speaker icon click to mute/unmute ──
+        var volIconBtn = document.getElementById('sp-vol-icon-box');
+        volIconBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (volume > 0) { setVolume(0); }
+            else { setVolume(prevVolume || 0.5); }
+        });
+
         // ── Title swipe to skip tracks ──
         var titleWrap = document.getElementById('sp-title-wrap');
         var titleEl = document.getElementById('sp-title');
@@ -376,38 +534,15 @@
         var SWIPE_THRESHOLD = 50;
 
         function animateTitle(direction, newText, callback) {
-            var oldWidth = pill.offsetWidth;
             // Slide out current title
             titleEl.classList.add(direction > 0 ? 'slide-out-left' : 'slide-out-right');
             setTimeout(function() {
-                // Lock pill width during text swap
-                pill.style.maxWidth = oldWidth + 'px';
-                pill.style.transition = 'none';
-                pill.offsetWidth;
                 // Update text and position for slide in
                 titleEl.textContent = newText;
                 titleEl.classList.remove('slide-out-left', 'slide-out-right');
                 titleEl.classList.add(direction > 0 ? 'slide-in-left' : 'slide-in-right');
-                // Measure new width and animate
-                pill.style.maxWidth = 'none';
-                pill.offsetWidth;
-                var newWidth = pill.scrollWidth;
-                if (Math.abs(newWidth - oldWidth) > 2) {
-                    pill.style.transition = 'none';
-                    pill.style.maxWidth = oldWidth + 'px';
-                    pill.offsetWidth;
-                    pill.style.transition = 'max-width 0.25s ease';
-                    pill.style.maxWidth = newWidth + 'px';
-                    setTimeout(function() {
-                        pill.style.transition = '';
-                        pill.style.maxWidth = '';
-                    }, 300);
-                } else {
-                    pill.style.transition = 'none';
-                    pill.style.maxWidth = '';
-                    pill.offsetWidth;
-                    pill.style.transition = '';
-                }
+                // Animate pill width to fit new title
+                measurePillWidth();
                 // Force reflow then slide in
                 titleEl.offsetWidth;
                 titleEl.classList.remove('slide-in-left', 'slide-in-right');
@@ -494,12 +629,6 @@
             var dx = e ? (e.clientX - swipeStartX) : lastSwipeDx;
 
             if (Math.abs(dx) > SWIPE_THRESHOLD && nextTitleLoaded) {
-                // Lock pill width to current size before swap
-                var oldWidth = pill.offsetWidth;
-                pill.style.maxWidth = oldWidth + 'px';
-                pill.style.transition = 'none';
-                pill.offsetWidth; // reflow
-
                 // Instant swap: put new text on main title at the position nextTitle reached
                 var newTitle = nextTitleLoaded.title;
                 var dir = nextTitleLoaded.direction;
@@ -519,31 +648,7 @@
 
                 setTimeout(function() {
                     titleEl.style.transition = '';
-                    // Measure new width and animate pill to it
-                    pill.style.maxWidth = 'none';
-                    pill.offsetWidth;
-                    var newWidth = pill.scrollWidth;
-                    if (Math.abs(newWidth - oldWidth) > 2) {
-                        pill.style.transition = 'none';
-                        pill.style.maxWidth = oldWidth + 'px';
-                        pill.offsetWidth;
-                        pill.style.transition = 'max-width 0.25s ease';
-                        pill.style.maxWidth = newWidth + 'px';
-                        setTimeout(function() {
-                            pill.style.transition = 'none';
-                            pill.style.maxWidth = '';
-                            pill.offsetWidth;
-                            pill.style.transition = '';
-                        }, 300);
-                    } else {
-                        pill.style.transition = 'none';
-                        pill.style.maxWidth = '';
-                        pill.offsetWidth;
-                        pill.style.transition = '';
-                    }
-                    // Re-enable default title transition after reflow
-                    titleEl.offsetWidth;
-                    titleEl.style.transition = '';
+                    measurePillWidth();
                 }, 150);
                 // Start playing
                 skipTrack(dir, true);
@@ -569,10 +674,10 @@
 
         // ── Self-hosted audio integration ──
         var tracks = [
-            { title: 'A Weekend In June',  src: 'audio/a-weekend-in-june.mp3' },
-            { title: 'This Guy Again?',    src: 'audio/this-guy-again.mp3' },
-            { title: 'Validation',         src: 'audio/validation.mp3' },
-            { title: 'The Alterglow',      src: 'audio/the-alterglow.mp3' }
+            { title: 'A Weekend In June',  src: 'audio/a-weekend-in-june.mp3', art: 'art/a-weekend-in-june.jpg' },
+            { title: 'This Guy Again?',    src: 'audio/this-guy-again.mp3',    art: 'art/this-guy-again.jpg' },
+            { title: 'Validation',         src: 'audio/validation.mp3',        art: 'art/validation.jpg' },
+            { title: 'The Alterglow',      src: 'audio/the-alterglow.mp3',     art: 'art/the-alterglow.jpg' }
         ];
         var trackIntervals = {
             0: { start: 45000,  end: 93000  },  // A Weekend In June — 0:45–1:33
@@ -626,18 +731,28 @@
         }
 
         var titleEl = document.getElementById('sp-title');
-        var audioWantsPlay = false;
         var audioIsPlaying = false;
 
+        var artImg = document.getElementById('sp-art-img');
         titleEl.textContent = tracks[0].title;
+        artImg.src = tracks[0].art;
 
         var isTrackChange = false;
         function playTrack(idx) {
             isTrackChange = true;
             currentTrack = idx;
             audio.src = tracks[idx].src;
+            artImg.src = tracks[idx].art;
             audio.play();
         }
+
+        // Enforce interval start position after metadata loads (seek before metadata is ignored)
+        audio.addEventListener('loadedmetadata', function() {
+            var interval = trackIntervals[currentTrack];
+            if (interval && interval.start) {
+                audio.currentTime = interval.start / 1000;
+            }
+        });
 
         // Crossfade + enforce end time
         var FADE_MS = 2000;
@@ -680,6 +795,7 @@
             if (eqRaf) { cancelAnimationFrame(eqRaf); eqRaf = null; }
             for (var i = 0; i < eqBars.length; i++) eqBars[i].style.height = '2px';
             audioIsPlaying = false;
+            updatePlayPauseIcon();
         });
 
         // Fade in on new track start
@@ -694,6 +810,7 @@
             } else if (firstPlay) {
                 firstPlay = false;
                 titleEl.textContent = tracks[currentTrack].title;
+                measurePillWidth();
             } else {
                 animateTitle(1, tracks[currentTrack].title);
             }
@@ -727,6 +844,7 @@
             }
 
             audioIsPlaying = true;
+            updatePlayPauseIcon();
         });
 
         // audioIsPlaying tracked in the pause listener above
@@ -767,12 +885,10 @@
             if (!scVolRaf) scVolRaf = requestAnimationFrame(scApplyVolume);
         }
 
-        // Wire volume changes to audio element
+        // Wire volume changes to audio element (volume is independent of play/pause)
         var origSetVolume = setVolume;
-        var muteFromButton = false;
         setVolume = function(v) {
             origSetVolume(v);
-            audioWantsPlay = volume > 0;
             scFadeMul = 1;
             scSetTargetVol(volume * 100);
             // Hard-mute when volume is 0 — bypass lerp
@@ -781,15 +897,6 @@
                 if (gainNode) gainNode.gain.value = 0;
                 else audio.volume = 0;
             }
-            if (volume > 0 && !audioIsPlaying) {
-                audioIsPlaying = true;
-                audio.play();
-            } else if (v === 0 && muteFromButton) {
-                audioIsPlaying = false;
-                audio.pause();
-                document.title = 'Conjius';
-            }
-            muteFromButton = false;
         };
     })();
 
@@ -1430,8 +1537,26 @@
             var phase = 0; // 0=idle, 1=going to 11, 2=hold at 11, 3=going to 0, 4=hold at 0
             var holdTimer = null;
 
+            var pillText = card.querySelector('.knob-pill-text');
+
+            function degToDb(deg) {
+                // 45° = -100 dB (min), 315° = +24 dB (max)
+                var norm = (deg - ZERO_DEG) / (ELEVEN_DEG - ZERO_DEG);
+                norm = Math.max(0, Math.min(1, norm));
+                // Inverse of JUCE skew: value = min + (max-min) * norm^(1/skew)
+                var skew = 3.25;
+                var value = -100 + 124 * Math.pow(norm, 1.0 / skew);
+                return value;
+            }
+
+            function formatDb(db) {
+                if (db <= -99.9) return '\u2212\u221e dB';
+                return (db >= 0 ? '+' : '') + db.toFixed(1) + ' dB';
+            }
+
             function applyRotation() {
                 indicator.style.transform = 'rotate(' + currentDeg + 'deg)';
+                if (pillText) pillText.textContent = formatDb(degToDb(currentDeg));
             }
 
             function springStep() {
