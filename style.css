@@ -970,6 +970,29 @@ body {
     transition: background 0.2s, color 0.2s;
 }
 
+.share-btn {
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, color 0.2s;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.share-btn:active {
+    background: var(--accent);
+    color: var(--bg);
+}
+
 @media (hover: hover) and (pointer: fine) {
     .card-links > a:hover,
     .card-footer-left > a:hover {
