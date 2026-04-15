@@ -2610,9 +2610,12 @@
         var fingerDown = false, fingerX = 0, fingerY = 0;
 
         function isBgTarget(el) {
+            var isMobile = window.innerWidth <= 600;
             while (el) {
                 if (el.classList && (el.classList.contains('project-card') || el.classList.contains('footer-brand') ||
                     el.classList.contains('footer-links') || el.tagName === 'A' || el.tagName === 'BUTTON')) return false;
+                // On mobile, exclude the entire card gallery area from snake forces
+                if (isMobile && el.classList && (el.classList.contains('sections-wrapper') || el.classList.contains('sections-fade'))) return false;
                 el = el.parentElement;
             }
             return true;
