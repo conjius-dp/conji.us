@@ -705,32 +705,45 @@
                 var newArt = nextLoaded.art;
                 var dir = nextLoaded.direction;
 
-                // Swap title text to main element at next's current position
-                titleEl.style.transition = 'none';
-                titleEl.textContent = newTitle;
-                titleEl.style.transform = nextTitleEl.style.transform || '';
-                nextTitleEl.style.transition = 'none';
-                nextTitleEl.style.opacity = '0';
-                nextTitleEl.style.transform = '';
+                // Animate both current and next to final positions naturally
+                // Current slides out, next slides to 0 — clipping hides the departing one
+                var exitX = dir > 0 ? -wrapWidth : wrapWidth;
+                var exitArtX = dir > 0 ? -(artWidth + artGap) : (artWidth + artGap);
 
-                // Swap art src to main element at next's current position
-                artImg.style.transition = 'none';
-                artImg.src = newArt;
-                artImg.style.transform = artNext.style.transform || '';
-                artNext.style.transition = 'none';
-                artNext.style.opacity = '0';
-                artNext.style.transform = '';
-
-                // Snap both to final position
-                titleEl.offsetWidth;
                 titleEl.style.transition = 'transform ' + SNAP_MS + ' ease-out';
-                titleEl.style.transform = 'translateX(0)';
-                artImg.style.transition = 'transform ' + SNAP_MS + ' ease-out';
-                artImg.style.transform = 'translateX(0)';
+                titleEl.style.transform = 'translateX(' + exitX + 'px)';
+                nextTitleEl.style.transition = 'transform ' + SNAP_MS + ' ease-out';
+                nextTitleEl.style.transform = 'translateX(0)';
 
+                artImg.style.transition = 'transform ' + SNAP_MS + ' ease-out';
+                artImg.style.transform = 'translateX(' + exitArtX + 'px)';
+                artNext.style.transition = 'transform ' + SNAP_MS + ' ease-out';
+                artNext.style.transform = 'translateX(0)';
+
+                // After snap animation, swap sources and reset
                 setTimeout(function() {
+                    titleEl.textContent = newTitle;
+                    titleEl.style.transition = 'none';
+                    titleEl.style.transform = '';
+                    titleEl.offsetWidth;
                     titleEl.style.transition = '';
+                    nextTitleEl.style.transition = 'none';
+                    nextTitleEl.style.opacity = '0';
+                    nextTitleEl.style.transform = '';
+                    nextTitleEl.offsetWidth;
+                    nextTitleEl.style.transition = '';
+
+                    artImg.src = newArt;
+                    artImg.style.transition = 'none';
+                    artImg.style.transform = '';
+                    artImg.offsetWidth;
                     artImg.style.transition = '';
+                    artNext.style.transition = 'none';
+                    artNext.style.opacity = '0';
+                    artNext.style.transform = '';
+                    artNext.offsetWidth;
+                    artNext.style.transition = '';
+
                     measurePillWidth();
                 }, 150);
                 skipTrack(dir, true);
