@@ -883,6 +883,7 @@
         var skipArtUpdate = false;
         function playTrack(idx) {
             isTrackChange = true;
+            needsSeekOnPlaying = true;
             currentTrack = idx;
             // Apply per-track gain before playback starts to avoid late dip
             var interval = trackIntervals[idx];
@@ -898,6 +899,18 @@
             var interval = trackIntervals[currentTrack];
             if (interval && interval.start) {
                 audio.currentTime = interval.start / 1000;
+            }
+        });
+
+        // Mobile: seek again once playback actually starts (mobile ignores seeks before play)
+        var needsSeekOnPlaying = true;
+        audio.addEventListener('playing', function() {
+            if (needsSeekOnPlaying) {
+                needsSeekOnPlaying = false;
+                var interval = trackIntervals[currentTrack];
+                if (interval && interval.start && audio.currentTime < interval.start / 1000 - 0.5) {
+                    audio.currentTime = interval.start / 1000;
+                }
             }
         });
 
