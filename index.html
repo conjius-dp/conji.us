@@ -2760,15 +2760,20 @@
                 raf = requestAnimationFrame(tick);
             }
 
-            card.addEventListener('mouseenter', function() {
+            function activate() {
                 hovering = true;
                 if (!raf) raf = requestAnimationFrame(tick);
-            });
-            card.addEventListener('mouseleave', function() {
+            }
+            function deactivate() {
                 hovering = false;
                 t = 0;
                 setKnob(0.5);
-            });
+            }
+            card.addEventListener('mouseenter', activate);
+            card.addEventListener('mouseleave', deactivate);
+            card.addEventListener('touchstart', function() { activate(); }, { passive: true });
+            card.addEventListener('touchend', function() { deactivate(); });
+            card.addEventListener('touchcancel', function() { deactivate(); });
         }
         init();
     })();
