@@ -537,6 +537,16 @@
 
         var artContainer = document.getElementById('sp-art');
         var artNext = document.getElementById('sp-art-next');
+        var speakerPill = document.getElementById('speaker-pill');
+
+        // Gap between images = distance from art left edge to pill left edge
+        function updateArtGap() {
+            var artRect = artContainer.getBoundingClientRect();
+            var pillRect = speakerPill.getBoundingClientRect();
+            var gap = Math.max(2, Math.round(artRect.left - pillRect.left));
+            artContainer.style.setProperty('--art-gap', gap + 'px');
+            return gap;
+        }
 
         var SLIDE_MS = 600;
         function animateTitle(direction, newText, nextArtSrc, callback) {
@@ -544,6 +554,7 @@
 
             // Wrap is full-width of row, so --wrap-w gives natural gap between titles
             titleWrap.style.setProperty('--wrap-w', titleWrap.offsetWidth + 'px');
+            updateArtGap();
 
             // Set up next title
             nextTitleEl.textContent = newText;
@@ -611,6 +622,7 @@
         var nextLoaded = null; // cached {direction, title, art}
         var wrapWidth = 0;
         var artWidth = 0;
+        var artGap = 2;
 
         function startSwipe(e) {
             e.stopPropagation();
@@ -619,13 +631,13 @@
             nextLoaded = null;
             wrapWidth = titleWrap.offsetWidth;
             artWidth = artContainer.offsetWidth;
+            artGap = updateArtGap();
             titleWrap.setPointerCapture(e.pointerId);
         }
 
         titleWrap.addEventListener('pointerdown', startSwipe);
         artContainer.addEventListener('pointerdown', function(e) {
             startSwipe(e);
-            // Redirect capture to titleWrap so all move/up events go there
             try { titleWrap.setPointerCapture(e.pointerId); } catch(ex) {}
         });
 
@@ -644,16 +656,17 @@
             if (!swiping) return;
             e.stopPropagation();
             var dx = e.clientX - swipeStartX;
+
+            // Clamp so you can't drag beyond one track in either direction
+            dx = Math.max(-wrapWidth, Math.min(wrapWidth, dx));
             lastSwipeDx = dx;
-            // progress: 0 at start, 1 when dragged a full container width
-            var progress = Math.min(1, Math.abs(dx) / wrapWidth);
 
             // Move current title with finger
             titleEl.style.transform = 'translateX(' + dx + 'px)';
             titleEl.style.transition = 'none';
 
-            // Move current art proportionally (art uses its own width as scale)
-            var artDx = (dx / wrapWidth) * artWidth;
+            // Move current art proportionally (art uses its own width as scale, including gap)
+            var artDx = (dx / wrapWidth) * (artWidth + artGap);
             artImg.style.transform = 'translateX(' + artDx + 'px)';
             artImg.style.transition = 'none';
 
@@ -667,8 +680,8 @@
                 nextTitleEl.style.opacity = '1';
                 nextTitleEl.style.transition = 'none';
 
-                // Next art: starts one artWidth away, moves with drag
-                var nextArtOffset = artDx + (dir > 0 ? artWidth : -artWidth);
+                // Next art: starts one (artWidth + gap) away, moves with drag
+                var nextArtOffset = artDx + (dir > 0 ? (artWidth + artGap) : -(artWidth + artGap));
                 artNext.style.transform = 'translateX(' + nextArtOffset + 'px)';
                 artNext.style.opacity = '1';
                 artNext.style.transition = 'none';

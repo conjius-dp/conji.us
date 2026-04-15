@@ -332,6 +332,7 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 18px;
     filter: grayscale(1) sepia(1) saturate(5) hue-rotate(-5deg) brightness(0.75);
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -348,17 +349,17 @@ body {
     opacity: 1;
 }
 
-/* Slide left: current goes -100%, next starts at +100% then goes to 0 */
-.sp-art.sliding-left img { transform: translateX(-100%); }
+/* Slide left: current goes -(100% + gap), next starts at +(100% + gap) then goes to 0 */
+.sp-art.sliding-left img { transform: translateX(calc(-100% - var(--art-gap))); }
 .sp-art.sliding-left .sp-art-next { transform: translateX(0); }
 
-/* Slide right: current goes +100%, next starts at -100% then goes to 0 */
-.sp-art.sliding-right img { transform: translateX(100%); }
+/* Slide right: current goes +(100% + gap), next starts at -(100% + gap) then goes to 0 */
+.sp-art.sliding-right img { transform: translateX(calc(100% + var(--art-gap))); }
 .sp-art.sliding-right .sp-art-next { transform: translateX(0); }
 
 /* Pre-position next image before animation starts */
-.sp-art.pre-left .sp-art-next { transform: translateX(100%); transition: none; }
-.sp-art.pre-right .sp-art-next { transform: translateX(-100%); transition: none; }
+.sp-art.pre-left .sp-art-next { transform: translateX(calc(100% + var(--art-gap))); transition: none; }
+.sp-art.pre-right .sp-art-next { transform: translateX(calc(-100% - var(--art-gap))); transition: none; }
 
 /* Right section — title, transport, volume */
 .sp-right {
