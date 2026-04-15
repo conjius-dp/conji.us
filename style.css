@@ -93,7 +93,7 @@ body {
     height: 288px;
     border-radius: 0;
     border: none;
-    margin-top: -4.5rem;
+    margin-top: -3.5rem;
     margin-bottom: -2.5rem;
     object-fit: contain;
     -webkit-touch-callout: none;
@@ -1037,8 +1037,10 @@ footer {
     }
 
     .avatar {
-        width: 216px;
-        height: 216px;
+        width: 192px;
+        height: 192px;
+        margin-top: -3rem;
+        margin-bottom: -2rem;
     }
 
     .name {
