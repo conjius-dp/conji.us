@@ -187,7 +187,7 @@
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="img/logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="-200" y="-200" width="800" height="600" fill="#111"/><g class="wav-numbers"></g></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
-        'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="76" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="78" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,78) scale(1,0.83) translate(0,-78)">\u221e</text><text x="62" y="76" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><rect class="knob-pill" x="-40" y="62" width="80" height="22" rx="11" ry="11" fill="#d48300"/><text class="knob-pill-text" x="0" y="77" text-anchor="middle" dominant-baseline="auto" fill="#111" font-family="Inconsolata,monospace" font-size="14" font-weight="700">0.0 dB</text></g></svg></div>',
+        'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,88) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g id="boostor-ind" class="knob-indicator" style="transform-origin:0 0;transform:rotate(180deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="76" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="78" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,78) scale(1,0.83) translate(0,-78)">\u221e</text><text x="62" y="76" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><g transform="translate(0,90) scale(0.833) translate(0,-76)"><rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/><text id="boostor-sign" x="-46" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">+</text><text id="boostor-val" x="-28" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0.0</text><text x="48" y="76" text-anchor="end" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">dB</text></g></g></svg></div>',
         'tiptoe': (function() {
             var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
             var noisy = 'M', clean = 'M';
@@ -1670,133 +1670,6 @@
 
     loadPinnedRepos();
 
-    // Gain knob animation
-    (function() {
-        var ZERO_DEG = 45;
-        var ELEVEN_DEG = 315;
-
-        function setupKnobAnim() {
-            var indicator = document.querySelector('.knob-indicator');
-            if (!indicator) return;
-            var card = indicator.closest('.project-card');
-            if (!card) return;
-
-            var currentDeg = ZERO_DEG;
-            var targetDeg = ZERO_DEG;
-            var velDeg = 0;
-            var animFrame = null;
-            var active = false;
-            var phase = 0; // 0=idle, 1=going to 11, 2=hold at 11, 3=going to 0, 4=hold at 0
-            var holdTimer = null;
-
-            var pillText = card.querySelector('.knob-pill-text');
-
-            function degToDb(deg) {
-                // 45° = -100 dB (min), 315° = +24 dB (max)
-                var norm = (deg - ZERO_DEG) / (ELEVEN_DEG - ZERO_DEG);
-                norm = Math.max(0, Math.min(1, norm));
-                // Inverse of JUCE skew: value = min + (max-min) * norm^(1/skew)
-                var skew = 3.25;
-                var value = -100 + 124 * Math.pow(norm, 1.0 / skew);
-                return value;
-            }
-
-            function formatDb(db) {
-                if (db <= -99.9) return '\u2212\u221e dB';
-                return (db >= 0 ? '+' : '') + db.toFixed(1) + ' dB';
-            }
-
-            function applyRotation() {
-                indicator.style.transform = 'rotate(' + currentDeg + 'deg)';
-                if (pillText) pillText.textContent = formatDb(degToDb(currentDeg));
-            }
-
-            function springStep() {
-                var stiffness = 0.02;
-                var damping = 0.75;
-                var accel = (targetDeg - currentDeg) * stiffness;
-                velDeg += accel;
-                velDeg *= damping;
-                currentDeg += velDeg;
-                applyRotation();
-
-                if (Math.abs(velDeg) < 0.05 && Math.abs(targetDeg - currentDeg) < 0.1) {
-                    currentDeg = targetDeg;
-                    velDeg = 0;
-                    applyRotation();
-                    animFrame = null;
-                    onSettled();
-                    return;
-                }
-                animFrame = requestAnimationFrame(springStep);
-            }
-
-            function startSpring() {
-                if (animFrame) cancelAnimationFrame(animFrame);
-                animFrame = requestAnimationFrame(springStep);
-            }
-
-            function clearHold() {
-                if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-            }
-
-            function onSettled() {
-                if (!active) return;
-                if (phase === 1) {
-                    // arrived at 11, hold
-                    phase = 2;
-                    holdTimer = setTimeout(function() {
-                        if (!active) return;
-                        phase = 3;
-                        targetDeg = ZERO_DEG;
-                        startSpring();
-                    }, 600);
-                } else if (phase === 3) {
-                    // arrived at 0, hold
-                    phase = 4;
-                    holdTimer = setTimeout(function() {
-                        if (!active) return;
-                        phase = 1;
-                        targetDeg = ELEVEN_DEG;
-                        startSpring();
-                    }, 600);
-                }
-            }
-
-            function activate() {
-                if (active) return;
-                active = true;
-                phase = 1;
-                targetDeg = ELEVEN_DEG;
-                startSpring();
-            }
-
-            function deactivate() {
-                active = false;
-                clearHold();
-                phase = 0;
-                targetDeg = ZERO_DEG;
-                startSpring();
-            }
-
-            // desktop: hover
-            card.addEventListener('mouseenter', activate);
-            card.addEventListener('mouseleave', deactivate);
-            // mobile: touch
-            card.addEventListener('touchstart', function() { activate(); }, { passive: true });
-            card.addEventListener('touchend', function() { deactivate(); });
-            card.addEventListener('touchcancel', function() { deactivate(); });
-        }
-
-        // wait for repos to render, then set up
-        var knobCheck = setInterval(function() {
-            if (document.querySelector('.knob-indicator')) {
-                clearInterval(knobCheck);
-                setupKnobAnim();
-            }
-        }, 100);
-    })();
-
     // Tiptoe waveform animation
     (function() {
         var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
@@ -2828,6 +2701,78 @@
         }
         tick();
     })();
+    // ── Boostor knob animation (hover only) ──
+    (function() {
+        function init() {
+            var ind = document.getElementById('boostor-ind');
+            var signEl = document.getElementById('boostor-sign');
+            var valEl = document.getElementById('boostor-val');
+            if (!ind || !signEl || !valEl) { setTimeout(init, 500); return; }
+
+            var card = ind.closest('.project-card');
+            if (!card) return;
+
+            var hovering = false;
+            var raf = null;
+            var t = 0;
+
+            function setKnob(norm) {
+                // Line points down at 0deg; offset +45 so norm=0→45° (−∞), norm=0.5→180° (up/0dB), norm=1→315° (+24)
+                var angle = 45 + norm * 270;
+                ind.style.transform = 'rotate(' + angle + 'deg)';
+
+                if (norm < 0.1) {
+                    signEl.textContent = '\u2212';
+                    valEl.textContent = '\u221e';
+                } else if (norm < 0.5) {
+                    var db = 135 * Math.log10(norm / 0.5);
+                    if (db < -99.9) db = -99.9;
+                    if (Math.abs(db) < 0.05) {
+                        signEl.textContent = '';
+                        valEl.textContent = '0.0';
+                    } else {
+                        signEl.textContent = '\u2212';
+                        valEl.textContent = Math.abs(db).toFixed(1);
+                    }
+                } else if (norm > 0.9) {
+                    signEl.textContent = '+';
+                    valEl.textContent = '24.0';
+                } else {
+                    var db = (norm - 0.5) / 0.4 * 24;
+                    if (db < 0.05) {
+                        signEl.textContent = '';
+                        valEl.textContent = '0.0';
+                    } else {
+                        signEl.textContent = '+';
+                        valEl.textContent = Math.min(24, db).toFixed(1);
+                    }
+                }
+            }
+
+            // Default: 0 dB (norm 0.5, indicator pointing up)
+            setKnob(0.5);
+
+            function tick() {
+                if (!hovering) { raf = null; return; }
+                t += 0.01;
+                var norm = (Math.sin(t) + 1) / 2;
+                setKnob(norm);
+                raf = requestAnimationFrame(tick);
+            }
+
+            card.addEventListener('mouseenter', function() {
+                hovering = true;
+                if (!raf) raf = requestAnimationFrame(tick);
+            });
+            card.addEventListener('mouseleave', function() {
+                hovering = false;
+                t = 0;
+                setKnob(0.5);
+            });
+        }
+        init();
+    })();
+
     // ── Music card hover: random rotation on background ──
     (function() {
         var cards = document.querySelectorAll('.music .project-card');
