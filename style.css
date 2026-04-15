@@ -933,12 +933,31 @@ body {
     padding-top: 0.35rem;
 }
 
+.card-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.card-footer-left > a {
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: none;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+}
+
 .card-links {
     display: flex;
     gap: 0.5rem;
 }
 
-.card-links a {
+.card-links > a {
     color: var(--accent);
     display: flex;
     align-items: center;
@@ -952,7 +971,8 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .card-links a:hover {
+    .card-links > a:hover,
+    .card-footer-left > a:hover {
         background: var(--accent);
         color: var(--bg);
     }
@@ -974,6 +994,108 @@ body {
         background: var(--accent);
         color: var(--bg);
     }
+}
+
+/* Download button with hover expand */
+.dl-wrap {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    height: 44px;
+    overflow: hidden;
+    max-width: 44px;
+    transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+    border-radius: 50%;
+    color: var(--accent);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, opacity 0.2s, max-width 0.3s;
+    flex-shrink: 0;
+}
+
+.dl-pill-icon {
+    vertical-align: -4px;
+}
+
+.dl-options {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    padding-right: 4px;
+}
+
+.dl-options a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    font-size: clamp(0.85rem, 2vw, 1.15rem);
+    font-weight: 600;
+    font-family: 'Inconsolata', monospace;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+    box-sizing: border-box;
+    gap: 6px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .dl-wrap:hover {
+        max-width: 340px;
+    }
+
+    .dl-wrap:hover .dl-icon {
+        opacity: 0;
+        max-width: 0;
+        min-width: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .dl-wrap:hover .dl-options {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .dl-options a:hover {
+        background: var(--accent);
+        color: var(--bg);
+    }
+}
+
+/* Touch: tap to toggle */
+.dl-wrap.dl-open {
+    max-width: 340px;
+}
+
+.dl-wrap.dl-open .dl-icon {
+    opacity: 0;
+    max-width: 0;
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dl-wrap.dl-open .dl-options {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .lang {
@@ -1194,10 +1316,27 @@ footer {
         gap: 0;
     }
 
-    .card-links a {
+    .card-links > a,
+    .card-footer-left > a {
         width: 46px;
         height: 46px;
         padding: 7px;
+    }
+
+    .dl-wrap {
+        max-width: 46px;
+        height: 46px;
+    }
+
+    .dl-icon {
+        min-width: 46px;
+        width: 46px;
+        height: 46px;
+        padding: 7px;
+    }
+
+    .dl-wrap.dl-open {
+        max-width: 360px;
     }
 
     .projects .project-info h3,
