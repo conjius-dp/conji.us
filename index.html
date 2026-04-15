@@ -499,13 +499,14 @@
         function onDown(e) {
             e.stopPropagation();
             dragging = true;
+            slider.classList.add('dragging');
             sliderPos(e);
         }
         function onMove(e) {
             if (!dragging) return;
             sliderPos(e);
         }
-        function onUp() { dragging = false; }
+        function onUp() { dragging = false; slider.classList.remove('dragging'); }
 
         slider.addEventListener('mousedown', onDown);
         handle.addEventListener('mousedown', onDown);
@@ -814,7 +815,7 @@
                 firstPlay = false;
                 titleEl.textContent = tracks[currentTrack].title;
                 measurePillWidth();
-            } else {
+            } else if (isTrackChange) {
                 animateTitle(1, tracks[currentTrack].title);
             }
 
