@@ -746,6 +746,7 @@
 
                     measurePillWidth();
                 }, 150);
+                skipArtUpdate = true;
                 skipTrack(dir, true);
             } else {
                 // Snap back
@@ -839,6 +840,7 @@
         artImg.src = tracks[0].art;
 
         var isTrackChange = false;
+        var skipArtUpdate = false;
         function playTrack(idx) {
             isTrackChange = true;
             currentTrack = idx;
@@ -846,7 +848,8 @@
             var interval = trackIntervals[idx];
             scGain = (interval && interval.gain) ? interval.gain : 1;
             audio.src = tracks[idx].src;
-            artImg.src = tracks[idx].art;
+            if (!skipArtUpdate) artImg.src = tracks[idx].art;
+            skipArtUpdate = false;
             audio.play();
         }
 
