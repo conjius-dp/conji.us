@@ -1343,7 +1343,20 @@ footer {
 
 
     .card-links {
-        gap: 0;
+        gap: 0.25rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
+    .card-links::-webkit-scrollbar {
+        display: none;
+    }
+
+    .card-links .share-btn {
+        flex-shrink: 0;
     }
 
     .card-links > a,
