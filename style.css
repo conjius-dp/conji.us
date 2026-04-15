@@ -384,10 +384,22 @@ body {
 /* Speaker icon in volume row — matches muted circle icon size */
 .sp-row-volume .sp-vol-icon {
     flex-shrink: 0;
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
+    padding: 4px;
+    box-sizing: border-box;
     color: #000;
     cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.15s;
+}
+
+.sp-row-volume .sp-vol-icon:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.sp-row-volume .sp-vol-icon:active {
+    background: rgba(0,0,0,0.2);
 }
 
 .sp-track-bg {
@@ -464,8 +476,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     border: none;
     background: none;
     color: #000;
