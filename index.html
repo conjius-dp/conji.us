@@ -1289,12 +1289,9 @@
     var hashRoute = location.hash.replace('#', '').toLowerCase();
     if (hashRoute === 'music') {
         setProgress(1);
+        window.scrollTo(0, 0);
         setTimeout(function() {
             if (window._pillOpenPaused) window._pillOpenPaused();
-            setTimeout(function() {
-                var pill = document.getElementById('speaker-pill');
-                if (pill) pill.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 950);
         }, 100);
     } else {
         setProgress(0);
