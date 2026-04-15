@@ -183,8 +183,8 @@
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="-200" y="-200" width="800" height="600" fill="#111"/><g class="wav-numbers"></g></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
-        'gain-knob': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="76" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="78" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,78) scale(1,0.83) translate(0,-78)">\u221e</text><text x="62" y="76" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><rect class="knob-pill" x="-40" y="62" width="80" height="22" rx="11" ry="11" fill="#d48300"/><text class="knob-pill-text" x="0" y="77" text-anchor="middle" dominant-baseline="auto" fill="#111" font-family="Inconsolata,monospace" font-size="14" font-weight="700">0.0 dB</text></g></svg></div>',
-        'denoiser': (function() {
+        'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g class="knob-indicator" style="transform:rotate(45deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="76" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="78" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,78) scale(1,0.83) translate(0,-78)">\u221e</text><text x="62" y="76" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><rect class="knob-pill" x="-40" y="62" width="80" height="22" rx="11" ry="11" fill="#d48300"/><text class="knob-pill-text" x="0" y="77" text-anchor="middle" dominant-baseline="auto" fill="#111" font-family="Inconsolata,monospace" font-size="14" font-weight="700">0.0 dB</text></g></svg></div>',
+        'tiptoe': (function() {
             var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
             var noisy = 'M', clean = 'M';
             for (var i = 0; i <= pts; i++) {
@@ -197,7 +197,7 @@
                 var n = s + Math.sin(t*Math.PI*9.3)*amp*0.5 + Math.sin(t*Math.PI*14)*amp*0.6 + Math.sin(t*Math.PI*22)*amp*0.4 + Math.sin(t*Math.PI*31)*amp*0.35 + Math.sin(t*Math.PI*38)*amp*0.3 + Math.sin(t*Math.PI*47)*amp*0.24 + Math.sin(t*Math.PI*54)*amp*0.2 + Math.sin(t*Math.PI*66)*amp*0.16 + Math.sin(t*Math.PI*78)*amp*0.14 + Math.sin(t*Math.PI*93)*amp*0.1 + Math.sin(t*Math.PI*110)*amp*0.08 + Math.sin(t*Math.PI*134)*amp*0.12 + Math.sin(t*Math.PI*157)*amp*0.1 + Math.sin(t*Math.PI*189)*amp*0.09 + Math.sin(t*Math.PI*223)*amp*0.07 + Math.sin(t*Math.PI*271)*amp*0.06 + Math.sin(t*Math.PI*320)*amp*0.05;
                 noisy += (i ? ' L' : '') + x + ',' + (cy - n).toFixed(1);
             }
-            return '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(1,0.8) translate(-200,-100)"><path class="denoiser-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2" opacity="1"/><path class="denoiser-clean" d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5" opacity="1"/></g></svg></div>';
+            return '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(1,0.8) translate(-200,-100)"><path class="tiptoe-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2" opacity="1"/><path class="tiptoe-clean" d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5" opacity="1"/></g></svg></div>';
         })()
     };
 
@@ -1419,7 +1419,7 @@
     })();
 
     // pinned repos in display order (matches GitHub profile pins)
-    var PINNED_REPOS = ['gain-knob', 'denoiser', 'CivDecks', 'midi-visu', 'wav-decoder'];
+    var PINNED_REPOS = ['boostor', 'tiptoe', 'CivDecks', 'midi-visu', 'wav-decoder'];
 
     function loadPinnedRepos() {
         fetchRepoDetails(PINNED_REPOS);
@@ -1427,8 +1427,8 @@
 
     // static fallback data when API is rate-limited
     var FALLBACK = {
-        'gain-knob': { description: 'Simple audio gain knob plugin (macOS VST3, AU)', language: 'C++', homepage: null },
-        'denoiser': { description: 'Spectral gating denoiser audio plugin (macOS VST3, AU)', language: 'C++', homepage: null },
+        'boostor': { description: 'Simple audio gain plugin (macOS VST3, AU)', language: 'C++', homepage: null },
+        'tiptoe': { description: 'Spectral gating denoiser audio plugin (macOS VST3, AU)', language: 'C++', homepage: null },
         'CivDecks': { description: 'Hex-based civilization strategy game with deckbuilding mechanics', language: 'GDScript', homepage: 'https://conji.us/civdecks/' },
         'midi-visu': { description: 'Real-time MIDI visualizer (macOS VST3/AU/Standalone)', language: 'C++', homepage: null },
         'wav-decoder': { description: 'A C++20 .wav file decoder', language: 'C++', homepage: null }
@@ -1649,7 +1649,7 @@
         }, 100);
     })();
 
-    // Denoiser waveform animation
+    // Tiptoe waveform animation
     (function() {
         var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
         var harmonics = [
@@ -1697,9 +1697,9 @@
             return d;
         }
 
-        function setupDenoiserAnim() {
-            var cleanEl = document.querySelector('.denoiser-clean');
-            var noisyEl = document.querySelector('.denoiser-noisy');
+        function setupTiptoeAnim() {
+            var cleanEl = document.querySelector('.tiptoe-clean');
+            var noisyEl = document.querySelector('.tiptoe-noisy');
             if (!cleanEl || !noisyEl) return;
             var card = cleanEl.closest('.project-card');
             if (!card) return;
@@ -1775,9 +1775,9 @@
         }
 
         var check = setInterval(function() {
-            if (document.querySelector('.denoiser-clean')) {
+            if (document.querySelector('.tiptoe-clean')) {
                 clearInterval(check);
-                setupDenoiserAnim();
+                setupTiptoeAnim();
             }
         }, 100);
     })();
