@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=157">
+    <link rel="stylesheet" href="style.css?v=158">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -179,12 +179,20 @@
         var url = btn.getAttribute('data-url');
         var name = btn.getAttribute('data-name');
         var format = btn.getAttribute('data-format');
-        navigator.share({
-            text: 'Check out the macOS ' + format + ' build for ' + name,
-            url: url
-        }).catch(function(err) {
-            // User cancelled or share failed — do nothing
-        });
+        try {
+            alert('share: ' + url);
+            navigator.share({
+                title: name + ' ' + format,
+                text: 'Check out the macOS ' + format + ' build for ' + name,
+                url: url
+            }).then(function() {
+                alert('shared ok');
+            }).catch(function(err) {
+                alert('share error: ' + err.message);
+            });
+        } catch (ex) {
+            alert('exception: ' + ex.message);
+        }
     };
 
     var GH_USER = 'conjius-dp';
