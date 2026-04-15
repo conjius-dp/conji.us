@@ -1276,7 +1276,17 @@
         }
     }, { passive: false });
 
-    setProgress(0);
+    // Handle /music and /code routes via hash
+    var hashRoute = location.hash.replace('#', '').toLowerCase();
+    if (hashRoute === 'music') {
+        setProgress(1);
+        setTimeout(function() {
+            var musicSection = document.querySelector('.music');
+            if (musicSection) musicSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    } else {
+        setProgress(0);
+    }
     window.addEventListener('resize', function() { setProgress(progress); });
 
     // springy avatar drag
