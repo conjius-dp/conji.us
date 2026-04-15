@@ -93,7 +93,8 @@ body {
     height: 288px;
     border-radius: 0;
     border: none;
-    margin-bottom: 0.75rem;
+    margin-top: -6rem;
+    margin-bottom: -6rem;
     object-fit: contain;
     -webkit-touch-callout: none;
     filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.7))
