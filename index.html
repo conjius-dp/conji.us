@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=178">
+    <link rel="stylesheet" href="style.css?v=179">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -2644,8 +2644,8 @@
             var depth = rand(0, 1);
             var speedMul = 1 - depth * 0.85;
             var opacity = 1.0;
-            // deeper snakes get a darker color (darken by up to 60%)
-            var bright = 1.0 - depth * 0.85;
+            // deeper snakes get a darker color
+            var bright = 0.45 - depth * 0.3;
             var r = Math.round(0xd4 * bright);
             var g = Math.round(0x83 * bright);
             var b = Math.round(0x00 * bright);
