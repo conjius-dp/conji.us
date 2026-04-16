@@ -882,14 +882,14 @@ body {
     height: 100%;
 }
 
-.projects .project-grid .project-card:nth-child(2) .card-thumb {
+.card-thumb:has(.wav-decoder-svg) {
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.projects .project-grid .project-card:nth-child(2) .card-thumb svg {
+.wav-decoder-svg {
     transform: scaleY(2.5) translateY(4%);
 }
 

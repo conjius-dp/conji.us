@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=167">
+    <link rel="stylesheet" href="style.css?v=172">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -224,19 +224,78 @@
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="opacity:0;transition:opacity 0.3s ease"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
         'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,88) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g id="boostor-ind" class="knob-indicator" style="transform-origin:0 0;transform:rotate(180deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="72" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="74" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,74) scale(1,0.83) translate(0,-74)">\u221e</text><text x="62" y="72" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><g transform="translate(0,90) scale(0.833) translate(0,-76)"><rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/><text id="boostor-sign" x="-46" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">+</text><text id="boostor-val" x="-28" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0.0</text><text x="48" y="76" text-anchor="end" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">dB</text></g></g></svg></div>',
         'tiptoe': (function() {
-            var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
+            // Wider viewBox to match card aspect ratio (~2.85:1) so content fills edge to edge
+            var vw = 570, vh = 200;
+            var pts = 160, x0 = 5, x1 = 565, w = x1 - x0, cy = 100, amp = 16;
             var noisy = 'M', clean = 'M';
             for (var i = 0; i <= pts; i++) {
                 var t = i / pts;
                 var x = (x0 + t * w).toFixed(1);
-                // clean sine: 2 full cycles
                 var s = Math.sin(t * Math.PI * 4) * amp;
                 clean += (i ? ' L' : '') + x + ',' + (cy - s).toFixed(1);
-                // noisy: same base + many harmonics
                 var n = s + Math.sin(t*Math.PI*9.3)*amp*0.5 + Math.sin(t*Math.PI*14)*amp*0.6 + Math.sin(t*Math.PI*22)*amp*0.4 + Math.sin(t*Math.PI*31)*amp*0.35 + Math.sin(t*Math.PI*38)*amp*0.3 + Math.sin(t*Math.PI*47)*amp*0.24 + Math.sin(t*Math.PI*54)*amp*0.2 + Math.sin(t*Math.PI*66)*amp*0.16 + Math.sin(t*Math.PI*78)*amp*0.14 + Math.sin(t*Math.PI*93)*amp*0.1 + Math.sin(t*Math.PI*110)*amp*0.08 + Math.sin(t*Math.PI*134)*amp*0.12 + Math.sin(t*Math.PI*157)*amp*0.1 + Math.sin(t*Math.PI*189)*amp*0.09 + Math.sin(t*Math.PI*223)*amp*0.07 + Math.sin(t*Math.PI*271)*amp*0.06 + Math.sin(t*Math.PI*320)*amp*0.05;
                 noisy += (i ? ' L' : '') + x + ',' + (cy - n).toFixed(1);
             }
-            return '<div class="card-thumb"><svg viewBox="0 0 400 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,100) scale(1,0.8) translate(-200,-100)"><path class="tiptoe-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2" opacity="1"/><path class="tiptoe-clean" d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5" opacity="1"/></g></svg></div>';
+            // Tick line helper — compute (x,y) at a given knob angle in degrees
+            // angle 0 = straight down, clockwise. Returns inner→outer line coords.
+            function tickLine(angleDeg, r1, r2) {
+                var rad = angleDeg * Math.PI / 180;
+                var sx = -Math.sin(rad), cy2 = Math.cos(rad);
+                return 'x1="' + (sx*r1).toFixed(0) + '" y1="' + (cy2*r1).toFixed(0) + '" x2="' + (sx*r2).toFixed(0) + '" y2="' + (cy2*r2).toFixed(0) + '"';
+            }
+            function tickText(angleDeg, r, label, anchor) {
+                var rad = angleDeg * Math.PI / 180;
+                var tx = -Math.sin(rad) * r, ty = Math.cos(rad) * r;
+                return '<text x="' + tx.toFixed(0) + '" y="' + (ty + 6).toFixed(0) + '" text-anchor="' + (anchor || 'middle') + '" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">' + label + '</text>';
+            }
+            // Threshold knob — ticks at 45° (min 0.5), 315° (max 5.0), 105° (1.5 default)
+            var threshKnob = '<g transform="translate(155,88) scale(0.85)">' +
+                '<circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/>' +
+                '<g id="tiptoe-thresh-ind" class="knob-indicator" style="transform-origin:0 0;transform:rotate(105deg)">' +
+                    '<line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/>' +
+                '</g>' +
+                '<line ' + tickLine(45, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
+                '<line ' + tickLine(315, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
+                '<line ' + tickLine(105, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
+                tickText(45, 80, '0.5', 'middle') +
+                tickText(315, 80, '5.0', 'middle') +
+                tickText(105, 80, '1.5', 'start') +
+                '<g transform="translate(0,90) scale(0.833) translate(0,-76)">' +
+                    '<rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
+                    '<text x="-46" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="28" font-weight="300">\u00d7</text>' +
+                    '<text id="tiptoe-thresh-val" x="6" y="76" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">1.5</text>' +
+                '</g>' +
+            '</g>';
+            // Reduction knob — ticks at 45° (min -60), 315° (max 0), 180° (-30 default/mid)
+            var reducKnob = '<g transform="translate(415,88) scale(0.85)">' +
+                '<circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/>' +
+                '<g id="tiptoe-reduc-ind" class="knob-indicator" style="transform-origin:0 0;transform:rotate(180deg)">' +
+                    '<line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/>' +
+                '</g>' +
+                '<line ' + tickLine(45, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
+                '<line ' + tickLine(315, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
+                '<line ' + tickLine(180, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
+                tickText(45, 80, '\u221260', 'middle') +
+                tickText(315, 80, '0', 'middle') +
+                tickText(180, 80, '\u221230', 'middle') +
+                '<g transform="translate(0,90) scale(0.833) translate(0,-76)">' +
+                    '<rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
+                    '<text id="tiptoe-reduc-val" x="0" y="76" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">\u221230.0 dB</text>' +
+                '</g>' +
+            '</g>';
+            // Learn label + Start pill — centered between knobs, near bottom
+            var learnPill = '<g transform="translate(285,148) scale(0.85)">' +
+                '<text x="0" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Learn</text>' +
+                '<rect class="knob-pill" x="-48" y="-16" width="96" height="32" rx="16" ry="16" fill="#d48300"/>' +
+                '<text x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Start</text>' +
+            '</g>';
+            var svg = '<div class="card-thumb"><svg viewBox="0 0 ' + vw + ' ' + vh + '" xmlns="http://www.w3.org/2000/svg">' +
+                '<rect width="' + vw + '" height="' + vh + '" fill="#111"/>' +
+                '<g opacity="0.3"><path class="tiptoe-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2"/>' +
+                '<path class="tiptoe-clean" d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5"/></g>' +
+                threshKnob + learnPill + reducKnob +
+            '</svg></div>';
+            return svg;
         })()
     };
 
@@ -1791,9 +1850,9 @@
 
     loadPinnedRepos();
 
-    // Tiptoe waveform animation
+    // Tiptoe waveform + knob animation
     (function() {
-        var pts = 160, x0 = 35, x1 = 365, w = x1 - x0, cy = 93, amp = 13;
+        var pts = 160, x0 = 5, x1 = 565, w = x1 - x0, cy = 100, amp = 16;
         var harmonics = [
             [9.3, 0.5], [14, 0.6], [22, 0.4], [31, 0.35], [38, 0.3],
             [47, 0.24], [54, 0.2], [66, 0.16], [78, 0.14], [93, 0.1],
@@ -1801,7 +1860,6 @@
             [271, 0.06], [320, 0.05]
         ];
 
-        // precompute static Y values and X positions
         var xs = new Float32Array(pts + 1);
         var staticCleanY = new Float32Array(pts + 1);
         var staticNoisyY = new Float32Array(pts + 1);
@@ -1839,12 +1897,38 @@
             return d;
         }
 
+        // Threshold knob: norm 0→1 maps to 0.5x→5.0x (linear)
+        function setThreshKnob(norm, indEl, valEl) {
+            var angle = 45 + norm * 270;
+            indEl.style.transform = 'rotate(' + angle + 'deg)';
+            var val = 0.5 + norm * 4.5;
+            valEl.textContent = val.toFixed(1);
+        }
+
+        // Reduction knob: norm 0→1 maps to -60dB→0dB (linear)
+        function setReducKnob(norm, indEl, valEl) {
+            var angle = 45 + norm * 270;
+            indEl.style.transform = 'rotate(' + angle + 'deg)';
+            var db = -60 + norm * 60;
+            if (db > -0.05) {
+                valEl.textContent = '0.0 dB';
+            } else {
+                valEl.textContent = '\u2212' + Math.abs(db).toFixed(1) + ' dB';
+            }
+        }
+
         function setupTiptoeAnim() {
             var cleanEl = document.querySelector('.tiptoe-clean');
             var noisyEl = document.querySelector('.tiptoe-noisy');
             if (!cleanEl || !noisyEl) return;
             var card = cleanEl.closest('.project-card');
             if (!card) return;
+
+            // knob elements
+            var threshInd = document.getElementById('tiptoe-thresh-ind');
+            var threshVal = document.getElementById('tiptoe-thresh-val');
+            var reducInd = document.getElementById('tiptoe-reduc-ind');
+            var reducVal = document.getElementById('tiptoe-reduc-val');
 
             var active = false;
             var phase = 0;
@@ -1853,6 +1937,16 @@
             var phaseSpeed = 0;
             var curCleanY = new Float32Array(staticCleanY);
             var curNoisyY = new Float32Array(staticNoisyY);
+            var knobT = 0;
+
+            // Threshold default: 1.5x → norm = (1.5 - 0.5) / 4.5 ≈ 0.222
+            var threshDefault = (1.5 - 0.5) / 4.5;
+            // Reduction default: -30dB → norm = (-30 + 60) / 60 = 0.5
+            var reducDefault = 0.5;
+
+            // Set defaults
+            if (threshInd && threshVal) setThreshKnob(threshDefault, threshInd, threshVal);
+            if (reducInd && reducVal) setReducKnob(reducDefault, reducInd, reducVal);
 
             function tick() {
                 if (fading) {
@@ -1865,6 +1959,9 @@
                     }
                     cleanEl.setAttribute('d', buildPath(curCleanY));
                     noisyEl.setAttribute('d', buildPath(curNoisyY));
+                    // Fade knobs back to defaults
+                    if (threshInd && threshVal) setThreshKnob(threshDefault, threshInd, threshVal);
+                    if (reducInd && reducVal) setReducKnob(reducDefault, reducInd, reducVal);
                     if (done) {
                         for (var j = 0; j <= pts; j++) {
                             curCleanY[j] = staticCleanY[j];
@@ -1874,6 +1971,7 @@
                         noisyEl.setAttribute('d', buildPath(staticNoisyY));
                         fading = false;
                         phase = 0;
+                        knobT = 0;
                         animFrame = null;
                         return;
                     }
@@ -1892,6 +1990,12 @@
                 }
                 cleanEl.setAttribute('d', buildPath(curCleanY));
                 noisyEl.setAttribute('d', buildPath(curNoisyY));
+                // Animate knobs — same sine pattern as boostor but offset
+                knobT += (window.innerWidth <= 600) ? 0.05 : 0.01;
+                var threshNorm = (Math.sin(knobT) + 1) / 2;
+                var reducNorm = (Math.sin(knobT * 0.7 + 1.5) + 1) / 2;
+                if (threshInd && threshVal) setThreshKnob(threshNorm, threshInd, threshVal);
+                if (reducInd && reducVal) setReducKnob(reducNorm, reducInd, reducVal);
                 animFrame = requestAnimationFrame(tick);
             }
 
