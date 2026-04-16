@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=172">
+    <link rel="stylesheet" href="style.css?v=175">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -196,6 +196,8 @@
         // If finger moved more than 10px, it's a swipe — let scroll happen
         if (dx > 10 || dy > 10) return;
         e.preventDefault();
+        btn.classList.add('tapped');
+        setTimeout(function() { btn.classList.remove('tapped'); }, 200);
         var url = btn.getAttribute('data-url');
         var name = btn.getAttribute('data-name');
         var format = btn.getAttribute('data-format');
@@ -222,7 +224,7 @@
         'CivDecks': '<div class="card-thumb" style="background:#111"><img class="civdecks-logo" src="img/logo-civdecks.png" alt="CivDecks" style="width:60%;height:auto;object-fit:contain"></div>',
         'wav-decoder': '<div class="card-thumb"><svg class="wav-decoder-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="-200" y="-200" width="800" height="600" fill="#111"/><g class="wav-numbers"></g></svg></div>',
         'midi-visu': '<div class="card-thumb"><svg class="midi-visu-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="opacity:0;transition:opacity 0.3s ease"><rect width="500" height="200" fill="#111"/><circle cx="45" cy="38" r="22" fill="#e89a1a"/><circle cx="160" cy="33" r="12" fill="#a06000"/><circle cx="300" cy="45" r="30" fill="#d48300"/><circle cx="450" cy="36" r="15" fill="#b37200"/><circle cx="105" cy="100" r="18" fill="#c07800"/><circle cx="250" cy="95" r="32" fill="#e89a1a"/><circle cx="420" cy="100" r="10" fill="#a06000"/><circle cx="55" cy="158" r="20" fill="#d48300"/><circle cx="190" cy="155" r="25" fill="#b37200"/><circle cx="350" cy="162" r="8" fill="#c07800"/><circle cx="460" cy="158" r="18" fill="#e89a1a"/></svg></div>',
-        'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g transform="translate(200,88) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g id="boostor-ind" class="knob-indicator" style="transform-origin:0 0;transform:rotate(180deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="72" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="74" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,74) scale(1,0.83) translate(0,-74)">\u221e</text><text x="62" y="72" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><g transform="translate(0,90) scale(0.833) translate(0,-76)"><rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/><text id="boostor-sign" x="-46" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">+</text><text id="boostor-val" x="-28" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0.0</text><text x="48" y="76" text-anchor="end" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">dB</text></g></g></svg></div>',
+        'boostor': '<div class="card-thumb"><svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#111"/><g opacity="0.3"><path id="boostor-wave" d="" fill="none" stroke="#d48300" stroke-width="3.5"/></g><g transform="translate(200,88) scale(0.85)"><circle cx="0" cy="0" r="45" fill="none" stroke="#d48300" stroke-width="4"/><g id="boostor-ind" class="knob-indicator" style="transform-origin:0 0;transform:rotate(180deg)"><line x1="0" y1="15" x2="0" y2="30" stroke="#d48300" stroke-width="5" stroke-linecap="round"/></g><line x1="-39" y1="39" x2="-49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="39" y1="39" x2="49" y2="49" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><line x1="0" y1="-52" x2="0" y2="-62" stroke="#d48300" stroke-width="4" stroke-linecap="round"/><text x="-75" y="72" text-anchor="end" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">\u2212</text><text x="-74" y="74" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="40" font-weight="300" transform="translate(0,74) scale(1,0.83) translate(0,-74)">\u221e</text><text x="62" y="72" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="24" font-weight="600">+24</text><text x="0" y="-70" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0</text><g transform="translate(0,90) scale(0.833) translate(0,-76)"><rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/><text id="boostor-sign" x="-46" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">+</text><text id="boostor-val" x="-28" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">0.0</text><text x="48" y="76" text-anchor="end" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">dB</text></g></g></svg></div>',
         'tiptoe': (function() {
             // Wider viewBox to match card aspect ratio (~2.85:1) so content fills edge to edge
             var vw = 570, vh = 200;
@@ -243,9 +245,9 @@
                 var sx = -Math.sin(rad), cy2 = Math.cos(rad);
                 return 'x1="' + (sx*r1).toFixed(0) + '" y1="' + (cy2*r1).toFixed(0) + '" x2="' + (sx*r2).toFixed(0) + '" y2="' + (cy2*r2).toFixed(0) + '"';
             }
-            function tickText(angleDeg, r, label, anchor) {
+            function tickText(angleDeg, r, label, anchor, dx, dy) {
                 var rad = angleDeg * Math.PI / 180;
-                var tx = -Math.sin(rad) * r, ty = Math.cos(rad) * r;
+                var tx = -Math.sin(rad) * r + (dx || 0), ty = Math.cos(rad) * r + (dy || 0);
                 return '<text x="' + tx.toFixed(0) + '" y="' + (ty + 6).toFixed(0) + '" text-anchor="' + (anchor || 'middle') + '" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">' + label + '</text>';
             }
             // Threshold knob — ticks at 45° (min 0.5), 315° (max 5.0), 105° (1.5 default)
@@ -257,9 +259,9 @@
                 '<line ' + tickLine(45, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
                 '<line ' + tickLine(315, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
                 '<line ' + tickLine(105, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
-                tickText(45, 80, '0.5', 'middle') +
-                tickText(315, 80, '5.0', 'middle') +
-                tickText(105, 80, '1.5', 'start') +
+                tickText(45, 80, '0.5', 'middle', 0, 8) +
+                tickText(315, 80, '5.0', 'middle', 0, 8) +
+                tickText(105, 80, '1.5', 'start', -20, 0) +
                 '<g transform="translate(0,90) scale(0.833) translate(0,-76)">' +
                     '<rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
                     '<text x="-46" y="76" text-anchor="start" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="28" font-weight="300">\u00d7</text>' +
@@ -275,8 +277,8 @@
                 '<line ' + tickLine(45, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
                 '<line ' + tickLine(315, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
                 '<line ' + tickLine(180, 55, 65) + ' stroke="#d48300" stroke-width="4" stroke-linecap="round"/>' +
-                tickText(45, 80, '\u221260', 'middle') +
-                tickText(315, 80, '0', 'middle') +
+                tickText(45, 80, '\u221260', 'middle', 0, 8) +
+                tickText(315, 80, '0', 'middle', 0, 8) +
                 tickText(180, 80, '\u221230', 'middle') +
                 '<g transform="translate(0,90) scale(0.833) translate(0,-76)">' +
                     '<rect class="knob-pill" x="-58" y="60" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
@@ -1784,18 +1786,13 @@
                 var releasesUrl = 'https://github.com/conjius-dp/' + repo.name + '/releases/latest';
                 var SHARE_ICON_SM = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-4px"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>';
                 if (window._isMobile) {
-                    // Mobile: standalone share buttons — no <a href>, no dropdown
+                    // Mobile: share buttons with native share sheet
                     links += '<button type="button" class="share-btn" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="VST3">' + APPLE_ICON + 'VST3 ' + SHARE_ICON_SM + '</button>' +
                         '<button type="button" class="share-btn" data-url="' + releasesUrl + '" data-name="' + repo.name + '" data-format="AU">' + APPLE_ICON + 'AU ' + SHARE_ICON_SM + '</button>';
                 } else {
-                    // Desktop: expandable download dropdown
-                    links += '<div class="dl-wrap">' +
-                        '<span class="dl-icon" title="Download">' + DL_ICON + '</span>' +
-                        '<div class="dl-options">' +
-                            '<a href="' + vst3Url + '" title="VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
-                            '<a href="' + auUrl + '" title="AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>' +
-                        '</div>' +
-                    '</div>';
+                    // Desktop: always-visible download pill buttons
+                    links += '<a href="' + vst3Url + '" class="dl-pill" title="Download VST3">' + APPLE_ICON + 'VST3 ' + DL_ICON_SM + '</a>' +
+                        '<a href="' + auUrl + '" class="dl-pill" title="Download AU">' + APPLE_ICON + 'AU ' + DL_ICON_SM + '</a>';
                 }
             }
 
@@ -1811,22 +1808,9 @@
                     '</div>' +
                 '</div>';
 
-            // Desktop: download button hover/touch toggle (mobile uses share buttons instead)
-            var dlWrap = card.querySelector('.dl-wrap');
-            if (dlWrap) {
-                dlWrap.addEventListener('click', function(e) {
-                    if (e.target.closest('.dl-options a')) return;
-                    e.stopPropagation();
-                    var isOpen = dlWrap.classList.contains('dl-open');
-                    document.querySelectorAll('.dl-wrap.dl-open').forEach(function(el) { el.classList.remove('dl-open'); });
-                    if (!isOpen) dlWrap.classList.add('dl-open');
-                });
-            }
-
             card.addEventListener('click', function(e) {
                 if (e.target.closest('a')) return;
                 if (e.target.closest('button')) return;
-                if (e.target.closest('.dl-wrap')) return;
                 // on desktop, don't navigate if clicking on selectable text
                 var isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
                 if (isDesktop) {
@@ -1840,12 +1824,6 @@
             grid.appendChild(card);
         });
 
-        // Close download menus on outside tap
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.dl-wrap')) {
-                document.querySelectorAll('.dl-wrap.dl-open').forEach(function(el) { el.classList.remove('dl-open'); });
-            }
-        });
     }
 
     loadPinnedRepos();
@@ -1944,11 +1922,16 @@
             // Reduction default: -30dB → norm = (-30 + 60) / 60 = 0.5
             var reducDefault = 0.5;
 
+            // Current knob norms — lerped for smooth transitions
+            var threshCur = threshDefault;
+            var reducCur = reducDefault;
+
             // Set defaults
             if (threshInd && threshVal) setThreshKnob(threshDefault, threshInd, threshVal);
             if (reducInd && reducVal) setReducKnob(reducDefault, reducInd, reducVal);
 
             function tick() {
+                var lerpRate = 0.08;
                 if (fading) {
                     var done = true;
                     for (var i = 0; i <= pts; i++) {
@@ -1959,16 +1942,24 @@
                     }
                     cleanEl.setAttribute('d', buildPath(curCleanY));
                     noisyEl.setAttribute('d', buildPath(curNoisyY));
-                    // Fade knobs back to defaults
-                    if (threshInd && threshVal) setThreshKnob(threshDefault, threshInd, threshVal);
-                    if (reducInd && reducVal) setReducKnob(reducDefault, reducInd, reducVal);
-                    if (done) {
+                    // Smoothly fade knobs back to defaults
+                    threshCur += (threshDefault - threshCur) * lerpRate;
+                    reducCur += (reducDefault - reducCur) * lerpRate;
+                    if (threshInd && threshVal) setThreshKnob(threshCur, threshInd, threshVal);
+                    if (reducInd && reducVal) setReducKnob(reducCur, reducInd, reducVal);
+                    var knobsDone = Math.abs(threshCur - threshDefault) < 0.002 &&
+                                    Math.abs(reducCur - reducDefault) < 0.002;
+                    if (done && knobsDone) {
                         for (var j = 0; j <= pts; j++) {
                             curCleanY[j] = staticCleanY[j];
                             curNoisyY[j] = staticNoisyY[j];
                         }
                         cleanEl.setAttribute('d', buildPath(staticCleanY));
                         noisyEl.setAttribute('d', buildPath(staticNoisyY));
+                        threshCur = threshDefault;
+                        reducCur = reducDefault;
+                        if (threshInd && threshVal) setThreshKnob(threshDefault, threshInd, threshVal);
+                        if (reducInd && reducVal) setReducKnob(reducDefault, reducInd, reducVal);
                         fading = false;
                         phase = 0;
                         knobT = 0;
@@ -1990,12 +1981,14 @@
                 }
                 cleanEl.setAttribute('d', buildPath(curCleanY));
                 noisyEl.setAttribute('d', buildPath(curNoisyY));
-                // Animate knobs — same sine pattern as boostor but offset
+                // Animate knobs — lerp toward sine targets for smooth start
                 knobT += (window.innerWidth <= 600) ? 0.05 : 0.01;
-                var threshNorm = (Math.sin(knobT) + 1) / 2;
-                var reducNorm = (Math.sin(knobT * 0.7 + 1.5) + 1) / 2;
-                if (threshInd && threshVal) setThreshKnob(threshNorm, threshInd, threshVal);
-                if (reducInd && reducVal) setReducKnob(reducNorm, reducInd, reducVal);
+                var threshTarget = (Math.sin(knobT) + 1) / 2;
+                var reducTarget = (Math.sin(knobT * 0.7 + 1.5) + 1) / 2;
+                threshCur += (threshTarget - threshCur) * lerpRate;
+                reducCur += (reducTarget - reducCur) * lerpRate;
+                if (threshInd && threshVal) setThreshKnob(threshCur, threshInd, threshVal);
+                if (reducInd && reducVal) setReducKnob(reducCur, reducInd, reducVal);
                 animFrame = requestAnimationFrame(tick);
             }
 
@@ -2929,20 +2922,43 @@
         }
         tick();
     })();
-    // ── Boostor knob animation (hover only) ──
+    // ── Boostor knob + waveform animation (hover only) ──
     (function() {
         function init() {
             var ind = document.getElementById('boostor-ind');
             var signEl = document.getElementById('boostor-sign');
             var valEl = document.getElementById('boostor-val');
+            var waveEl = document.getElementById('boostor-wave');
             if (!ind || !signEl || !valEl) { setTimeout(init, 500); return; }
 
             var card = ind.closest('.project-card');
             if (!card) return;
 
+            // Waveform constants — same structure as tiptoe background
+            var wPts = 160, wx0 = 0, wx1 = 400, ww = wx1 - wx0, wcy = 100, wAmp = 55;
+
+            function buildWavePath(ampMul) {
+                var d = 'M';
+                for (var i = 0; i <= wPts; i++) {
+                    var t = i / wPts;
+                    var x = wx0 + t * ww;
+                    var s = Math.sin(t * Math.PI * 4) * wAmp * ampMul;
+                    s += Math.sin(t * Math.PI * 9.3) * wAmp * 0.3 * ampMul;
+                    s += Math.sin(t * Math.PI * 14) * wAmp * 0.25 * ampMul;
+                    s += Math.sin(t * Math.PI * 22) * wAmp * 0.15 * ampMul;
+                    var y = wcy - s;
+                    d += (i ? ' L' : '') + x.toFixed(1) + ',' + y.toFixed(1);
+                }
+                return d;
+            }
+
             var hovering = false;
+            var fading = false;
             var raf = null;
-            var t = 0;
+            var animT = 0;
+            var knobDefault = 0.5;
+            var knobCur = knobDefault;
+            var lerpRate = 0.08;
 
             function setKnob(norm) {
                 // Line points down at 0deg; offset +45 so norm=0→45° (−∞), norm=0.5→180° (up/0dB), norm=1→315° (+24)
@@ -2978,24 +2994,45 @@
             }
 
             // Default: 0 dB (norm 0.5, indicator pointing up)
-            setKnob(0.5);
+            setKnob(knobDefault);
+            // Set initial waveform — at 0dB default, half amplitude
+            if (waveEl) waveEl.setAttribute('d', buildWavePath(knobDefault));
 
             function tick() {
+                if (fading) {
+                    knobCur += (knobDefault - knobCur) * lerpRate;
+                    setKnob(knobCur);
+                    if (waveEl) waveEl.setAttribute('d', buildWavePath(knobCur));
+                    if (Math.abs(knobCur - knobDefault) < 0.002) {
+                        knobCur = knobDefault;
+                        setKnob(knobDefault);
+                        if (waveEl) waveEl.setAttribute('d', buildWavePath(knobDefault));
+                        fading = false;
+                        animT = 0;
+                        raf = null;
+                        return;
+                    }
+                    raf = requestAnimationFrame(tick);
+                    return;
+                }
                 if (!hovering) { raf = null; return; }
-                t += (window.innerWidth <= 600) ? 0.05 : 0.01;
-                var norm = (Math.sin(t) + 1) / 2;
-                setKnob(norm);
+                animT += (window.innerWidth <= 600) ? 0.05 : 0.01;
+                var target = (Math.sin(animT) + 1) / 2;
+                knobCur += (target - knobCur) * lerpRate;
+                setKnob(knobCur);
+                if (waveEl) waveEl.setAttribute('d', buildWavePath(knobCur));
                 raf = requestAnimationFrame(tick);
             }
 
             function activate() {
                 hovering = true;
+                fading = false;
                 if (!raf) raf = requestAnimationFrame(tick);
             }
             function deactivate() {
                 hovering = false;
-                t = 0;
-                setKnob(0.5);
+                fading = true;
+                if (!raf) raf = requestAnimationFrame(tick);
             }
             card.addEventListener('mouseenter', activate);
             card.addEventListener('mouseleave', deactivate);

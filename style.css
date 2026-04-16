@@ -889,10 +889,6 @@ body {
     justify-content: center;
 }
 
-.wav-decoder-svg {
-    transform: scaleY(2.5) translateY(4%);
-}
-
 
 
 .project-info {
@@ -995,7 +991,7 @@ body {
     pointer-events: none;
 }
 
-.share-btn:active {
+.share-btn.tapped {
     background: var(--accent);
     color: var(--bg);
 }
@@ -1026,57 +1022,19 @@ body {
     }
 }
 
-/* Download button with hover expand */
-.dl-wrap {
-    display: flex;
-    align-items: center;
-    flex-direction: row-reverse;
-    height: 44px;
-    overflow: hidden;
-    max-width: 44px;
-    transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.dl-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    width: 44px;
-    height: 44px;
-    padding: 6px;
-    border-radius: 50%;
-    color: var(--accent);
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s, opacity 0.2s, max-width 0.3s;
-    flex-shrink: 0;
-}
-
+/* Download pill buttons (desktop) */
 .dl-pill-icon {
     vertical-align: -4px;
 }
 
-.dl-options {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    pointer-events: none;
-    white-space: nowrap;
-    padding-right: 4px;
-}
-
-.dl-options a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 42px;
-    padding: 0 16px;
+.card-links > a.dl-pill {
+    width: auto;
+    height: 36px;
+    padding: 0 14px;
     border-radius: 999px;
-    border: 1.5px solid var(--accent);
+    border: 1px solid var(--accent);
     color: var(--accent);
-    font-size: clamp(0.85rem, 2vw, 1.15rem);
+    font-size: 0.85rem;
     font-weight: 600;
     font-family: 'Inconsolata', monospace;
     text-decoration: none;
@@ -1087,45 +1045,10 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .dl-wrap:hover {
-        max-width: 340px;
-    }
-
-    .dl-wrap:hover .dl-icon {
-        opacity: 0;
-        max-width: 0;
-        min-width: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    .dl-wrap:hover .dl-options {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .dl-options a:hover {
+    .card-links > a.dl-pill:hover {
         background: var(--accent);
         color: var(--bg);
     }
-}
-
-/* Touch: tap to toggle */
-.dl-wrap.dl-open {
-    max-width: 340px;
-}
-
-.dl-wrap.dl-open .dl-icon {
-    opacity: 0;
-    max-width: 0;
-    min-width: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.dl-wrap.dl-open .dl-options {
-    opacity: 1;
-    pointer-events: auto;
 }
 
 .lang {
@@ -1370,21 +1293,6 @@ footer {
         padding: 7px;
     }
 
-    .dl-wrap {
-        max-width: 46px;
-        height: 46px;
-    }
-
-    .dl-icon {
-        min-width: 46px;
-        width: 46px;
-        height: 46px;
-        padding: 7px;
-    }
-
-    .dl-wrap.dl-open {
-        max-width: 360px;
-    }
 
     .projects .project-info h3,
     .projects .project-info p {
