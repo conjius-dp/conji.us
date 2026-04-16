@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=184">
+    <link rel="stylesheet" href="style.css?v=186">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -201,10 +201,12 @@
         var url = btn.getAttribute('data-url');
         var name = btn.getAttribute('data-name');
         var format = btn.getAttribute('data-format');
-        var platform = format.indexOf('Windows') !== -1 ? 'Windows' : 'macOS';
+        var isWindows = format.indexOf('Windows') !== -1;
+        var platform = isWindows ? 'Windows' : 'macOS';
+        var pluginFormat = isWindows ? format.replace('Windows ', '') : format;
         navigator.share({
-            title: name + ' ' + format,
-            text: 'Check out the ' + platform + ' ' + format + ' build for ' + name,
+            title: name + ' ' + pluginFormat + ' for ' + platform,
+            text: 'Check out the ' + name + ' audio ' + pluginFormat + ' plugin for ' + platform,
             url: url
         }).catch(function() {});
     }, { passive: false });
