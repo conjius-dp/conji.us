@@ -29,7 +29,7 @@ img, svg, a {
     --text-muted: #aaa;
     --accent: #d48300;
     --accent-hover: #e89a1a;
-    --card-height: 320px;
+    --card-height: 370px;
     --card-gap: 30px;
 }
 
@@ -1046,6 +1046,39 @@ body {
 
 @media (hover: hover) and (pointer: fine) {
     .card-links > a.dl-pill:hover {
+        background: var(--accent);
+        color: var(--bg);
+    }
+}
+
+/* Download row (desktop only — 3 pills below card-footer) */
+.card-download-row {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding-top: 0.35rem;
+}
+
+.card-download-row .dl-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Inconsolata', monospace;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+    box-sizing: border-box;
+    gap: 6px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .card-download-row .dl-pill:hover {
         background: var(--accent);
         color: var(--bg);
     }
