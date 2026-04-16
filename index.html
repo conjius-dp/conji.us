@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=186">
+    <link rel="stylesheet" href="style.css?v=187">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -1241,9 +1241,13 @@
                     } else if (card && card.tagName === 'A') {
                         window.open(card.href, card.target || '_blank');
                     } else if (card) {
-                        // code cards: find the repo link
-                        var repoLink = card.querySelector('.card-links a');
-                        if (repoLink) window.open(repoLink.href, '_blank');
+                        // code cards: use the card's repo URL (GitHub source)
+                        var repoUrl = card.getAttribute('data-repo-url');
+                        if (!repoUrl) {
+                            var ghLink = card.querySelector('.card-footer-left a[title="Source"]');
+                            repoUrl = ghLink && ghLink.href;
+                        }
+                        if (repoUrl) window.open(repoUrl, '_blank');
                     }
                 }
                 animateTo(progress >= 0.5 ? 1 : 0);
@@ -1708,8 +1712,8 @@
 
     // static fallback data when API is rate-limited
     var FALLBACK = {
-        'boostor': { description: 'Simple audio gain plugin (macOS VST3, AU)', language: 'C++', homepage: null },
-        'tiptoe': { description: 'Spectral gating denoiser audio plugin (macOS VST3, AU)', language: 'C++', homepage: null },
+        'boostor': { description: 'Simple audio gain plugin (macOS/Windows VST3, macOS AU)', language: 'C++', homepage: null },
+        'tiptoe': { description: 'Spectral gating denoiser audio plugin (macOS/Windows VST3, macOS AU)', language: 'C++', homepage: null },
         'CivDecks': { description: 'Hex-based civilization strategy game with deckbuilding mechanics', language: 'GDScript', homepage: 'https://conji.us/civdecks/' },
         'midi-visu': { description: 'Real-time MIDI visualizer (macOS VST3/AU/Standalone)', language: 'C++', homepage: null },
         'wav-decoder': { description: 'A C++20 .wav file decoder', language: 'C++', homepage: null }
@@ -1756,6 +1760,7 @@
         repos.forEach(function(repo) {
             var card = document.createElement('div');
             card.className = 'project-card';
+            card.setAttribute('data-repo-url', repo.url);
 
             // thumbnail: custom SVG > social image > generated placeholder
             var thumb;
