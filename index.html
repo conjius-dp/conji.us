@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=187">
+    <link rel="stylesheet" href="style.css?v=190">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="prefetch" href="art/a-weekend-in-june.jpg" as="image">
     <link rel="prefetch" href="art/this-guy-again.jpg" as="image">
@@ -288,17 +288,30 @@
                     '<text id="tiptoe-reduc-val" x="0" y="76" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">\u221230.0 dB</text>' +
                 '</g>' +
             '</g>';
-            // Learn label + Start pill — centered between knobs, near bottom
+            // Learn label + Start pill — centered between knobs, near bottom.
+            // Includes hidden overlay elements for the hover cycle: "Learning..." + Stop pill.
             var learnPill = '<g transform="translate(285,148) scale(0.85)">' +
-                '<text x="0" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Learn</text>' +
-                '<rect class="knob-pill" x="-48" y="-16" width="96" height="32" rx="16" ry="16" fill="#d48300"/>' +
-                '<text x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Start</text>' +
+                // Learn / Learning text pair
+                '<text id="tiptoe-learn-text" x="0" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Learn</text>' +
+                '<text id="tiptoe-learning-text" x="-12" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">Learning</text>' +
+                // Three animated dots
+                '<text id="tiptoe-dot-0" x="36" y="-28" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">.</text>' +
+                '<text id="tiptoe-dot-1" x="41" y="-28" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">.</text>' +
+                '<text id="tiptoe-dot-2" x="46" y="-28" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">.</text>' +
+                // Button background: filled pill (Start) + outlined pill (Stop, hidden by default)
+                '<rect id="tiptoe-pill-fill" class="knob-pill" x="-48" y="-16" width="96" height="32" rx="16" ry="16" fill="#d48300"/>' +
+                '<rect id="tiptoe-pill-stroke" x="-47" y="-15" width="94" height="30" rx="15" ry="15" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0"/>' +
+                // Button text: Start (default) + Stop (hidden by default)
+                '<text id="tiptoe-start-text" x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Start</text>' +
+                '<text id="tiptoe-stop-text" x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">Stop</text>' +
             '</g>';
+            // Title logo — static, drawn on top of everything (no animation)
+            var titleImg = '<image href="img/tiptoe-logo.png" x="215" y="14" width="140" height="75" preserveAspectRatio="xMidYMid meet"/>';
             var svg = '<div class="card-thumb"><svg viewBox="0 0 ' + vw + ' ' + vh + '" xmlns="http://www.w3.org/2000/svg">' +
                 '<rect width="' + vw + '" height="' + vh + '" fill="#111"/>' +
                 '<g opacity="0.3"><path class="tiptoe-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2"/>' +
                 '<path class="tiptoe-clean" d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5"/></g>' +
-                threshKnob + learnPill + reducKnob +
+                threshKnob + learnPill + reducKnob + titleImg +
             '</svg></div>';
             return svg;
         })()
@@ -1924,6 +1937,26 @@
             var reducInd = document.getElementById('tiptoe-reduc-ind');
             var reducVal = document.getElementById('tiptoe-reduc-val');
 
+            // learn pair elements (text crossfade + animated dots + button state)
+            var learnEls = {
+                learn: document.getElementById('tiptoe-learn-text'),
+                learning: document.getElementById('tiptoe-learning-text'),
+                dots: [
+                    document.getElementById('tiptoe-dot-0'),
+                    document.getElementById('tiptoe-dot-1'),
+                    document.getElementById('tiptoe-dot-2')
+                ],
+                pillFill: document.getElementById('tiptoe-pill-fill'),
+                pillStroke: document.getElementById('tiptoe-pill-stroke'),
+                startTxt: document.getElementById('tiptoe-start-text'),
+                stopTxt: document.getElementById('tiptoe-stop-text')
+            };
+            var learnCycleStart = null;
+            var learnCycleMs = 2800;   // full cycle duration
+            var clickMs = 250;         // transition duration at each "click"
+            var learnStayMs = 1500;    // stay in Learning state
+            // pause between cycles is the remainder of learnCycleMs
+
             var active = false;
             var phase = 0;
             var animFrame = null;
@@ -1945,6 +1978,82 @@
             // Set defaults
             if (threshInd && threshVal) setThreshKnob(threshDefault, threshInd, threshVal);
             if (reducInd && reducVal) setReducKnob(reducDefault, reducInd, reducVal);
+
+            var dotTiming = [
+                { inStart: 0.00, inEnd: 0.15, outStart: 0.80, outEnd: 0.90 },
+                { inStart: 0.15, inEnd: 0.30, outStart: 0.70, outEnd: 0.80 },
+                { inStart: 0.30, inEnd: 0.45, outStart: 0.60, outEnd: 0.70 }
+            ];
+
+            function resetLearnPair() {
+                if (!learnEls.learn) return;
+                learnEls.learn.setAttribute('opacity', '1');
+                learnEls.learning.setAttribute('opacity', '0');
+                learnEls.pillFill.setAttribute('opacity', '1');
+                learnEls.pillStroke.setAttribute('opacity', '0');
+                learnEls.startTxt.setAttribute('opacity', '1');
+                learnEls.stopTxt.setAttribute('opacity', '0');
+                for (var i = 0; i < 3; i++) {
+                    learnEls.dots[i].setAttribute('opacity', '0');
+                    learnEls.dots[i].setAttribute('transform', 'translate(0,8)');
+                }
+            }
+
+            function updateLearnPair(nowMs) {
+                if (!learnEls.learn) return;
+                if (learnCycleStart === null) learnCycleStart = nowMs;
+                var t = (nowMs - learnCycleStart) % learnCycleMs;
+                var p1 = clickMs;               // end of click-to-Learning
+                var p2 = p1 + learnStayMs;      // end of Learning state
+                var p3 = p2 + clickMs;          // end of click-back-to-Learn
+
+                var stateProgress;
+                var dotPhase = 0;
+
+                if (t < p1) {
+                    stateProgress = t / clickMs;
+                } else if (t < p2) {
+                    stateProgress = 1;
+                    dotPhase = (t - p1) / learnStayMs;
+                } else if (t < p3) {
+                    stateProgress = 1 - (t - p2) / clickMs;
+                } else {
+                    stateProgress = 0;
+                }
+
+                // Crossfades
+                var aLearn    = Math.max(0, 1 - 2 * stateProgress);
+                var aLearning = Math.max(0, 2 * stateProgress - 1);
+                learnEls.learn.setAttribute('opacity', aLearn.toFixed(3));
+                learnEls.learning.setAttribute('opacity', aLearning.toFixed(3));
+                learnEls.startTxt.setAttribute('opacity', aLearn.toFixed(3));
+                learnEls.stopTxt.setAttribute('opacity', aLearning.toFixed(3));
+                learnEls.pillFill.setAttribute('opacity', (1 - stateProgress).toFixed(3));
+                learnEls.pillStroke.setAttribute('opacity', stateProgress.toFixed(3));
+
+                // Dot animation — only active when fully in Learning state
+                for (var i = 0; i < 3; i++) {
+                    var d = dotTiming[i];
+                    var a = 0, slide = 1;
+                    if (stateProgress >= 1) {
+                        if (dotPhase < d.inStart) {
+                            a = 0; slide = 1;
+                        } else if (dotPhase < d.inEnd) {
+                            var tt = (dotPhase - d.inStart) / (d.inEnd - d.inStart);
+                            a = tt; slide = 1 - tt;
+                        } else if (dotPhase < d.outStart) {
+                            a = 1; slide = 0;
+                        } else if (dotPhase < d.outEnd) {
+                            var tt = (dotPhase - d.outStart) / (d.outEnd - d.outStart);
+                            a = 1 - tt; slide = tt;
+                        } else {
+                            a = 0; slide = 1;
+                        }
+                    }
+                    learnEls.dots[i].setAttribute('opacity', (a * aLearning).toFixed(3));
+                    learnEls.dots[i].setAttribute('transform', 'translate(0,' + (slide * 8).toFixed(2) + ')');
+                }
+            }
 
             function tick() {
                 var lerpRate = 0.08;
@@ -2005,6 +2114,7 @@
                 reducCur += (reducTarget - reducCur) * lerpRate;
                 if (threshInd && threshVal) setThreshKnob(threshCur, threshInd, threshVal);
                 if (reducInd && reducVal) setReducKnob(reducCur, reducInd, reducVal);
+                updateLearnPair(performance.now());
                 animFrame = requestAnimationFrame(tick);
             }
 
@@ -2013,12 +2123,15 @@
                 active = true;
                 fading = false;
                 phaseSpeed = 0;
+                learnCycleStart = null; // restart the cycle from the top
                 if (!animFrame) animFrame = requestAnimationFrame(tick);
             }
 
             function deactivate() {
                 active = false;
                 fading = true;
+                resetLearnPair();
+                learnCycleStart = null;
                 if (!animFrame) animFrame = requestAnimationFrame(tick);
             }
 
