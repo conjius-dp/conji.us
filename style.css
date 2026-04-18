@@ -1057,6 +1057,9 @@ body {
     justify-content: space-evenly;
     align-items: center;
     padding-top: 0.35rem;
+    /* New stacking context so the animated SVG behind (waveform, knob)
+       can't cause the pills to repaint-flicker during hover */
+    isolation: isolate;
 }
 
 .card-download-row .dl-pill {
@@ -1075,6 +1078,10 @@ body {
     transition: background 0.2s, color 0.2s;
     box-sizing: border-box;
     gap: 6px;
+    /* Promote each pill to its own compositor layer so hover transitions
+       aren't invalidated by the parent card's continuous SVG repaints */
+    transform: translateZ(0);
+    will-change: background-color, color;
 }
 
 @media (hover: hover) and (pointer: fine) {
