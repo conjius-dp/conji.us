@@ -294,9 +294,16 @@
                     '<text id="tiptoe-reduc-val" x="0" y="76" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">\u221230.0 dB</text>' +
                 '</g>' +
             '</g>';
+            // Mode label + pill — above the Learn pair, matches the in-plugin
+            // MODE button (toggles Realtime ↔ HQ; Realtime is the default).
+            var modePill = '<g transform="translate(285,112) scale(0.7)">' +
+                '<text x="0" y="-22" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Mode</text>' +
+                '<rect x="-58" y="-16" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
+                '<text x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Realtime</text>' +
+            '</g>';
             // Learn label + Start pill — centered between knobs, near bottom.
             // Includes hidden overlay elements for the hover cycle: "Learning..." + Stop pill.
-            var learnPill = '<g transform="translate(285,148) scale(0.85)">' +
+            var learnPill = '<g transform="translate(285,162) scale(0.85)">' +
                 // Learn / Learning text pair
                 '<text id="tiptoe-learn-text" x="0" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Learn</text>' +
                 '<text id="tiptoe-learning-text" x="-12" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">Learning</text>' +
@@ -317,7 +324,7 @@
                 '<rect width="' + vw + '" height="' + vh + '" fill="#111"/>' +
                 '<g opacity="0.3"><path class="tiptoe-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2"/>' +
                 '<path class="tiptoe-clean" d="' + clean + '" fill="none" stroke="#d48300" stroke-width="3.5"/></g>' +
-                threshKnob + learnPill + reducKnob + titleImg +
+                threshKnob + learnPill + reducKnob + modePill + titleImg +
             '</svg></div>';
             return svg;
         })()
@@ -1732,7 +1739,7 @@
     // static fallback data when API is rate-limited
     var FALLBACK = {
         'boostor': { description: 'Simple audio gain plugin (macOS/Windows VST3, macOS AU)', language: 'C++', homepage: null },
-        'tiptoe': { description: 'Spectral gating denoiser audio plugin (macOS/Windows VST3, macOS AU)', language: 'C++', homepage: null },
+        'tiptoe': { description: 'Realtime spectral denoiser audio plugin (macOS/Windows VST3, macOS AU)', language: 'C++', homepage: null },
         'CivDecks': { description: 'Hex-based civilization strategy game with deckbuilding mechanics', language: 'GDScript', homepage: 'https://conji.us/civdecks/' },
         'midi-visu': { description: 'Real-time MIDI visualizer (macOS VST3/AU/Standalone)', language: 'C++', homepage: null },
         'wav-decoder': { description: 'A C++20 .wav file decoder', language: 'C++', homepage: null }
