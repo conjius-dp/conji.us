@@ -296,17 +296,17 @@
             '</g>';
             // Mode label + pill — above the Learn pair, matches the in-plugin
             // MODE button (toggles Realtime ↔ HQ; Realtime is the default).
-            var modePill = '<g transform="translate(285,112) scale(0.7)">' +
-                '<text x="0" y="-22" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Mode</text>' +
+            var modePill = '<g transform="translate(285,100) scale(0.65)">' +
+                '<text x="0" y="-22" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">MODE</text>' +
                 '<rect x="-58" y="-16" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
-                '<text x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Realtime</text>' +
+                '<text x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">REALTIME</text>' +
             '</g>';
             // Learn label + Start pill — centered between knobs, near bottom.
             // Includes hidden overlay elements for the hover cycle: "Learning..." + Stop pill.
-            var learnPill = '<g transform="translate(285,162) scale(0.85)">' +
+            var learnPill = '<g transform="translate(285,162) scale(0.65)">' +
                 // Learn / Learning text pair
-                '<text id="tiptoe-learn-text" x="0" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Learn</text>' +
-                '<text id="tiptoe-learning-text" x="-12" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">Learning</text>' +
+                '<text id="tiptoe-learn-text" x="0" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">LEARN</text>' +
+                '<text id="tiptoe-learning-text" x="-12" y="-28" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">LEARNING</text>' +
                 // Three animated dots
                 '<text id="tiptoe-dot-0" x="36" y="-28" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">.</text>' +
                 '<text id="tiptoe-dot-1" x="41" y="-28" text-anchor="start" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">.</text>' +
@@ -315,11 +315,11 @@
                 '<rect id="tiptoe-pill-fill" class="knob-pill" x="-48" y="-16" width="96" height="32" rx="16" ry="16" fill="#d48300"/>' +
                 '<rect id="tiptoe-pill-stroke" x="-47" y="-15" width="94" height="30" rx="15" ry="15" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0"/>' +
                 // Button text: Start (default) + Stop (hidden by default)
-                '<text id="tiptoe-start-text" x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">Start</text>' +
-                '<text id="tiptoe-stop-text" x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">Stop</text>' +
+                '<text id="tiptoe-start-text" x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">START</text>' +
+                '<text id="tiptoe-stop-text" x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600" opacity="0">STOP</text>' +
             '</g>';
             // Title logo — static, drawn on top of everything (no animation)
-            var titleImg = '<image href="img/tiptoe-logo.png" x="215" y="24" width="140" height="75" preserveAspectRatio="xMidYMid meet"/>';
+            var titleImg = '<image href="img/tiptoe-logo.png" x="215" y="12" width="140" height="75" preserveAspectRatio="xMidYMid meet"/>';
             var svg = '<div class="card-thumb"><svg viewBox="0 0 ' + vw + ' ' + vh + '" xmlns="http://www.w3.org/2000/svg">' +
                 '<rect width="' + vw + '" height="' + vh + '" fill="#111"/>' +
                 '<g opacity="0.3"><path class="tiptoe-noisy" d="' + noisy + '" fill="none" stroke="#7a5200" stroke-width="2"/>' +
