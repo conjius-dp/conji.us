@@ -301,7 +301,7 @@
                 '<text x="0" y="-22" text-anchor="middle" dominant-baseline="auto" fill="#d48300" font-family="Inconsolata,monospace" font-size="22" font-weight="600">MODE</text>' +
                 // Inner group carries the click-press scale so the "MODE"
                 // label above stays still while the pill depresses.
-                '<g id="tiptoe-mode-press" style="transform-origin:0 0;transform:scale(1)">' +
+                '<g id="tiptoe-mode-press" transform="scale(1)">' +
                     '<rect id="tiptoe-mode-fill" x="-58" y="-16" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
                     '<rect id="tiptoe-mode-stroke" x="-57" y="-15" width="114" height="30" rx="15" ry="15" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0"/>' +
                     '<text id="tiptoe-mode-realtime-text" x="0" y="0" text-anchor="middle" dominant-baseline="central" fill="#111" font-family="Inconsolata,monospace" font-size="22" font-weight="600">REALTIME</text>' +
@@ -321,7 +321,7 @@
                 // Inner group carries the click-press scale so the label
                 // ("LEARN"/"LEARNING") above stays still while the pill
                 // depresses on each click.
-                '<g id="tiptoe-learn-press" style="transform-origin:0 0;transform:scale(1)">' +
+                '<g id="tiptoe-learn-press" transform="scale(1)">' +
                     // Button background: filled pill (Start) + outlined pill (Stop, hidden by default)
                     '<rect id="tiptoe-pill-fill" class="knob-pill" x="-58" y="-16" width="116" height="32" rx="16" ry="16" fill="#d48300"/>' +
                     '<rect id="tiptoe-pill-stroke" x="-57" y="-15" width="114" height="30" rx="15" ry="15" fill="none" stroke="#d48300" stroke-width="2.5" opacity="0"/>' +
@@ -2048,14 +2048,14 @@
                     learnEls.dots[i].setAttribute('opacity', '0');
                     learnEls.dots[i].setAttribute('transform', 'translate(0,8)');
                 }
-                if (learnEls.press) learnEls.press.style.transform = 'scale(1)';
+                if (learnEls.press) learnEls.press.setAttribute('transform', 'scale(1)');
                 // Mode: reset to REALTIME / filled
                 if (modeEls.fill) {
                     modeEls.fill  .setAttribute('opacity', '1');
                     modeEls.stroke.setAttribute('opacity', '0');
                     modeEls.rtTxt .setAttribute('opacity', '1');
                     modeEls.hqTxt .setAttribute('opacity', '0');
-                    if (modeEls.press) modeEls.press.style.transform = 'scale(1)';
+                    if (modeEls.press) modeEls.press.setAttribute('transform', 'scale(1)');
                 }
                 modeState = 0;
                 modeTarget = 0;
@@ -2068,27 +2068,38 @@
             }
 
             // Queue a click-press kick on a given SVG element (scale dip).
+            // Uses the SVG `transform` attribute rather than CSS transform so
+            // the scale composes cleanly with the outer group's translate()
+            // in every browser (Safari in particular is flaky with CSS
+            // transforms on nested <g> inside a transformed parent).
             function kickPress(el, nowMs) {
                 if (!el) return;
                 pressKicks.push({ el: el, tStart: nowMs });
             }
 
             function updatePressKicks(nowMs) {
-                var minScale = 0.88;
+                var minScale = 0.78;                 // deeper dip, clearly visible
                 if (pressKicks.length === 0) return;
                 var next = [];
                 for (var i = 0; i < pressKicks.length; i++) {
                     var k = pressKicks[i];
                     var t = (nowMs - k.tStart) / pressMs;
                     if (t >= 1) {
-                        k.el.style.transform = 'scale(1)';
+                        k.el.setAttribute('transform', 'scale(1)');
                         continue;
                     }
-                    // Down-then-up over pressMs (triangle): 0→min at t=0.5, back to 1 at t=1
-                    var s = t < 0.5
-                        ? 1 - (1 - minScale) * (t / 0.5)
-                        : minScale + (1 - minScale) * ((t - 0.5) / 0.5);
-                    k.el.style.transform = 'scale(' + s.toFixed(3) + ')';
+                    // Ease: fast press-down (0→0.35), slower release (0.35→1)
+                    // so it reads as a real click, not a symmetric pulse.
+                    var s;
+                    if (t < 0.35) {
+                        var td = t / 0.35;
+                        s = 1 - (1 - minScale) * (td * td);        // ease-in
+                    } else {
+                        var tr = (t - 0.35) / 0.65;
+                        var ease = 1 - Math.pow(1 - tr, 2);        // ease-out
+                        s = minScale + (1 - minScale) * ease;
+                    }
+                    k.el.setAttribute('transform', 'scale(' + s.toFixed(3) + ')');
                     next.push(k);
                 }
                 pressKicks = next;
@@ -2116,7 +2127,10 @@
                     // New cycle → click-down on learn button. Mode toggles
                     // every 2 cycles: kick the mode pill and flip its target.
                     kickPress(learnEls.press, nowMs);
-                    if (cycleIdx > 0 && cycleIdx % 2 === 0) {
+                    // Each learn cycle = 2 clicks (down + up). Toggle mode
+                    // on every cycle boundary so mode flips every 2 learn
+                    // clicks, matching the in-plugin behaviour of tapping HQ.
+                    if (cycleIdx > 0) {
                         modeTarget = 1 - modeTarget;
                         modeTransitionStart = nowMs;
                         kickPress(modeEls.press, nowMs);
