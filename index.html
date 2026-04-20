@@ -3247,7 +3247,7 @@
             // whether we then rebuild the path — keeps the motion consistent.
             function stepJiggle() {
                 for (var i = 0; i <= wPts; i++) {
-                    jiggleY[i] += (jiggleTarget[i] - jiggleY[i]) * 0.18;
+                    jiggleY[i] += (jiggleTarget[i] - jiggleY[i]) * 0.306;
                     if (Math.abs(jiggleTarget[i] - jiggleY[i]) < 0.02) {
                         jiggleTarget[i] = (Math.random() * 2 - 1);
                     }
