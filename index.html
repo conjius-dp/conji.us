@@ -3228,16 +3228,59 @@
                 [9.3, 0.5], [14, 0.6], [22, 0.4], [31, 0.35], [38, 0.3],
                 [47, 0.24], [54, 0.2], [66, 0.16], [78, 0.14], [93, 0.1]
             ];
+            // Peak envelope of the original static waveform at ampMul=1:
+            // worst-case constructive interference is (1 + Σ harmonic_amps) * wAmp.
+            // Pre-computed so the animated version below can be clamped to this
+            // envelope — per-sample y is never bigger than what the static
+            // waveform could reach at the knob's +24 dB extreme.
+            var wPeakAt1 = wAmp;
+            for (var _h = 0; _h < wHarmonics.length; _h++) wPeakAt1 += wAmp * wHarmonics[_h][1];
 
-            function buildNoisyPath(ampMul) {
+            // Per-point random-walk jitter, persisted frame-to-frame. Each
+            // point lerps toward a random target; when it gets close the
+            // target is re-randomised, producing smooth pseudo-noise.
+            var jiggleY      = new Float32Array(wPts + 1);
+            var jiggleTarget = new Float32Array(wPts + 1);
+            for (var _j = 0; _j <= wPts; _j++) jiggleTarget[_j] = (Math.random() * 2 - 1);
+
+            // Advance the jitter one tick. Called once per rAF regardless of
+            // whether we then rebuild the path — keeps the motion consistent.
+            function stepJiggle() {
+                for (var i = 0; i <= wPts; i++) {
+                    jiggleY[i] += (jiggleTarget[i] - jiggleY[i]) * 0.18;
+                    if (Math.abs(jiggleTarget[i] - jiggleY[i]) < 0.02) {
+                        jiggleTarget[i] = (Math.random() * 2 - 1);
+                    }
+                }
+            }
+
+            function buildNoisyPath(ampMul, phaseT) {
                 var d = 'M';
+                // Scrolling phase offset so the harmonic series drifts over
+                // time — makes the waveform *move* instead of being a frozen
+                // pattern just scaling with the knob.
+                var phi = phaseT || 0;
                 for (var i = 0; i <= wPts; i++) {
                     var t = i / wPts;
                     var x = wx0 + t * ww;
-                    var s = Math.sin(t * Math.PI * 4) * wAmp * ampMul;
+                    // Base: sum of sines with slowly-shifting phases
+                    var s = Math.sin(t * Math.PI * 4 + phi * 0.7) * wAmp;
                     for (var h = 0; h < wHarmonics.length; h++) {
-                        s += Math.sin(t * Math.PI * wHarmonics[h][0]) * wAmp * wHarmonics[h][1] * ampMul;
+                        s += Math.sin(t * Math.PI * wHarmonics[h][0]
+                                      + phi * (0.3 + h * 0.11))
+                             * wAmp * wHarmonics[h][1];
                     }
+                    // Mix in the smooth random-walk jitter. Scale it so that
+                    // (base + jitter) summed at their worst case still fits
+                    // inside wPeakAt1 at ampMul=1.
+                    s += jiggleY[i] * wAmp * 0.9;
+                    // Multiply by knob → straight line at −∞, full motion at +24
+                    s *= ampMul;
+                    // Hard-clamp per sample to the original envelope so the
+                    // animated waveform is never taller than the static one at
+                    // the knob's +24 dB extreme.
+                    if (s >  wPeakAt1) s =  wPeakAt1;
+                    if (s < -wPeakAt1) s = -wPeakAt1;
                     var y = wcy - s;
                     d += (i ? ' L' : '') + x.toFixed(1) + ',' + y.toFixed(1);
                 }
@@ -3248,6 +3291,7 @@
             var fading = false;
             var raf = null;
             var animT = 0;
+            var wavePhase = 0;            // advances each frame → waveform scrolls
             var knobDefault = 0.5;
             var knobCur = knobDefault;
             var lerpRate = 0.08;
@@ -3288,17 +3332,24 @@
             // Default: 0 dB (norm 0.5, indicator pointing up)
             setKnob(knobDefault);
             // Set initial waveform — at 0dB default, half amplitude
-            if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobDefault));
+            if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobDefault, 0));
 
             function tick() {
                 if (fading) {
                     knobCur += (knobDefault - knobCur) * lerpRate;
                     setKnob(knobCur);
-                    if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobCur));
+                    stepJiggle();
+                    wavePhase += 0.02;
+                    if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobCur, wavePhase));
+                    // Stop when knob has settled AND the jitter amplitude
+                    // attenuated to near-zero by the knob (norm=0.5 → still
+                    // some jitter; we accept that — it IS the 0-dB state
+                    // when idle the card isn't hovered yet, so we never fade
+                    // the waveform itself, only let the knob bring it home).
                     if (Math.abs(knobCur - knobDefault) < 0.002) {
                         knobCur = knobDefault;
                         setKnob(knobDefault);
-                        if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobDefault));
+                        if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobDefault, wavePhase));
                         fading = false;
                         animT = 0;
                         raf = null;
@@ -3309,10 +3360,12 @@
                 }
                 if (!hovering) { raf = null; return; }
                 animT += (window.innerWidth <= 600) ? 0.05 : 0.01;
+                wavePhase += 0.025;
                 var target = (Math.sin(animT) + 1) / 2;
                 knobCur += (target - knobCur) * lerpRate;
                 setKnob(knobCur);
-                if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobCur));
+                stepJiggle();
+                if (waveNoisyEl) waveNoisyEl.setAttribute('d', buildNoisyPath(knobCur, wavePhase));
                 raf = requestAnimationFrame(tick);
             }
 
