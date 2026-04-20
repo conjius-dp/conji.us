@@ -3223,10 +3223,17 @@
             if (!card) return;
 
             // Waveform constants — same structure as tiptoe background
-            var wPts = 160, wx0 = 5, wx1 = 565, ww = wx1 - wx0, wcy = 100, wAmp = 30;
+            var wPts = 160, wx0 = 5, wx1 = 565, ww = wx1 - wx0, wcy = 100, wAmp = 22;
+            // Mixture of low-frequency body + mid/high-frequency detail.
+            // Non-integer frequencies so harmonics don't align into a
+            // periodic pattern — gives the outline real low-freq shape
+            // (big dips + crests) in addition to the fine high-freq hash.
             var wHarmonics = [
-                [9.3, 0.5], [14, 0.6], [22, 0.4], [31, 0.35], [38, 0.3],
-                [47, 0.24], [54, 0.2], [66, 0.16], [78, 0.14], [93, 0.1]
+                // Low-frequency body (new) — broad crests/dips across the view
+                [1.4, 0.50], [2.3, 0.60], [3.2, 0.38], [5.1, 0.30],
+                // Mid/high-frequency detail (existing, slightly rebalanced)
+                [9.3, 0.42], [14, 0.5], [22, 0.34], [31, 0.3], [38, 0.26],
+                [47, 0.2], [54, 0.17], [66, 0.14], [78, 0.12], [93, 0.09]
             ];
             // Peak envelope of the original static waveform at ampMul=1:
             // worst-case constructive interference is (1 + Σ harmonic_amps) * wAmp.
